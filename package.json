@@ -26,7 +26,7 @@
   "main": "src/index.js",
   "browser": "dist/index.js",
   "scripts": {
-    "benchmark": "node --no-deprecation node_modules/.bin/matcha",
+    "benchmark": "cd benchmark && npm i && npm run benchmark",
     "build": "babel src -d dist",
     "clean": "rm -rf .nyc_output coverage dist",
     "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
@@ -44,13 +44,10 @@
     "babel-preset-env": "^1.5.1",
     "eslint": "^3.19.0",
     "eslint-plugin-babel": "^4.1.1",
-    "libxmljs": "^0.18.4",
-    "matcha": "^0.7.0",
     "mocha": "^3.4.2",
     "nyc": "^11.0.2",
     "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5",
-    "xmldoc": "^1.1.0"
+    "webpack-dev-server": "^2.4.5"
   },
   "dependencies": {
     "babel-runtime": "^6.23.0"
