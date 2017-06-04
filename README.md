@@ -2,6 +2,8 @@
 
 A fast, safe, compliant XML parser for Node.js and browsers.
 
+[![Build Status](https://travis-ci.org/rgrove/parse-xml.svg?branch=master)](https://travis-ci.org/rgrove/parse-xml)
+
 ## Contents
 
 -   [Installation](#installation)
