@@ -31,7 +31,7 @@
     "clean": "rm -rf .nyc_output coverage dist",
     "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
     "lint": "eslint --cache {benchmark,src,tests}/**/*.js",
-    "prepublish": "npm run clean && npm run build",
+    "prepublishOnly": "npm run clean && npm run build",
     "test": "nyc --check-coverage --lines 100 mocha tests/*.test.js --delay --reporter dot",
     "test:browser": "(sleep 1 && open 'http://localhost:8080/tests/browser/') & webpack-dev-server"
   },
