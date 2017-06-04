@@ -1,0 +1,1833 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- From http://research.cs.wisc.edu/niagara/data/nasa/5032A.xml -->
+<!DOCTYPE dataset SYSTEM "http://tarantella.gsfc.nasa.gov/xml/dataset_048.dtd">
+<dataset subject="astronomy" xmlns:xlink="http://www.w3.org/XML/XLink/0.9">
+	<title>Catalogue of Stars within 25 Parsecs of the Sun</title>
+	<altname type="ADC">5032A</altname>
+		<altname type="CDS">V/32A</altname>
+		<altname type="brief">Stars within 25 pc of the Sun</altname>
+	<reference>
+		<source>
+<other>
+	<title>Catalogue of Stars within 25 Parsecs of the Sun</title>
+	<author>
+			<initial>R</initial>
+			<initial>V</initial>
+			<initial>D</initial>
+			<initial>R</initial>
+			<lastName>Woolley</lastName></author>
+	<author>
+			<initial>E</initial>
+			<initial>A</initial>
+			<lastName>Epps</lastName></author>
+	<author>
+			<initial>M</initial>
+			<initial>J</initial>
+			<lastName>Penston</lastName></author>
+	<author>
+			<initial>S</initial>
+			<initial>B</initial>
+			<lastName>Pocock</lastName></author>
+	<name>Royal Obs. Ann. 5</name>
+	<publisher>???</publisher>
+	<city>???</city>
+
+		<date>
+			<year>1970</year></date>
+	<bibcode>1970ROAn....5....1W</bibcode></other></source>
+	<related>
+			<holding role="similar">V/70 : Nearby Stars 3, Preliminary (Gliese, Jahreiss 1991)<xlink:simple href="V/70"/></holding>
+			   Gliese, W. 1957, "Katalog der Sterne naher als 20 Parsek fuer 1950.0",
+      Astron. Rechen-Inst. Heidelb., Mitt. A, Nr. 8
+   Jenkins, L.F. 1952, General Catalogue of Trigonometric Stellar Parallaxes
+      (New Haven; Yale University Observatory)
+   Jenkins, L.F. 1963, Supplement to the General Catalogue of Trigonometric
+      Stellar Parallaxes (New Haven; Yale University Observatory)
+   Wilson, R.E. 1953, General Catalogue of Stellar Radial Velocities, Publ.
+      Carnegie Inst., Washington, No. 601</related></reference>
+	<keywords parentListURL="http://messier.gsfc.nasa.gov/xml/keywordlists/adc_keywords.html">
+			<keyword xlink:href="Stars_nearby.html">Stars, nearby</keyword></keywords>
+	<descriptions>
+				<description>
+				<para>
+    This catalog was constructed at the Royal Greenwich Observatory in
+    order to enlarge the Gliese (1957) compilation. It contains data on
+    stars nearer than 25 pc that are not included in Gliese's catalog,
+    plus additional information published since 1957 on stars in the
+    Gliese catalog. The machine version contains essentially all
+    information given in Table Ia of the published catalog, plus
+    positional data, and most cross references to other catalogs given in
+    Table IIa. The notes flags in Table Ia are not included because the
+    notes are not machine-readable. Omitted from Table IIa are the
+    finding-chart indicators (Lowell G numbers or notes references) and
+    miscellaneous cross identifications to other names and catalog
+    identifiers. Tables Ib and IIb, containing 21 systems originally
+    included in Gliese's (1957) catalog but for which revised parallaxes
+    have placed them farther than 25 pc are not included in the machine
+    version.</para><para>    Data in the machine version are Gliese number (Newly added stars begin
+    with 9001, but new parallaxes have removed 9419 and added 9849 and
+    9850; the Sun [first record] has number 0); component identifications
+    for multiple systems; parallax; annual proper motions; radial
+    velocity; (U,V,W) space velocities; box orbit parameters (omega, e,
+    i); spectral type; UBV data; absolute visual magnitude; right
+    ascension (B1950) declination, GCTP (Jenkins 1952, 1963); HD DM, GCRV
+    (Wilson 1953) and other catalog identifiers; BS (= HR) (Hoffleit 1964)
+    numbers; and remarks codes for SB, doubles, variables, etc.</para><para>    Please note that the first entry is for the Sun, and thus it lacks
+    fields such as RA and Dec.</para></description>
+                        <details/></descriptions>
+	<tableHead>
+		<tableLinks>
+				<tableLink xlink:href="catalog.dat">
+	<title>The catalogue of stars within 25pc</title></tableLink></tableLinks>
+	<fields>
+		<field>
+			<name>Woolley</name>
+			<definition>Sequence number
+	<footnote>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>m_Woolley</name>
+			<definition>Component identification
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>plx</name>
+			<definition>Parallax
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>mas</units></field>
+		<field>
+			<name>e_plx</name>
+			<definition>Probable error in plx
+	<footnote>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>mas</units></field>
+		<field>
+			<name>n_plx</name>
+			<definition>Note:'8' if e_plx &lt; 15%, '9' if e_plx &lt; 10%
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>pmRA</name>
+			<definition>Proper motion in RA
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>s/yr</units></field>
+		<field>
+			<name>pmDE</name>
+			<definition>Proper motion in Dec
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>arcsec/yr</units></field>
+		<field>
+			<name>RVel</name>
+			<definition>Radial velocity
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>km/s</units></field>
+		<field>
+			<name>n_RVel</name>
+			<definition>Note on RV
+	<footnote>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>U</name>
+			<definition>U component of space velocity
+                                    (toward galactic centre)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>km/s</units></field>
+		<field>
+			<name>V</name>
+			<definition>V component of space velocity
+                                    (toward galactic rotation)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>km/s</units></field>
+		<field>
+			<name>W</name>
+			<definition>W component of space velocity
+                                    (toward North galactic pole)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>km/s</units></field>
+		<field>
+			<name>GCdist</name>
+			<definition>Galactocentric distance in units of
+                                    Sun's distance from the center
+	<footnote>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>10-4</units></field>
+		<field>
+			<name>e</name>
+			<definition>Box orbit eccentricity
+	<footnote footnoteId="???"><para>number=1</para>
+			<para>see details in file "adc.doc" or in the original publication.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>i</name>
+			<definition>Box orbit angle (highest inclination
+                                     of the orbit)
+	<footnote footnoteId="???"><para>number=1</para>
+			<para>see details in file "adc.doc" or in the original publication.</para></footnote></definition>
+			<units>10-4rad</units></field>
+		<field>
+			<name>LC_Code</name>
+			<definition>Luminosity class code
+	<footnote>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>SpType</name>
+			<definition>Spectral type
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>r_SpType</name>
+			<definition>Coded source of spectral type
+	<footnote>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>Mag</name>
+			<definition>Magnitude m(v) or m(pg) (see n_Mag)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>mag</units></field>
+		<field>
+			<name>n_Mag</name>
+			<definition>Magnitude code
+	<footnote>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>B-V</name>
+			<definition>B-V color
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>mag</units></field>
+		<field>
+			<name>U-B</name>
+			<definition>U-B color
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>mag</units></field>
+		<field>
+			<name>Mv</name>
+			<definition>Absolute visual magnitude
+	<footnote>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>mag</units></field>
+		<field>
+			<name>RA1900h</name>
+			<definition>Hours RA, equinox B1900, epoch 1900.0
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>h</units></field>
+		<field>
+			<name>RA1900dm</name>
+			<definition>Minutes RA, equinox B1900, epoch 1900.0
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>0.1min</units></field>
+		<field>
+			<name>DE1900-</name>
+			<definition>Sign Dec, equinox B1900, epoch 1900.0
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>DE1900d</name>
+			<definition>Degrees Dec, equinox B1900, epoch 1900.0
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>deg</units></field>
+		<field>
+			<name>DE1900m</name>
+			<definition>Minutes Dec, equinox B1900, epoch 1900.0
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>arcmin</units></field>
+		<field>
+			<name>RAh</name>
+			<definition>Right Ascension B1950, epoch 1950 (hours)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>h</units></field>
+		<field>
+			<name>RAm</name>
+			<definition>Right Ascension B1950, epoch 1950 (minutes)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>min</units></field>
+		<field>
+			<name>RAs</name>
+			<definition>Right Ascension B1950, epoch 1950 (seconds)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>s</units></field>
+		<field>
+			<name>DE-</name>
+			<definition>Declination B1950, epoch 1950 (sign)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>DEd</name>
+			<definition>Declination B1950, epoch 1950 (degrees)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>deg</units></field>
+		<field>
+			<name>DEdm</name>
+			<definition>Declination B1950, epoch 1950 (deci-minutes)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>0.1arcmin</units></field>
+		<field>
+			<name>GCTP</name>
+			<definition>Gen. Cat. of Trigonometric Parallaxes &lt;I/60>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>HD</name>
+			<definition>Henry Draper Catalog (HD) number
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>DM</name>
+			<definition>Durchmusterung (BD, CD, or CP)
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>GCRV</name>
+			<definition>Gen. Cat. of Radial Velocities (GCRV) number
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>PM_Name</name>
+			<definition>Name from other proper-motion catalog
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>HR</name>
+			<definition>Bright Star = Harvard Revised catalog &lt;V.50>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>Vys</name>
+			<definition>Number in red dwarf lists of Vyssotsky
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Star sequence numbers less than 1000 are from Gliese (1957);
+    new stars have a number > 9000; The Sun is #0 (and therefore lacks entries
+    in fields such as the RA and Dec.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+   "S" indicates spectroscopic parallax</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined components of binary
+    V = variable velocity</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    i.e GCdist represents parsecs if the Sun distance is 10kpc. See
+    also in file "adc.doc"</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 = I or c;   2 = II or c;
+    3 = III or g; 4 = IV or sg;
+    5 = V or d;   6 = VI or sd;
+    7 = D or wd.
+    Intermediate classes have no codes, e.g. 4 is given for IV-V.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    1 if MK;
+    2 if combined MK type for multiple system;
+    4 if combined non-MK;
+    blank  if non-MK.</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    J = combined light for multiple system
+    P = Mag indicates a photographic magnitude
+    V = variable magnitude</para></footnote>
+	<footnote footnoteId="???"><para>number=</para>
+			<para>
+    Visual magnitude is reported to 0.01 mag if both probable error of
+    parallax &lt; 10% and V is given to 0.01 mag.</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>Remark1</name>
+			<definition>First remark code
+	<footnote footnoteId="???"><para>number=2</para>
+			<para>the codes are
+   2 = spectroscopic binary
+   3 = spectroscopic triple
+   4 = unresolved double, unknown nature
+   5 = UV Ceti flare star
+   6 = eclipsing binary
+   7 = semi-regular variable
+   8 = astrometric binary
+   9 = planetary nebula
+</para></footnote></definition>
+			<units>---</units></field>
+		<field>
+			<name>Remark2</name>
+			<definition>Second remark code
+	<footnote footnoteId="???"><para>number=2</para>
+			<para>the codes are
+   2 = spectroscopic binary
+   3 = spectroscopic triple
+   4 = unresolved double, unknown nature
+   5 = UV Ceti flare star
+   6 = eclipsing binary
+   7 = semi-regular variable
+   8 = astrometric binary
+   9 = planetary nebula
+</para></footnote></definition>
+			<units>---</units></field></fields></tableHead>
+
+			<textFile xlink:href="adc.doc"><name>adc.doc</name><description><para>Original Documentation by Wayne H. Warren Jr.</para></description></textFile>
+	<history>
+		<ingest>
+
+			<creator>
+				<lastName>Francois Ochsenbein</lastName>
+				<affiliation>CDS</affiliation></creator>
+			<creator>
+				<lastName>James Gass</lastName>
+				<affiliation>SSDOO/ADC</affiliation></creator>
+	<date>
+		<year>1997</year><month>Jul</month><day>21</day></date></ingest>
+
+		<revisions>
+	<revision>
+		<creator>
+			<lastName>UNKNOWN</lastName></creator>
+		<date><year>UNKNOWN</year></date>
+		<para>  * 19-Jul-1994: The file has been reformatted at CDS from the CD-ROM
+    version "Selected Astronomical Catalogues Vol.1" with addition of
+    decimal points when required (blank numbers in the decimal part) and
+    conversion of RVel and Mag codes.
+  * The 1950 declination of Gliese 157B (record #350) was corrected.
+
+  * 21-Jul-1997: This document was brought up to current CDS/ADC standards.
+    [J. Gass, ADC]</para></revision></revisions></history>
+	<identifier>V_32A.xml</identifier></dataset>

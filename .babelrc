@@ -1,0 +1,20 @@
+{
+  "ignore": [
+    "dist",
+    "node_modules"
+  ],
+
+  "presets": [
+    ["env", {
+      "loose": true,
+
+      "targets": {
+        "uglify": true
+      }
+    }]
+  ],
+
+  "plugins": [
+    "transform-runtime"
+  ]
+}

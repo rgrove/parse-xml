@@ -1,0 +1,58 @@
+{
+  "name": "@rgrove/parse-xml",
+  "version": "1.0.0",
+  "description": "A fast, safe, compliant XML parser for Node.js and browsers.",
+  "keywords": [
+    "xml",
+    "parse",
+    "parser"
+  ],
+  "author": "Ryan Grove <ryan@wonko.com>",
+  "license": "ISC",
+  "homepage": "https://github.com/rgrove/parse-xml",
+  "bugs": "https://github.com/rgrove/parse-xml/issues",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rgrove/parse-xml.git"
+  },
+  "engines": {
+    "node": ">=6.0.0"
+  },
+  "files": [
+    "dist",
+    "src",
+    "LICENSE"
+  ],
+  "main": "src/index.js",
+  "browser": "dist/index.js",
+  "scripts": {
+    "benchmark": "node --no-deprecation node_modules/.bin/matcha",
+    "build": "babel src -d dist",
+    "clean": "rm -rf .nyc_output coverage dist",
+    "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
+    "lint": "eslint --cache {benchmark,src,tests}/**/*.js",
+    "prepublish": "npm run clean && npm run build",
+    "test": "nyc --check-coverage --lines 100 mocha tests/*.test.js --delay --reporter dot",
+    "test:browser": "(sleep 1 && open 'http://localhost:8080/tests/browser/') & webpack-dev-server"
+  },
+  "devDependencies": {
+    "async": "^2.4.1",
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.0.0",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.5.1",
+    "eslint": "^3.19.0",
+    "eslint-plugin-babel": "^4.1.1",
+    "libxmljs": "^0.18.4",
+    "matcha": "^0.7.0",
+    "mocha": "^3.4.2",
+    "nyc": "^11.0.2",
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5",
+    "xmldoc": "^1.1.0"
+  },
+  "dependencies": {
+    "babel-runtime": "^6.23.0"
+  }
+}

@@ -1,0 +1,24 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>parse-xml tests</title>
+<link rel="stylesheet" href="../../node_modules/mocha/mocha.css">
+
+<div id="mocha"></div>
+
+<script src="../../node_modules/mocha/mocha.js"></script>
+<script src="/parseXml.js"></script>
+
+<script>
+mocha.setup({
+  delay: true,
+  ui: 'bdd'
+});
+</script>
+
+<script src="/testIndex.js"></script>
+<script src="/testConformance.js"></script>
+
+<script>
+  mocha.checkLeaks();
+  mocha.run();
+</script>

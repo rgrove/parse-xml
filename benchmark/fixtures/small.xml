@@ -1,0 +1,16 @@
+<root>
+  This is a very small XML document.
+
+  <child foo="bar" baz="&amp;&lt;&gt;&apos;&quot;">
+    &amp;&lt;&gt;&apos;&quot;
+  </child>
+
+  <emptyChild abc="123" />
+
+  <cdataChild>
+    <![CDATA[
+      Woo! It's CDATA so I can do whatever I want!
+      <>&"'
+    ]]>
+  </cdataChild>
+</root>
