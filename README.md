@@ -2,6 +2,7 @@
 
 A fast, safe, compliant XML parser for Node.js and browsers.
 
+[![npm version](https://badge.fury.io/js/%40rgrove%2Fparse-xml.svg)](https://badge.fury.io/js/%40rgrove%2Fparse-xml)
 [![Build Status](https://travis-ci.org/rgrove/parse-xml.svg?branch=master)](https://travis-ci.org/rgrove/parse-xml)
 
 ## Contents
