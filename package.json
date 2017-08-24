@@ -1,5 +1,5 @@
 {
-  "name": "@rgrove/parse-xml",
+  "name": "@retorquere/parse-xml",
   "version": "1.0.0",
   "description": "A fast, safe, compliant XML parser for Node.js and browsers.",
   "keywords": [
@@ -9,11 +9,11 @@
   ],
   "author": "Ryan Grove <ryan@wonko.com>",
   "license": "ISC",
-  "homepage": "https://github.com/rgrove/parse-xml",
-  "bugs": "https://github.com/rgrove/parse-xml/issues",
+  "homepage": "https://github.com/retorquere/parse-xml",
+  "bugs": "https://github.com/retorquere/parse-xml/issues",
   "repository": {
     "type": "git",
-    "url": "https://github.com/rgrove/parse-xml.git"
+    "url": "https://github.com/retorquere/parse-xml.git"
   },
   "engines": {
     "node": ">=6.0.0"
@@ -36,20 +36,20 @@
     "test:browser": "(sleep 1 && open 'http://localhost:8080/tests/browser/') & webpack-dev-server"
   },
   "devDependencies": {
-    "async": "^2.4.1",
-    "babel-cli": "^6.24.1",
+    "async": "^2.5.0",
+    "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",
-    "babel-loader": "^7.0.0",
+    "babel-loader": "^7.1.2",
     "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.5.1",
-    "eslint": "^3.19.0",
-    "eslint-plugin-babel": "^4.1.1",
-    "mocha": "^3.4.2",
-    "nyc": "^11.0.2",
-    "webpack": "^2.6.1",
-    "webpack-dev-server": "^2.4.5"
+    "babel-preset-env": "^1.6.0",
+    "eslint": "^4.5.0",
+    "eslint-plugin-babel": "^4.1.2",
+    "mocha": "^3.5.0",
+    "nyc": "^11.1.0",
+    "webpack": "^3.5.5",
+    "webpack-dev-server": "^2.7.1"
   },
   "dependencies": {
-    "babel-runtime": "^6.23.0"
+    "babel-runtime": "^6.26.0"
   }
 }

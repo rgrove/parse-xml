@@ -46,6 +46,26 @@ describe("parseXml()", () => {
     assertChildren(doc.children, [ assertIsElement ]);
   });
 
+  describe("when `options.resolveUndefinedEntities` is set", () => {
+    beforeEach(() => {
+      options = {
+        ignoreUndefinedEntities: true,
+        resolveUndefinedEntities: function(ref) {
+          if (ref == '&bogus;') return ref;
+        }
+      };
+      xml = '<root foo="bar &bogus; baz">&quux;</root>';
+    });
+
+    it("should emit undefined entities as-is", () => {
+      let [ root ] = parseXml(xml, options).children;
+      let [ text ] = root.children;
+
+      assert.equal(root.attributes.foo, 'bar &bogus; baz');
+      assert.equal(text.text, '&quux;');
+    });
+  });
+
   describe("when `options.ignoreUndefinedEntities` is `true`", () => {
     beforeEach(() => {
       options = { ignoreUndefinedEntities: true };
