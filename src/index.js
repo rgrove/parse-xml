@@ -405,23 +405,25 @@ function replaceReference(ref) {
 
   // This is a named entity.
   let value = namedEntities[ref];
-  if (value === void 0 && state.options.resolveUndefinedEntities) {
-    let v = state.options.resolveUndefinedEntities(ref);
-    if (v != null) { // tests both undefined and null but not other falsish values
-      value = v;
+
+  if (value !== void 0) {
+    return value;
+  }
+
+  if (state.options.resolveUndefinedEntities) {
+    let resolvedValue = state.options.resolveUndefinedEntities(ref);
+
+    if (resolvedValue !== null && resolvedValue !== void 0) {
+      return resolvedValue;
     }
   }
 
-  if (value === void 0) {
-    if (state.options.ignoreUndefinedEntities) {
-      return ref;
-    }
-
-    state.pos = state.prevPos;
-    error(state, `Named entity isn't defined: \`${ref}\``);
+  if (state.options.ignoreUndefinedEntities) {
+    return ref;
   }
 
-  return value;
+  state.pos = state.prevPos;
+  error(state, `Named entity isn't defined: \`${ref}\``);
 }
 
 function scan(state, regex) {
