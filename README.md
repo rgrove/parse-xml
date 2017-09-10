@@ -158,6 +158,14 @@ The following options may be provided as properties of the `options` argument:
     type `comment`. Otherwise comments will not be included in the document
     tree.
 
+-   **resolveUndefinedEntity** _Function_
+
+    When an undefined named entity is encountered, this function will be called
+    with the entity as its only argument. It should return a string value with
+    which to replace the entity, or `null` or `undefined` to treat the entity as
+    undefined (which may result in a parse error depending on the value of
+    `ignoreUndefinedEntities`).
+
 ## Nodes
 
 An XML document is parsed into a tree of node objects. Each node has the
