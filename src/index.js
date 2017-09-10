@@ -410,8 +410,8 @@ function replaceReference(ref) {
     return value;
   }
 
-  if (state.options.resolveUndefinedEntities) {
-    let resolvedValue = state.options.resolveUndefinedEntities(ref);
+  if (state.options.resolveUndefinedEntity) {
+    let resolvedValue = state.options.resolveUndefinedEntity(ref);
 
     if (resolvedValue !== null && resolvedValue !== void 0) {
       return resolvedValue;

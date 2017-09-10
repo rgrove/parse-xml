@@ -61,10 +61,10 @@ describe("parseXml()", () => {
     });
   });
 
-  describe("when `options.resolveUndefinedEntities` is set", () => {
+  describe("when `options.resolveUndefinedEntity` is set", () => {
     beforeEach(() => {
       options = {
-        resolveUndefinedEntities(ref) {
+        resolveUndefinedEntity(ref) {
           if (ref === '&kittens;') {
             return 'kittens are fuzzy';
           }
@@ -87,7 +87,7 @@ describe("parseXml()", () => {
         options = {
           ignoreUndefinedEntities: true,
 
-          resolveUndefinedEntities(ref) {
+          resolveUndefinedEntity(ref) {
             if (ref === '&null;') {
               return null;
             }
