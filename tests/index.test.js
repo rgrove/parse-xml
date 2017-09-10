@@ -46,26 +46,6 @@ describe("parseXml()", () => {
     assertChildren(doc.children, [ assertIsElement ]);
   });
 
-  describe("when `options.resolveUndefinedEntities` is set", () => {
-    beforeEach(() => {
-      options = {
-        ignoreUndefinedEntities: true,
-        resolveUndefinedEntities: function(ref) {
-          if (ref == '&bogus;') return ref;
-        }
-      };
-      xml = '<root foo="bar &bogus; baz">&quux;</root>';
-    });
-
-    it("should emit undefined entities as-is", () => {
-      let [ root ] = parseXml(xml, options).children;
-      let [ text ] = root.children;
-
-      assert.equal(root.attributes.foo, 'bar &bogus; baz');
-      assert.equal(text.text, '&quux;');
-    });
-  });
-
   describe("when `options.ignoreUndefinedEntities` is `true`", () => {
     beforeEach(() => {
       options = { ignoreUndefinedEntities: true };
@@ -78,6 +58,51 @@ describe("parseXml()", () => {
 
       assert.equal(root.attributes.foo, 'bar &bogus; baz');
       assert.equal(text.text, '&quux;');
+    });
+  });
+
+  describe("when `options.resolveUndefinedEntities` is set", () => {
+    beforeEach(() => {
+      options = {
+        resolveUndefinedEntities(ref) {
+          if (ref === '&kittens;') {
+            return 'kittens are fuzzy';
+          }
+        }
+      };
+
+      xml = '<root foo="bar &kittens; baz">&kittens;</root>';
+    });
+
+    it("should resolve undefined entities", () => {
+      let [ root ] = parseXml(xml, options).children;
+      let [ text ] = root.children;
+
+      assert.equal(root.attributes.foo, 'bar kittens are fuzzy baz');
+      assert.equal(text.text, 'kittens are fuzzy');
+    });
+
+    describe("when the resolved value is `null` or `undefined`", () => {
+      beforeEach(() => {
+        options = {
+          ignoreUndefinedEntities: true,
+
+          resolveUndefinedEntities(ref) {
+            if (ref === '&null;') {
+              return null;
+            }
+          }
+        };
+
+        xml = '<root>&null;&undefined;</root>';
+      });
+
+      it("should treat the entity as unresolved", () => {
+        let [ root ] = parseXml(xml, options).children;
+        let [ text ] = root.children;
+
+        assert.equal(text.text, '&null;&undefined;');
+      });
     });
   });
 
