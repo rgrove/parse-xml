@@ -10,7 +10,7 @@
     "benchmark": "node --no-deprecation node_modules/.bin/matcha ."
   },
   "devDependencies": {
-    "libxmljs": "^0.18.4",
+    "libxmljs": "^0.18.7",
     "matcha": "^0.7.0",
     "xmldoc": "^1.1.0"
   }
