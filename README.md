@@ -397,28 +397,28 @@ libxml library) and [xmldoc](https://github.com/nfarina/xmldoc) (which is based
 on [sax-js](https://github.com/isaacs/sax-js)).
 
 ```
-Node.js v8.0.0 / Darwin x64
+Node.js v8.4.0 / Darwin x64
 Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz
 
                       Small document (291 bytes)
-          31,247 op/s » libxmljs (native)
-          58,804 op/s » parse-xml
-          33,669 op/s » xmldoc (sax-js)
+          29,400 op/s » libxmljs (native)
+          54,203 op/s » parse-xml
+          32,359 op/s » xmldoc (sax-js)
 
                       Medium document (72081 bytes)
-             661 op/s » libxmljs (native)
-             408 op/s » parse-xml
-             211 op/s » xmldoc (sax-js)
+             673 op/s » libxmljs (native)
+             389 op/s » parse-xml
+             234 op/s » xmldoc (sax-js)
 
                       Large document (1162464 bytes)
-              64 op/s » libxmljs (native)
-              24 op/s » parse-xml
+              61 op/s » libxmljs (native)
+              26 op/s » parse-xml
               20 op/s » xmldoc (sax-js)
 
 
   Suites:  3
   Benches: 9
-  Elapsed: 16,828.19 ms
+  Elapsed: 16,417.15 ms
 ```
 
 To run this benchmark yourself, clone this repo and run:
