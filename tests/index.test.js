@@ -310,6 +310,14 @@ describe("parseXml()", () => {
       assert(JSON.stringify(root));
     });
   });
+
+  describe("bugs", () => {
+    it("should not truncate attribute values at `=` characters", () => {
+      let [ root ] = parseXml(`<a b="foo=bar=baz" c =  'quux=moo' />`).children;
+      assert.equal(root.attributes.b, 'foo=bar=baz');
+      assert.equal(root.attributes.c, 'quux=moo');
+    });
+  });
 });
 
 // -- Helpers ------------------------------------------------------------------

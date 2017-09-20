@@ -353,7 +353,10 @@ function parseAttrs(state, attrs) {
     .sort();
 
   for (let i = 0, len = attrPairs.length; i < len; ++i) {
-    let [ name, value ] = attrPairs[i].split(Syntax.Eq);
+    let attrPair = attrPairs[i];
+    let eqMatch = attrPair.match(Syntax.Eq);
+    let name = attrPair.slice(0, eqMatch.index);
+    let value = attrPair.slice(eqMatch.index + eqMatch[0].length);
 
     if (name in parsedAttrs) {
       state.pos = state.prevPos;
