@@ -24,6 +24,7 @@
     "LICENSE"
   ],
   "main": "src/index.js",
+  "types": "src/index.d.ts",
   "browser": "dist/index.js",
   "scripts": {
     "benchmark": "cd benchmark && npm i && npm run benchmark",
