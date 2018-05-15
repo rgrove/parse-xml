@@ -421,11 +421,8 @@ Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz
   Elapsed: 16,417.15 ms
 ```
 
-To run this benchmark yourself, clone this repo and run:
-
-```
-npm i && npm run benchmark
-```
+See the [parse-xml-benchmark](https://github.com/rgrove/parse-xml-benchmark)
+repo for instructions on running this benchmark yourself.
 
 ## License
 

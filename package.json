@@ -26,7 +26,6 @@
   "main": "src/index.js",
   "browser": "dist/index.js",
   "scripts": {
-    "benchmark": "cd benchmark && npm i && npm run benchmark",
     "build": "babel src -d dist",
     "clean": "rm -rf .nyc_output coverage dist",
     "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
