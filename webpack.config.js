@@ -1,30 +1,28 @@
-// This webpack config is used to generate a browser bundle for unit testing.
 'use strict';
 
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = {
-  entry: {
-    parseXml: './src/index.js',
-    testConformance: './tests/conformance.test.js',
-    testIndex: './tests/index.test.js'
-  },
+  entry: './src/index.js',
+  mode: 'production',
 
   module: {
     rules: [{
       test: /\.js$/,
-      loader: 'babel-loader'
+      use: [{
+        loader: 'babel-loader'
+      }]
     }]
   },
 
   output: {
-    filename: '[name].js',
-    library: '[name]',
-    path: path.resolve(__dirname, 'tmp')
-  },
-
-  plugins: [
-    new webpack.IgnorePlugin(/^fs$/)
-  ]
+    filename: 'parse-xml.min.js',
+    globalObject: "typeof self !== 'undefined' ? self : this", // see https://github.com/webpack/webpack/issues/6522
+    library: {
+      commonjs: 'parse-xml',
+      root: 'parseXml'
+    },
+    libraryTarget: 'umd',
+    path: path.resolve(__dirname, 'dist', 'umd')
+  }
 };

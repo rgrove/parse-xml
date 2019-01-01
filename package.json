@@ -23,32 +23,31 @@
     "src",
     "LICENSE"
   ],
+  "browser": "dist/commonjs/index.js",
   "main": "src/index.js",
-  "browser": "dist/index.js",
   "scripts": {
-    "build": "babel src -d dist",
+    "build": "babel src -d dist/commonjs && webpack",
     "clean": "rm -rf .nyc_output coverage dist",
     "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
-    "lint": "eslint --cache {benchmark,src,tests}",
+    "lint": "eslint --cache {src,tests}",
     "prepublishOnly": "npm run clean && npm run build",
     "test": "nyc --check-coverage --lines 100 mocha tests/*.test.js --delay --reporter dot",
-    "test:browser": "(sleep 1 && open 'http://localhost:8080/tests/browser/') & webpack-dev-server"
+    "test:browser": "(sleep 5 && open 'http://localhost:8080/tests/browser/') & webpack-dev-server --config tests/webpack.config.test.js --watch"
   },
   "devDependencies": {
-    "async": "^2.6.0",
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.3",
-    "babel-loader": "^7.1.4",
-    "babel-plugin-transform-runtime": "^6.23.0",
-    "babel-preset-env": "^1.7.0",
-    "eslint": "^4.19.1",
-    "eslint-plugin-babel": "^5.1.0",
-    "mocha": "^5.1.1",
-    "nyc": "^11.7.3",
-    "webpack": "^3.12.0",
-    "webpack-dev-server": "^2.11.2"
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "async": "^2.6.1",
+    "babel-eslint": "^10.0.1",
+    "babel-loader": "^8.0.0",
+    "eslint": "^5.11.1",
+    "eslint-plugin-babel": "^5.3.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "webpack": "^4.28.3",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.14"
   },
-  "dependencies": {
-    "babel-runtime": "^6.23.0"
-  }
+  "dependencies": {}
 }

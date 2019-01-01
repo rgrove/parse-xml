@@ -30,12 +30,19 @@ A fast, safe, compliant XML parser for Node.js and browsers.
 npm install @rgrove/parse-xml
 ```
 
+Or, if you like living dangerously, you can load [the minified UMD bundle][umd]
+in a browser via [Unpkg][] and use the `parseXml` global.
+
+[umd]:https://unpkg.com/@rgrove/parse-xml/dist/umd/parse-xml.min.js
+[Unpkg]:https://unpkg.com/
+
 ## Features
 
 -   Returns an [object tree](#basic-usage) representing an XML document.
 
--   Works great in browsers. Around 6KB minified and gzipped (depending on how
-    you package it).
+-   Works great in Node.js 8+ and in modern browsers. Also works in older
+    browsers if you provide polyfills for `Object.assign()`, `Object.freeze()`,
+    and `String.fromCodePoint()`.
 
 -   Provides [helpful, detailed error messages](#friendly-errors) with context
     when a document is not well-formed.
