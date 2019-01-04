@@ -4,6 +4,7 @@ A fast, safe, compliant XML parser for Node.js and browsers.
 
 [![npm version](https://badge.fury.io/js/%40rgrove%2Fparse-xml.svg)](https://badge.fury.io/js/%40rgrove%2Fparse-xml)
 [![Build Status](https://travis-ci.org/rgrove/parse-xml.svg?branch=master)](https://travis-ci.org/rgrove/parse-xml)
+[![Bundle size](https://badgen.net/bundlephobia/minzip/@rgrove/parse-xml)](https://bundlephobia.com/result?p=@rgrove/parse-xml)
 
 ## Contents
 
@@ -52,7 +53,8 @@ in a browser via [Unpkg][] and use the `parseXml` global.
 
 -   Passes all relevant tests in the [XML Conformance Test Suite](https://www.w3.org/XML/Test/).
 
--   It's [fast](#benchmark).
+-   It's [fast](#benchmark), [tiny](https://bundlephobia.com/result?p=@rgrove/parse-xml),
+    and has no dependencies.
 
 ## Not Features
 
