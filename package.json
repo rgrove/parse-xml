@@ -1,6 +1,6 @@
 {
   "name": "@rgrove/parse-xml",
-  "version": "2.0.0-next.0",
+  "version": "2.0.0",
   "description": "A fast, safe, compliant XML parser for Node.js and browsers.",
   "keywords": [
     "xml",
