@@ -25,12 +25,13 @@ module.exports = function parseXml(xml, options = emptyObject) {
     Syntax = require('./lib/syntax');
   }
 
+  let pos = 0;
   if (xml[0] === '\uFEFF') {
     // Strip byte order mark.
-    xml = xml.slice(1);
+    pos = 1;
   }
 
-  xml = xml.replace(/\r\n/g, '\n'); // Normalize CRLF to LF.
+  //TODO: xml = xml.replace(/\r\n/g, '\n'); // Normalize CRLF to LF.
 
   let doc = {
     type: NODE_TYPE_DOCUMENT,
@@ -43,7 +44,7 @@ module.exports = function parseXml(xml, options = emptyObject) {
     length: xml.length,
     options,
     parent: doc,
-    pos: 0,
+    pos: pos,
     prevPos: 0,
     slice: null,
     xml
@@ -163,6 +164,7 @@ function consumeDoctypeDecl(state) {
 }
 
 function consumeElement(state) {
+  const posStart = state.pos;
   let [ tag, name, attrs ] = scan(state, Syntax.Anchored.EmptyElemTag);
   let isEmpty = tag !== void 0;
 
@@ -180,6 +182,7 @@ function consumeElement(state) {
   let node = {
     type: NODE_TYPE_ELEMENT,
     name,
+    offset: posStart,
     attributes: parsedAttrs,
     children: []
   };
