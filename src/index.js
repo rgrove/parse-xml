@@ -31,7 +31,9 @@ module.exports = function parseXml(xml, options = emptyObject) {
     pos = 1;
   }
 
-  //TODO: xml = xml.replace(/\r\n/g, '\n'); // Normalize CRLF to LF.
+  if (!options.addOffsets) {
+    xml = xml.replace(/\r\n/g, '\n'); // Normalize CRLF to LF.
+  }
 
   let doc = {
     type: NODE_TYPE_DOCUMENT,
@@ -182,10 +184,10 @@ function consumeElement(state) {
   let node = {
     type: NODE_TYPE_ELEMENT,
     name,
-    offset: posStart,
     attributes: parsedAttrs,
     children: []
   };
+  if (state.options.addOffsets) { node.offset = posStart; }
 
   let xmlSpace = parsedAttrs['xml:space'];
 
