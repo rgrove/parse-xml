@@ -30,7 +30,7 @@ module.exports = function parseXml(xml, options = emptyObject) {
     xml = xml.slice(1);
   }
 
-  xml = xml.replace(/\r\n/g, '\n'); // Normalize CRLF to LF.
+  xml = xml.replace(/\r\n?/g, '\n'); // Normalize CRLF and CR to LF.
 
   let doc = {
     type: NODE_TYPE_DOCUMENT,

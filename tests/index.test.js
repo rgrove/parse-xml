@@ -317,6 +317,12 @@ describe("parseXml()", () => {
       assert.equal(root.attributes.b, 'foo=bar=baz');
       assert.equal(root.attributes.c, 'quux=moo');
     });
+
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#sec-line-ends
+    it("should normalize `\\r` not followed by `\\n` to `\\n`", () => {
+      let [ root ] = parseXml('<a\r>baz\rquux\r\rmoo</a>').children;
+      assert.equal(root.children[0].text, 'baz\nquux\n\nmoo');
+    });
   });
 });
 

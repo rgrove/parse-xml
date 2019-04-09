@@ -4,6 +4,16 @@ All notable changes to parse-xml are documented in this file. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+-   A carriage return (`\r`) character that isn't followed by a line feed (`\n`)
+    character is now [correctly normalized][xml-line-ends] to a line feed before
+    parsing.
+
+[xml-line-ends]:https://www.w3.org/TR/2008/REC-xml-20081126/#sec-line-ends
+
 ## 2.0.0 (2019-01-20)
 
 ### Added
