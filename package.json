@@ -32,7 +32,7 @@
     "lint": "eslint --cache {src,tests}",
     "prepublishOnly": "npm run clean && npm run build",
     "test": "nyc --check-coverage --lines 100 mocha tests/*.test.js --delay --reporter dot",
-    "test:browser": "(sleep 5 && open 'http://localhost:8080/tests/browser/') & webpack-dev-server --config tests/webpack.config.test.js --watch"
+    "test:browser": "(sleep 5 && open 'http://localhost:8080/tests/browser/') & webpack-dev-server --config tests/webpack.config.js --watch"
   },
   "devDependencies": {
     "@babel/cli": "^7.2.3",
