@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+/* eslint-disable func-names */
 'use strict';
 
 const assert = require('assert');
@@ -176,7 +177,7 @@ function createTest(testRoot, test) {
       inputXml = xml;
 
       if (outputPath) {
-        readXml(outputPath, (err, xml) => {
+        readXml(outputPath, (err, xml) => { // eslint-disable-line no-shadow
           if (err) { return void done(err); }
 
           outputXml = xml;
@@ -190,14 +191,14 @@ function createTest(testRoot, test) {
 
   if (attributes.TYPE === 'not-wf' || attributes.TYPE === 'error') {
     // These tests should fail.
-    it(`${prefix} should fail to parse ${inputPathRelative}`, function () {
+    it(`${prefix} should fail to parse ${inputPathRelative}`, () => {
       assert.throws(() => {
         parseXml(inputXml);
       }, Error, description);
     });
   } else {
     // These tests should pass since the documents are well-formed.
-    it(`${prefix} should parse ${inputPathRelative}`, function () {
+    it(`${prefix} should parse ${inputPathRelative}`, () => {
       try {
         // Ignoring undefined entities here allows us to parse numerous test
         // documents that are still valuable tests but would otherwise fail due
@@ -220,7 +221,7 @@ function createTest(testRoot, test) {
           if (/^Named entity isn't defined:/.test(err.message)) {
             // Skip tests that fail due to our lack of support for entity
             // declarations.
-            this.skip();
+            this.skip(); // eslint-disable-line no-invalid-this
             return;
           }
 
@@ -282,8 +283,8 @@ function loadTestSuite(filename, cb) {
         doc: parseXml(xml),
         filename
       };
-    } catch (err) {
-      return void cb(err);
+    } catch (ex) {
+      return void cb(ex);
     }
 
     cb(null, suite);

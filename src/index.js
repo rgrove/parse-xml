@@ -57,7 +57,7 @@ module.exports = function parseXml(xml, options = emptyObject) {
     error(state, 'Root element is missing or invalid');
   }
 
-  while (consumeMisc(state)) {}
+  while (consumeMisc(state)) {} // eslint-disable-line no-empty
 
   if (!isEof(state)) {
     error(state, `Extra content at the end of the document`);
@@ -247,10 +247,10 @@ function consumeProlog(state) {
 
   scan(state, Syntax.Anchored.XMLDecl);
 
-  while (consumeMisc(state)) {}
+  while (consumeMisc(state)) {}  // eslint-disable-line no-empty
 
   if (consumeDoctypeDecl(state)) {
-    while (consumeMisc(state)) {}
+    while (consumeMisc(state)) {}  // eslint-disable-line no-empty
   }
 
   return state.pos > pos;
@@ -329,7 +329,7 @@ function isEof(state) {
 }
 
 function nodeToJson() {
-  let json = Object.assign(Object.create(null), this);
+  let json = Object.assign(Object.create(null), this); // eslint-disable-line no-invalid-this
   delete json.parent;
   return json;
 }
@@ -379,7 +379,7 @@ function parseAttrs(state, attrs) {
 }
 
 function replaceReference(ref) {
-  let state = this;
+  let state = this; // eslint-disable-line no-invalid-this
 
   if (ref[1] === '#') {
     // This is a character entity.
