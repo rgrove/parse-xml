@@ -222,7 +222,7 @@ describe("parseXml()", () => {
 
         assertAttributes(root.attributes, {
           a: "'foo'",
-          b: 'a > b < c',
+          b: '  a > b  < c ',
           c: '"foo"',
           '🤔': '😼'
         });
@@ -322,6 +322,15 @@ describe("parseXml()", () => {
     it("should normalize `\\r` not followed by `\\n` to `\\n`", () => {
       let [ root ] = parseXml('<a\r>baz\rquux\r\rmoo</a>').children;
       assert.equal(root.children[0].text, 'baz\nquux\n\nmoo');
+    });
+
+    // https://github.com/rgrove/parse-xml/issues/6
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#AVNormalize
+    it("should not normalize a character reference for a whitespace character other than space (\\x20)", () => {
+      let [ root ] = parseXml('<a b=" &#xD; &#xA; &#x9; " c=" a&#x20;&#x20;&#x20;z " d=" a   z " e=" \r \n \t " />').children;
+      assert.equal(root.attributes.b, " \r \n \t ");
+      assert.equal(root.attributes.c, " a   z ");
+      assert.equal(root.attributes.d, " a   z ");
     });
   });
 });

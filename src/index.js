@@ -336,9 +336,8 @@ function nodeToJson() {
 
 function normalizeAttrValue(state, value) {
   return value
-    .replace(Syntax.Global.Reference, state.replaceReference)
-    .replace(Syntax.Global.S, ' ')
-    .trim();
+    .replace(/[\x20\t\r\n]/g, ' ')
+    .replace(Syntax.Global.Reference, state.replaceReference);
 }
 
 function parseAttrs(state, attrs) {
