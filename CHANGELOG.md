@@ -4,6 +4,23 @@ All notable changes to parse-xml are documented in this file. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.2 (2020-01-10)
+
+### Fixed
+
+-   Whitespace in attribute values is now normalized correctly. [#7]
+
+    Previously, attribute values were normalized according to the rules for
+    non-CDATA attributes, but this was incorrect and based on a misreading of
+    the spec.
+
+    Attribute values are now correctly parsed as CDATA, meaning that whitespace
+    is not collapsed or trimmed and whitespace character entities are resolved
+    to their respective characters rather than being normalized to spaces (which
+    was incorrect even by the non-CDATA rules!).
+
+[#7]:https://github.com/rgrove/parse-xml/pull/7
+
 ## 2.0.1 (2019-04-09)
 
 ### Fixed
@@ -44,10 +61,10 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Added
 
--   [#2][2] New parsing option `resolveUndefinedEntity`.
+-   New parsing option `resolveUndefinedEntity`. [#2]
     ([@retorquere](https://github.com/retorquere))
 
-[2]:https://github.com/rgrove/parse-xml/pull/2
+[#2]:https://github.com/rgrove/parse-xml/pull/2
 
 ## 1.0.0 (2017-06-04)
 
