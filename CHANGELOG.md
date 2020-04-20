@@ -4,6 +4,15 @@ All notable changes to parse-xml are documented in this file. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.3 (2020-04-20)
+
+### Fixed
+
+-   Attribute values with many consecutive character references (such as `&lt;`)
+    no longer cause the parser to hang. [#10] (@rossj)
+
+[#10]:https://github.com/rgrove/parse-xml/pull/10
+
 ## 2.0.2 (2020-01-10)
 
 ### Fixed
