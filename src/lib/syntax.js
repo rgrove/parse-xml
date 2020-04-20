@@ -86,7 +86,7 @@ exports.Name = regex`
 // Loose implementation. The entity will be validated in the `replaceReference`
 // function.
 exports.Reference = regex`
-  &\S+?;
+  &[^\s&]+?;
 `;
 
 exports.S = regex`

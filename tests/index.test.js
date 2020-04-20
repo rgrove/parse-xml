@@ -332,6 +332,17 @@ describe("parseXml()", () => {
       assert.equal(root.attributes.c, " a   z ");
       assert.equal(root.attributes.d, " a   z ");
     });
+
+    it("should handle many character references in a single attribute", () => {
+      {
+        let [ root ] = parseXml('<a b="&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;"/>').children;
+        assert.equal(root.attributes.b, "<".repeat(35));
+      }
+      {
+        let [ root ] = parseXml('<a b="&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;"></a>').children;
+        assert.equal(root.attributes.b, "<".repeat(35));
+      }
+    });
   });
 });
 
