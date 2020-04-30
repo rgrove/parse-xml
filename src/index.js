@@ -45,7 +45,6 @@ module.exports = function parseXml(xml, options = emptyObject) {
     parent: doc,
     pos: 0,
     prevPos: 0,
-    slice: null,
     xml
   };
 
@@ -429,18 +428,13 @@ function replaceReference(ref) {
 }
 
 function scan(state, regex) {
-  let { pos, slice, xml } = state;
+  let { pos, xml } = state;
 
-  if (slice === null) {
-    if (pos > 0) {
-      slice = xml.slice(pos);
-      state.slice = slice;
-    } else {
-      slice = xml;
-    }
-  }
+  let xmlToScan = pos > 0
+    ? xml.slice(pos)
+    : xml;
 
-  let matches = slice.match(regex);
+  let matches = xmlToScan.match(regex);
 
   if (matches === null) {
     return emptyArray;
@@ -448,7 +442,6 @@ function scan(state, regex) {
 
   state.prevPos = state.pos;
   state.pos += matches[0].length;
-  state.slice = null;
 
   return matches;
 }
