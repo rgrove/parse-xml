@@ -343,6 +343,10 @@ describe("parseXml()", () => {
         assert.equal(root.attributes.b, "<".repeat(35));
       }
     });
+
+    it("should handle very long elements without RangeError", () => {
+        parseXml(`<a b="${'c'.repeat(9000000)}"/>`);
+    });
   });
 });
 
