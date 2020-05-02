@@ -402,10 +402,10 @@ Also, it was fun.
 
 Here's how parse-xml stacks up against two comparable libraries, [libxmljs2]
 (which is based on the native libxml library) and [xmldoc] (which is based on
-[sax-js].
+[sax-js]).
 
 [libxmljs2]:https://github.com/marudor/libxmljs2
-[saxjs]:https://github.com/isaacs/sax-js
+[sax-js]:https://github.com/isaacs/sax-js
 [xmldoc]:https://github.com/nfarina/xmldoc
 
 ```
