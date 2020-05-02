@@ -344,8 +344,10 @@ describe("parseXml()", () => {
       }
     });
 
-    it("should handle very long elements without RangeError", () => {
-        parseXml(`<a b="${'c'.repeat(9000000)}"/>`);
+    it('should parse an extremely long attribute value', () => {
+      let value = 'c'.repeat(9000000);
+      let [ root ] = parseXml(`<a b="${value}"/>`).children;
+      assert.equal(root.attributes.b, value);
     });
   });
 });
