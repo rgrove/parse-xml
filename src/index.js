@@ -379,7 +379,7 @@ function parseAttrs(state, attrs) {
 function replaceReference(ref) {
   let state = this; // eslint-disable-line no-invalid-this
 
-  if (ref[ref.length-1] !== ';') {
+  if (ref[ref.length - 1] !== ';') {
     error(state, `Invalid reference: \`${ref}\``);
   }
 
