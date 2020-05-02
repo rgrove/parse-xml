@@ -4,6 +4,15 @@ All notable changes to parse-xml are documented in this file. The format is
 based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 2.0.4 (2020-05-01)
+
+### Fixed
+
+-   Extremely long attribute values no longer cause the parser to throw a
+    "Maximum call stack size exceeded" `RangeError`. [#13] (@rossj)
+
+[#13]:https://github.com/rgrove/parse-xml/pull/13
+
 ## 2.0.3 (2020-04-20)
 
 ### Fixed
