@@ -379,6 +379,10 @@ function parseAttrs(state, attrs) {
 function replaceReference(ref) {
   let state = this; // eslint-disable-line no-invalid-this
 
+  if (ref[ref.length-1] !== ';') {
+    error(state, `Invalid reference: \`${ref}\``);
+  }
+
   if (ref[1] === '#') {
     // This is a character entity.
     let codePoint;
