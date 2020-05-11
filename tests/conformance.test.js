@@ -29,10 +29,10 @@ const testSuiteFiles = [
   // 'ibm/ibm_oasis_not-wf.xml',
 
   'oasis/oasis.xml',
+  'sun/sun-error.xml',
 
   // Skipping because the test case XML files themselves are not well-formed
   // XML and thus can't be parsed. ಠ_ಠ
-  // 'sun/sun-error.xml',
   // 'sun/sun-invalid.xml',
   // 'sun/sun-not-wf.xml',
   // 'sun/sun-valid.xml',
@@ -47,17 +47,12 @@ const skipSections = [
   '2.3 [11]', // SystemLiteral
   '2.3 [12]', // PubidLiteral
   '2.3 [13]', // PubidChar
-  '2.8 [23]', // XMLDecl
-  '2.8 [24]', // VersionInfo
-  '2.8 [26]', // VersionNum
   '2.8 [28]', // doctypedecl
   '2.8 [29]', // DTD markupdecl
   '2.8 [30]', // extSubset
   '2.8 [31]', // extSubsetDecl
-  '2.9', // Standalone Document Declaration
   '3.2', // Element Type Declarations
   '3.3', // Attribute-List Declarations
-  '3.4', // Conditional Sections
   '4.1 [69]', // PEReference
   '4.2', // Entity Declarations
   '4.3', // Parsed Entities
@@ -73,7 +68,6 @@ const skipTests = new Set([
   'not-wf-sa-084', // entity declaration
   'not-wf-sa-121', // entity declaration
   'not-wf-sa-128', // DTD
-  'not-wf-sa-152', // XMLDecl version string
   'not-wf-sa-160', // entity declaration
   'not-wf-sa-161', // entity declaration
   'not-wf-sa-162', // entity declaration
@@ -87,7 +81,6 @@ const skipTests = new Set([
   'o-p09fail3', // entity declaration
   'o-p09fail4', // entity declaration
   'o-p09fail5', // entity declaration
-  'o-p25fail1', // VersionInfo (rec section in the test is incorrect)
   'rmt-e2e-27', // claims to test an illegal char, but tests the wrong char
   'rmt-e2e-34', // DTD
   'rmt-e2e-55', // DTD
@@ -107,7 +100,7 @@ const skipTests = new Set([
   'x-ibm-1-0.5-not-wf-P04a-ibm04an22.xml', // claims to test an illegal char, but tests the wrong char
   'x-ibm-1-0.5-not-wf-P04a-ibm04an23.xml', // claims to test an illegal char, but tests the wrong char
   'x-ibm-1-0.5-not-wf-P04a-ibm04an24.xml', // claims to test an illegal char, but tests the wrong char
-  'x-rmt-008', // we don't currently parse XMLDecl version numbers
+  'x-rmt-008', // asserts a failure in XML 1.0 <=4th edition, but we implement 5th edition, which allows this
 ]);
 
 // -- Tests --------------------------------------------------------------------
@@ -155,7 +148,7 @@ function createTest(testRoot, test) {
     return;
   }
 
-  let description = getTextContent(test).trim();
+  let description = test.text.trim();
   let inputPath = path.join(testRoot, attributes.URI);
   let inputPathRelative = path.relative(REPO_ROOT, inputPath);
   let inputXml;
@@ -191,14 +184,14 @@ function createTest(testRoot, test) {
 
   if (attributes.TYPE === 'not-wf' || attributes.TYPE === 'error') {
     // These tests should fail.
-    it(`${prefix} should fail to parse ${inputPathRelative}`, () => {
+    it(`${prefix} fails to parse ${inputPathRelative}`, () => {
       assert.throws(() => {
         parseXml(inputXml);
       }, Error, description);
     });
   } else {
     // These tests should pass since the documents are well-formed.
-    it(`${prefix} should parse ${inputPathRelative}`, () => {
+    it(`${prefix} parses ${inputPathRelative}`, () => {
       try {
         // Ignoring undefined entities here allows us to parse numerous test
         // documents that are still valuable tests but would otherwise fail due
@@ -210,7 +203,7 @@ function createTest(testRoot, test) {
     });
 
     if (outputPath) {
-      it(`${prefix} parsed document should be equivalent to ${outputPathRelative}`, function () {
+      it(`${prefix} parsed document is equivalent to ${outputPathRelative}`, function () {
         let inputDoc;
         let outputDoc;
 
@@ -252,22 +245,6 @@ function createTestCases(testRoot, testCases) {
       }
     });
   });
-}
-
-function getTextContent(node) {
-  switch (node.type) {
-    case 'cdata':
-    case 'text':
-      return node.text;
-
-    case 'element':
-      return node.children
-        .map(getTextContent)
-        .join('');
-
-    default:
-      return '';
-  }
 }
 
 function loadTestSuite(filename, cb) {

@@ -1,263 +1,139 @@
 'use strict';
 
-// To improve readability, the regular expression patterns in this file are
-// written as tagged template literals. The `regex` tag function strips literal
-// whitespace characters and line comments beginning with `//` and returns a
-// RegExp instance.
-//
-// Escape sequences are preserved as-is in the resulting regex, so
-// double-escaping isn't necessary. A pattern may embed another pattern using
-// `${}` interpolation.
+// -- Exported Constants -------------------------------------------------------
 
-// -- Common Symbols -----------------------------------------------------------
-exports.Char = regex`
-  (?:
-    [
-      \t
-      \n
-      \r
-      \x20-\uD7FF
-      \uE000-\uFFFD
-    ]
+/**
+Mapping of predefined entity names to their replacement values.
 
-    |
+@type {Readonly<{[name: string]: string}>}
+@see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-predefined-ent
+*/
+const predefinedEntities = Object.freeze(Object.assign(Object.create(null), {
+  amp: '&',
+  apos: "'",
+  gt: '>',
+  lt: '<',
+  quot: '"'
+}));
 
-    [\uD800-\uDBFF][\uDC00-\uDFFF]
-  )
-`;
+exports.predefinedEntities = predefinedEntities;
 
-// Partial implementation.
-//
-// To be compliant, the matched text must result in an error if it contains the
-// string `]]>`, but that can't be easily represented here so we do it in the
-// parser.
-exports.CharData = regex`
-  [^<&]+
-`;
+// -- Exported Functions -------------------------------------------------------
 
-exports.NameStartChar = regex`
-  (?:
-    [
-      :
-      A-Z
-      _
-      a-z
-      \xC0-\xD6
-      \xD8-\xF6
-      \xF8-\u02FF
-      \u0370-\u037D
-      \u037F-\u1FFF
-      \u200C-\u200D
-      \u2070-\u218F
-      \u2C00-\u2FEF
-      \u3001-\uD7FF
-      \uF900-\uFDCF
-      \uFDF0-\uFFFD
-    ]
+/**
+Returns `true` if _char_ is an XML `NameChar`, `false` if it isn't.
 
-    |
-
-    [\uD800-\uDB7F][\uDC00-\uDFFF]
-  )
-`;
-
-exports.NameChar = regex`
-  (?:
-    ${exports.NameStartChar}
-
-    |
-
-    [
-      .
-      0-9
-      \xB7
-      \u0300-\u036F
-      \u203F-\u2040
-      -
-    ]
-  )
-`;
-
-exports.Name = regex`
-  ${exports.NameStartChar}
-  (?:${exports.NameChar})*
-`;
-
-// Loose implementation. The entity will be validated in the `replaceReference`
-// function.
-exports.Reference = regex`
-  &[^\s&;]*;?
-`;
-
-exports.S = regex`
-  [\x20\t\r\n]+
-`;
-
-// -- Attributes ---------------------------------------------------------------
-exports.Eq = regex`
-  (?:${exports.S})?
-  =
-  (?:${exports.S})?
-`;
-
-exports.Attribute = regex`
-  ${exports.Name}
-  ${exports.Eq}
-
-  (?:
-    "(?:
-      [^<"]
-    )*"
-
-    |
-
-    '(?:
-      [^<']
-    )*'
-  )
-`;
-
-// -- Elements -----------------------------------------------------------------
-exports.CDSect = regex`
-  <!\[CDATA\[
-    // Group 1: CData text content (optional)
-    (
-      (?:${exports.Char})*?
-    )
-  \]\]>
-`;
-
-exports.EmptyElemTag = regex`
-  <
-    // Group 1: Element name
-    (${exports.Name})
-
-    // Group 2: Attributes (optional)
-    (
-      (?:
-        ${exports.S}
-        ${exports.Attribute}
-      )*
-    )
-
-    (?:${exports.S})?
-  />
-`;
-
-exports.ETag = regex`
-  </
-    // Group 1: End tag name
-    (${exports.Name})
-    (?:${exports.S})?
-  >
-`;
-
-exports.STag = regex`
-  <
-    // Group 1: Start tag name
-    (${exports.Name})
-
-    // Group 2: Attributes (optional)
-    (
-      (?:
-        ${exports.S}
-        ${exports.Attribute}
-      )*
-    )
-
-    (?:${exports.S})?
-  >
-`;
-
-// -- Misc ---------------------------------------------------------------------
-
-// Special pattern that matches an entire string consisting only of `Char`
-// characters.
-exports.CharOnly = regex`
-  ^(?:${exports.Char})*$
-`;
-
-exports.Comment = regex`
-  <!--
-    // Group 1: Comment text (optional)
-    (
-      (?:
-        (?!-) ${exports.Char}
-        | - (?!-) ${exports.Char}
-      )*
-    )
-  -->
-`;
-
-// Loose implementation since doctype declarations are discarded.
-//
-// It's not possible to fully parse a doctype declaration with a regex, but
-// since we just discard them we can skip parsing the fiddly inner bits and use
-// a regex to speed things up.
-exports.doctypedecl = regex`
-  <!DOCTYPE
-    ${exports.S}
-
-    [^[>]*
-
-    (?:
-      \[ [\s\S]+? \]
-      (?:${exports.S})?
-    )?
-  >
-`;
-
-// Loose implementation since processing instructions are discarded.
-exports.PI = regex`
-  <\?
-    // Group 1: PITarget
-    (
-      ${exports.Name}
-    )
-
-    (?:
-      ${exports.S}
-      (?:${exports.Char})*?
-    )?
-  \?>
-`;
-
-// Loose implementation since XML declarations are discarded.
-exports.XMLDecl = regex`
-  <\?xml
-    ${exports.S}
-    [\s\S]+?
-  \?>
-`;
-
-// -- Helpers ------------------------------------------------------------------
-exports.Anchored = {};
-exports.Global = {};
-
-// Create anchored and global variations of each pattern.
-Object.keys(exports).forEach(name => {
-  if (name !== 'Anchored' && name !== 'CharOnly' && name !== 'Global') {
-    let pattern = exports[name];
-
-    exports.Anchored[name] = new RegExp('^' + pattern.source);
-    exports.Global[name] = new RegExp(pattern.source, 'g');
-  }
-});
-
-function regex(strings, ...embeddedPatterns) {
-  let { length, raw } = strings;
-  let lastIndex = length - 1;
-  let pattern = '';
-
-  for (let i = 0; i < length; ++i) {
-    pattern += raw[i]
-      .replace(/(^|[^\\])\/\/.*$/gm, '$1') // remove end-of-line comments
-      .replace(/\s+/g, ''); // remove all whitespace
-
-    if (i < lastIndex) {
-      pattern += embeddedPatterns[i].source;
-    }
+@param {string} char
+@returns {boolean}
+@see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameChar
+*/
+function isNameChar(char) {
+  if (isNameStartChar(char)) {
+    return true;
   }
 
-  return new RegExp(pattern);
+  let cp = getCodePoint(char);
+
+  return cp === 0x2D // -
+    || cp === 0x2E // .
+    || (cp >= 0x30 && cp <= 0x39) // 0-9
+    || cp === 0xB7
+    || (cp >= 0x300 && cp <= 0x36F)
+    || (cp >= 0x203F && cp <= 0x2040);
+}
+
+exports.isNameChar = isNameChar;
+
+/**
+Returns `true` if _char_ is an XML `NameStartChar`, `false` if it isn't.
+
+@param {string} char
+@returns {boolean}
+@see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameStartChar
+*/
+function isNameStartChar(char) {
+  let cp = getCodePoint(char);
+
+  return cp === 0x3A // :
+    || cp === 0x5F // _
+    || (cp >= 0x41 && cp <= 0x5A) // A-Z
+    || (cp >= 0x61 && cp <= 0x7A) // a-z
+    || (cp >= 0xC0 && cp <= 0xD6)
+    || (cp >= 0xD8 && cp <= 0xF6)
+    || (cp >= 0xF8 && cp <= 0x2FF)
+    || (cp >= 0x370 && cp <= 0x37D)
+    || (cp >= 0x37F && cp <= 0x1FFF)
+    || (cp >= 0x200C && cp <= 0x200D)
+    || (cp >= 0x2070 && cp <= 0x218F)
+    || (cp >= 0x2C00 && cp <= 0x2FEF)
+    || (cp >= 0x3001 && cp <= 0xD7FF)
+    || (cp >= 0xF900 && cp <= 0xFDCF)
+    || (cp >= 0xFDF0 && cp <= 0xFFFD)
+    || (cp >= 0x10000 && cp <= 0xEFFFF);
+}
+
+exports.isNameStartChar = isNameStartChar;
+
+/**
+Returns `true` if _char_ is not a valid XML `Char`, `false` otherwise.
+
+@param {string} char
+@returns {boolean}
+@see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Char
+*/
+function isNotXmlChar(char) {
+  return !isXmlChar(char);
+}
+
+exports.isNotXmlChar = isNotXmlChar;
+
+/**
+Returns `true` if _char_ is an XML whitespace character, `false` otherwise.
+
+@param {string} char
+@returns {boolean}
+@see https://www.w3.org/TR/2008/REC-xml-20081126/#white
+*/
+function isWhitespace(char) {
+  let cp = getCodePoint(char);
+
+  return cp === 0x20
+    || cp === 0x9
+    || cp === 0xA
+    || cp === 0xD;
+}
+
+exports.isWhitespace = isWhitespace;
+
+/**
+Returns `true` if _char_ is a valid XML `Char`, `false` otherwise.
+
+@param {string} char
+@returns {boolean}
+@see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Char
+*/
+function isXmlChar(char) {
+  let cp = getCodePoint(char);
+
+  return cp === 0x9
+    || cp === 0xA
+    || cp === 0xD
+    || (cp >= 0x20 && cp <= 0xD7FF)
+    || (cp >= 0xE000 && cp <= 0xFFFD)
+    || (cp >= 0x10000 && cp <= 0x10FFFF);
+}
+
+exports.isXmlChar = isXmlChar;
+
+// -- Private Functions --------------------------------------------------------
+
+/**
+Returns the Unicode code point value of the given character, or `-1` if _char_
+is empty.
+
+@param {string} char
+@returns {number}
+*/
+function getCodePoint(char) {
+  return char.codePointAt(0) || -1;
 }

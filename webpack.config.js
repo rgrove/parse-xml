@@ -3,15 +3,13 @@
 const path = require('path');
 
 module.exports = {
+  devtool: 'source-map',
   entry: './src/index.js',
   mode: 'production',
 
   module: {
     rules: [{
-      test: /\.js$/,
-      use: [{
-        loader: 'babel-loader'
-      }]
+      test: /\.js$/
     }]
   },
 

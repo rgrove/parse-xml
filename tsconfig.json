@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "strict": true,
+    "target": "es2017"
+  },
+
+  "include": [
+    "src/**/*.js"
+  ]
+}

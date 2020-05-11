@@ -1,0 +1,42 @@
+toc:
+  - name: Functions
+    children:
+      - parseXml
+
+  - name: Node Classes
+
+    description: |
+      All nodes in a parsed XML document are represented by an instance of one
+      of the following classes. Each class inherits from the base `XmlNode`
+      class, which provides common functionality that's available on every node.
+
+      While the use of classes to represent XML nodes may seem a little
+      old-school, it has many benefits. It allows static analysis, provides
+      better type safety, and also offers some performance benefits over using
+      plain objects, since JS engines are better able to optimize class
+      instances in some cases.
+
+      If you'd prefer to work with plain objects, you can easily convert any
+      node (including an entire document) to a plain object tree by calling its
+      `toJSON()` method:
+
+      ```js
+      let plainDoc = parseXml(xml).toJSON();
+      ```
+
+      In addition, any node (including the document) can safely be serialized to
+      a JSON string without any special steps simply by passing it to
+      `JSON.stringify()`. So converting an XML document to JSON is as easy as:
+
+      ```js
+      let json = JSON.stringify(parseXml(xml));
+      ```
+
+    children:
+      - XmlCdata
+      - XmlComment
+      - XmlDocument
+      - XmlElement
+      - XmlNode
+      - XmlProcessingInstruction
+      - XmlText

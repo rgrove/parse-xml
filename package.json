@@ -1,9 +1,12 @@
 {
   "name": "@rgrove/parse-xml",
-  "version": "2.0.4",
+  "version": "3.0.0-beta.0",
   "description": "A fast, safe, compliant XML parser for Node.js and browsers.",
   "keywords": [
     "xml",
+    "xml parser",
+    "parse-xml",
+    "parse xml",
     "parse",
     "parser"
   ],
@@ -16,37 +19,37 @@
     "url": "https://github.com/rgrove/parse-xml.git"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=10.0.0"
   },
   "files": [
     "dist",
     "src",
     "LICENSE"
   ],
-  "browser": "dist/commonjs/index.js",
-  "main": "src/index.js",
+  "main": "./src/index.js",
+  "types": "./dist/types/index.d.ts",
   "scripts": {
-    "build": "babel src -d dist/commonjs && webpack",
-    "clean": "rm -rf .nyc_output coverage dist",
+    "build": "webpack && npm run build:types && npm run build:docs",
+    "build:docs": "documentation readme --quiet --access public --config documentation.yml --readme-file API.md --section '@rgrove/parse-xml API Documentation' src",
+    "build:types": "tsc --declaration --declarationMap --emitDeclarationOnly --declarationDir dist/types",
+    "clean": "rm -rf .eslintcache .nyc_output coverage dist",
     "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
     "lint": "eslint --cache {src,tests}",
     "prepublishOnly": "npm run clean && npm run build",
-    "test": "nyc --check-coverage --lines 100 mocha tests/*.test.js --delay --reporter dot",
+    "test": "nyc --check-coverage --lines 100 mocha tests/*.test.js --delay",
     "test:browser": "(sleep 5 && open 'http://localhost:8080/tests/browser/') & webpack-dev-server --config tests/webpack.config.js --watch"
   },
   "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.6",
-    "@babel/preset-env": "^7.9.6",
     "@rgrove/eslint-config": "^1.5.0",
     "async": "^3.2.0",
-    "babel-loader": "^8.1.0",
+    "documentation": "^13.0.0",
     "eslint": "^6.8.0",
     "mocha": "^7.1.2",
     "nyc": "^15.0.1",
+    "typescript": "^3.8.3",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.11",
-    "webpack-dev-server": "^3.10.3"
+    "webpack-dev-server": "^3.11.0"
   },
   "dependencies": {}
 }
