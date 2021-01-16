@@ -15,7 +15,7 @@ module.exports = {
 
   output: {
     filename: 'parse-xml.min.js',
-    globalObject: "typeof self !== 'undefined' ? self : this", // see https://github.com/webpack/webpack/issues/6522
+    globalObject: "typeof self === 'undefined' ? this : self", // see https://github.com/webpack/webpack/issues/6522
     library: {
       commonjs: 'parse-xml',
       root: 'parseXml'

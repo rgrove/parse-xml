@@ -269,7 +269,7 @@ function loadTestSuite(filename, cb) {
 }
 
 function readXml(filename, cb) {
-  if (process.browser) {
+  if (typeof window !== 'undefined') {
     return readXmlBrowser(filename, cb);
   }
 

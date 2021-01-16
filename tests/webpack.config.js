@@ -25,6 +25,18 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.IgnorePlugin(/^fs$/)
-  ]
+    new webpack.IgnorePlugin(/^fs$/),
+
+    new webpack.ProvidePlugin({
+      process: 'process/browser',
+    }),
+  ],
+
+  resolve: {
+    fallback: {
+      assert: require.resolve('assert'),
+      fs: false,
+      path: require.resolve('path-browserify'),
+    }
+  }
 };
