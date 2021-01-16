@@ -21,14 +21,14 @@ minimal changes).
     alphabetical order in an element's `attributes` object (which is no longer
     the default behavior).
 
--   TypeScript type definitions. This is slightly experimental. While parse-xml
-    is still written in JavaScript, it now has TypeScript-friendly JSDoc
-    comments throughout, with strict type checking enabled. These comments are
-    now used to generate type definitions at build time.
+-   TypeScript type definitions. While parse-xml is still written in JavaScript,
+    it now has TypeScript-friendly JSDoc comments throughout, with strict type
+    checking enabled. These comments are now used to generate type definitions
+    at build time.
 
 ### Changed
 
--   The minimum supported Node.js version is now 10.x, and the minimum supported
+-   The minimum supported Node.js version is now 12.x, and the minimum supported
     ECMAScript version is ES2017. Extremely old browsers (like IE11) are no
     longer supported out of the box, but you can still transpile parse-xml
     yourself if you need to support old browsers.
