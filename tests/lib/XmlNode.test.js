@@ -6,8 +6,8 @@ const parseXml = require('../../src');
 
 const { XmlNode } = parseXml;
 
-describe('`XmlNode`', () => {
-  describe('`document`', () => {
+describe('XmlNode', () => {
+  describe('document', () => {
     describe('when the node is not associated with a document', () => {
       it('is `null`', () => {
         let node = new XmlNode();
@@ -16,7 +16,7 @@ describe('`XmlNode`', () => {
     });
   });
 
-  describe('`type`', () => {
+  describe('type', () => {
     it('is an empty string', () => {
       let node = new XmlNode();
       assert.strictEqual(node.type, '');

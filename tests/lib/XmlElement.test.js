@@ -6,7 +6,7 @@ const parseXml = require('../../src');
 
 const { XmlElement, XmlNode, XmlText } = parseXml;
 
-describe('`XmlElement`', () => {
+describe('XmlElement', () => {
   let options;
 
   beforeEach(() => {
@@ -31,7 +31,7 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`attributes`', () => {
+  describe('attributes', () => {
     it('has a `null` prototype', () => {
       let { root } = parseXml('<root />');
       assert.strictEqual(Object.getPrototypeOf(root.attributes), null);
@@ -62,7 +62,7 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`children`', () => {
+  describe('children', () => {
     it('is an array of child nodes', () => {
       let { root } = parseXml('<root>foo<a>bar</a><b><c>baz</c></b></root>');
       assert(Array.isArray(root.children));
@@ -85,14 +85,14 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`document`', () => {
+  describe('document', () => {
     it('is the document', () => {
       let doc = parseXml('<root/>');
       assert.strictEqual(doc.root.document, doc);
     });
   });
 
-  describe('`isEmpty`', () => {
+  describe('isEmpty', () => {
     it('is `true` when the element is empty', () => {
       let { root } = parseXml('<root />');
       assert.strictEqual(root.isEmpty, true);
@@ -104,7 +104,7 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`isRootNode`', () => {
+  describe('isRootNode', () => {
     describe('when the element is the root element', () => {
       it('is `true`', () => {
         assert.strictEqual(parseXml('<root/>').root.isRootNode, true);
@@ -118,7 +118,7 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`name`', () => {
+  describe('name', () => {
     it('is the name of the element', () => {
       let { root } = parseXml('<foo />');
       assert.strictEqual(root.name, 'foo');
@@ -130,7 +130,7 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`parent`', () => {
+  describe('parent', () => {
     describe('when the element is the root element', () => {
       it('is the document', () => {
         let doc = parseXml('<root/>');
@@ -146,7 +146,7 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`preserveWhitespace`', () => {
+  describe('preserveWhitespace', () => {
     describe('when neither the element nor any ancestor has an `xml:space` attribute', () => {
       it('is `false`', () => {
         let { root } = parseXml('<root />');
@@ -154,7 +154,7 @@ describe('`XmlElement`', () => {
       });
     });
 
-    describe("when the value of an element's `xml:space` attribute is 'default'", () => {
+    describe('when the value of an element\'s `xml:space` attribute is "default"', () => {
       it('is `false`', () => {
         let { root } = parseXml('<root xml:space="default"/>');
         assert.strictEqual(root.preserveWhitespace, false);
@@ -173,8 +173,8 @@ describe('`XmlElement`', () => {
       });
     });
 
-    describe("when the value of an element's `xml:space` attribute is set to 'preserve'", () => {
-      it('`preserveWhitespace` is `true`', () => {
+    describe('when the value of an element\'s `xml:space` attribute is "preserve"', () => {
+      it('is `true`', () => {
         let { root } = parseXml('<root xml:space="preserve"></root>');
         assert.strictEqual(root.preserveWhitespace, true);
       });
@@ -193,7 +193,7 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`text`', () => {
+  describe('text', () => {
     it('is the text content of the element and its descendants', () => {
       assert.strictEqual(parseXml('<root><a><b>hello</b></a> there!</root>').root.text, 'hello there!');
       assert.strictEqual(parseXml('<root><!-- hi --><a/><!-- hi --></root>', { preserveComments: true }).root.text, '');
@@ -205,7 +205,7 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('`type`', () => {
+  describe('type', () => {
     it('is `XmlNode.TYPE_ELEMENT`', () => {
       let { root } = parseXml('<root />');
       assert.strictEqual(root.type, XmlNode.TYPE_ELEMENT);

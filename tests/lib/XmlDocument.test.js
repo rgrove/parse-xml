@@ -6,7 +6,7 @@ const parseXml = require('../../src');
 
 const { XmlDocument, XmlNode } = parseXml;
 
-describe('`XmlDocument`', () => {
+describe('XmlDocument', () => {
   describe('is emitted by the parser', () => {
     assert(parseXml('<root />') instanceof XmlDocument);
   });
@@ -22,20 +22,20 @@ describe('`XmlDocument`', () => {
     });
   });
 
-  describe('`document`', () => {
+  describe('document', () => {
     it('is the XmlDocument instance itself', () => {
       let doc = parseXml('<root />');
       assert.strictEqual(doc.document, doc);
     });
   });
 
-  describe('`parent`', () => {
+  describe('parent', () => {
     it('is `null`', () => {
       assert.strictEqual(parseXml('<root />').parent, null);
     });
   });
 
-  describe('`root`', () => {
+  describe('root', () => {
     it('is the root element of the document', () => {
       let doc = parseXml('<root />');
       assert.strictEqual(doc.root.type, XmlNode.TYPE_ELEMENT);
@@ -50,14 +50,14 @@ describe('`XmlDocument`', () => {
     });
   });
 
-  describe('`text`', () => {
+  describe('text', () => {
     it('is the text content of the document and all its descendants', () => {
       assert.strictEqual(parseXml('<a><b><c>hello</c></b> there!</a>').text, 'hello there!');
       assert.strictEqual(parseXml('<!-- hi --><a/><!-- hi -->', { preserveComments: true }).text, '');
     });
   });
 
-  describe('`type`', () => {
+  describe('type', () => {
     it('is `XmlNode.TYPE_DOCUMENT`', () => {
       assert.strictEqual(parseXml('<root />').type, XmlNode.TYPE_DOCUMENT);
     });

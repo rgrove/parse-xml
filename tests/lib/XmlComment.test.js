@@ -6,7 +6,7 @@ const parseXml = require('../../src');
 
 const { XmlComment, XmlNode } = parseXml;
 
-describe('`XmlComment`', () => {
+describe('XmlComment', () => {
   it("isn't emitted by default", () => {
     let { root } = parseXml(`<root><!-- I'm a comment! --></root>`);
     assert.strictEqual(root.children.length, 0);
@@ -29,21 +29,21 @@ describe('`XmlComment`', () => {
     });
   });
 
-  describe('`content`', () => {
+  describe('content', () => {
     it('is the content of the comment', () => {
       let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
       assert.strictEqual(root.children[0].content, "I'm a comment!");
     });
   });
 
-  describe('`parent`', () => {
+  describe('parent', () => {
     it('is the parent node', () => {
       let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
       assert.strictEqual(root.children[0].parent, root);
     });
   });
 
-  describe('`type`', () => {
+  describe('type', () => {
     it('is `XmlNode.TYPE_COMMENT`', () => {
       let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
       let [ node ] = root.children;

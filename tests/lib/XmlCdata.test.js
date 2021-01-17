@@ -6,7 +6,7 @@ const parseXml = require('../../src');
 
 const { XmlCdata, XmlNode } = parseXml;
 
-describe('`XmlCdata`', () => {
+describe('XmlCdata', () => {
   let xml;
 
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe('`XmlCdata`', () => {
     assert.strictEqual(node.parent, root);
   });
 
-  describe('`type`', () => {
+  describe('type', () => {
     it('is `XmlNode.TYPE_CDATA`', () => {
       let { root } = parseXml(xml, { preserveCdata: true });
       assert.strictEqual(root.children[0].type, XmlNode.TYPE_CDATA);

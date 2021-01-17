@@ -6,7 +6,7 @@ const parseXml = require('../../src');
 
 const { XmlProcessingInstruction, XmlNode } = parseXml;
 
-describe('`XmlProcessingInstruction`', () => {
+describe('XmlProcessingInstruction', () => {
   it('is emitted by the parser', () => {
     let { root } = parseXml('<root><?xml-stylesheet type="text/xsl" href="style.xsl"?></root>');
     assert(root.children[0] instanceof XmlProcessingInstruction);
@@ -24,21 +24,21 @@ describe('`XmlProcessingInstruction`', () => {
     });
   });
 
-  describe('`document`', () => {
+  describe('document', () => {
     it('is the document', () => {
       let doc = parseXml('<root><?foo?></root>');
       assert.strictEqual(doc.root.children[0].document, doc);
     });
   });
 
-  describe('`parent`', () => {
+  describe('parent', () => {
     it('is the parent element', () => {
       let { root } = parseXml('<root><?foo?></root>');
       assert.strictEqual(root.children[0].parent, root);
     });
   });
 
-  describe('`type`', () => {
+  describe('type', () => {
     it('is `XmlNode.TYPE_PROCESSING_INSTRUCTION`', () => {
       let { root } = parseXml('<root><?foo?></root>');
       assert.strictEqual(root.children[0].type, XmlNode.TYPE_PROCESSING_INSTRUCTION);
