@@ -7,43 +7,47 @@ const parseXml = require('../../src');
 const { XmlComment, XmlNode } = parseXml;
 
 describe('`XmlComment`', () => {
-  let options;
-  let xml;
-
-  beforeEach(() => {
-    options = {};
-    xml = `<root><!-- I'm a comment! --></root>`;
-  });
-
   it("isn't emitted by default", () => {
-    let { root } = parseXml(xml);
+    let { root } = parseXml(`<root><!-- I'm a comment! --></root>`);
     assert.strictEqual(root.children.length, 0);
   });
 
-  describe('when `options.preserveComments` is `true`', () => {
-    beforeEach(() => {
-      options = { preserveComments: true };
+  it('is emitted when `options.preserveComments` is `true`', () => {
+    let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
+    assert(root.children[0] instanceof XmlComment);
+  });
+
+  it('can be serialized to JSON', () => {
+    let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
+    assert.strictEqual(JSON.stringify(root.children[0]), `{"type":"comment","content":"I'm a comment!"}`);
+  });
+
+  describe('constructor', () => {
+    it("defaults `content` to an empty string if it's not provided", () => {
+      let comment = new XmlComment();
+      assert.strictEqual(comment.content, '');
     });
+  });
 
-    it('is emitted', () => {
-      let { root } = parseXml(xml, options);
-      let [ node ] = root.children;
-
-      assert(node instanceof XmlComment);
-      assert.strictEqual(node.content, "I'm a comment!");
-      assert.strictEqual(node.parent, root);
+  describe('`content`', () => {
+    it('is the content of the comment', () => {
+      let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
+      assert.strictEqual(root.children[0].content, "I'm a comment!");
     });
+  });
 
-    it('has the correct type value', () => {
-      let { root } = parseXml(xml, options);
+  describe('`parent`', () => {
+    it('is the parent node', () => {
+      let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
+      assert.strictEqual(root.children[0].parent, root);
+    });
+  });
+
+  describe('`type`', () => {
+    it('is `XmlNode.TYPE_COMMENT`', () => {
+      let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
       let [ node ] = root.children;
       assert.strictEqual(node.type, XmlNode.TYPE_COMMENT);
-    });
-
-    it('can be serialized to JSON', () => {
-      let { root } = parseXml(xml, options);
-      let [ node ] = root.children;
-      assert.strictEqual(JSON.stringify(node), `{"type":"comment","content":"I'm a comment!"}`);
     });
   });
 });
