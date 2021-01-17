@@ -10,7 +10,7 @@ Element in an XML document.
 class XmlElement extends XmlNode {
   /**
   @param {string} name
-  @param {Object<string, string>} [attributes]
+  @param {{[attrName: string]: string}} [attributes]
   @param {Array<XmlCdata|XmlComment|XmlElement|XmlProcessingInstruction|XmlText>} [children]
   */
   constructor(name, attributes = Object.create(null), children = []) {
@@ -27,7 +27,7 @@ class XmlElement extends XmlNode {
     /**
     Attributes on this element.
 
-    @type {Object<string, string>}
+    @type {{[attrName: string]: string}}
     @public
     */
     this.attributes = attributes;
@@ -83,7 +83,7 @@ class XmlElement extends XmlNode {
     return XmlNode.TYPE_ELEMENT;
   }
 
-  /** @returns {Object<string, *>} */
+  /** @returns {{[key: string]: any}} */
   toJSON() {
     return Object.assign(XmlNode.prototype.toJSON.call(this), {
       name: this.name,

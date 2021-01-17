@@ -733,6 +733,8 @@ class Parser {
   }
 
   /**
+  Throws an error at the current scanner position.
+
   @param {string} message
   */
   error(message) {

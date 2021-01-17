@@ -77,11 +77,11 @@ class XmlNode {
   Returns a JSON-serializable object representing this node, minus properties
   that could result in circular references.
 
-  @returns {Object<string, *>}
+  @returns {{[key: string]: any}}
   @public
   */
   toJSON() {
-    /** @type {Object<string, *>} */
+    /** @type {{[key: string]: any}} */
     let json = {
       type: this.type
     };
