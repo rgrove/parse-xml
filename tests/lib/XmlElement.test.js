@@ -4,45 +4,41 @@
 const assert = require('assert');
 const parseXml = require('../../src');
 
-const { XmlElement, XmlText } = parseXml;
+const { XmlElement, XmlNode, XmlText } = parseXml;
 
 describe('`XmlElement`', () => {
   let options;
-  let xml;
 
   beforeEach(() => {
     options = {};
-    xml = `<root></root>`;
   });
 
-  it('is emitted', () => {
-    let { root } = parseXml(xml);
+  it('is emitted by the parser', () => {
+    let { root } = parseXml('<root />');
     assert(root instanceof XmlElement);
   });
 
-  it('can have emoji names and content', () => {
-    let { root } = parseXml('<👨‍👨‍👧‍👦>👧👦</👨‍👨‍👧‍👦>');
-    assert.strictEqual(root.name, '👨‍👨‍👧‍👦');
-    assert.strictEqual(root.text, '👧👦');
+  it('can be serialized to JSON', () => {
+    let { root } = parseXml('<a foo="bar" baz="quux"><b xml:space="preserve" /></a>');
+    assert.strictEqual(JSON.stringify(root), '{"type":"element","isRootNode":true,"name":"a","attributes":{"foo":"bar","baz":"quux"},"children":[{"type":"element","preserveWhitespace":true,"name":"b","attributes":{"xml:space":"preserve"},"children":[]}]}');
   });
 
-  it('has an `attributes` object with a `null` prototype', () => {
-    let { root } = parseXml(xml);
-    assert.strictEqual(Object.getPrototypeOf(root.attributes), null);
-  });
-
-  describe('with attributes', () => {
-    beforeEach(() => {
-      xml = `<root b="  a &gt; b  &lt; c " a="'foo'" c = '"foo"' 🤔="😼"/>`;
+  describe('constructor', () => {
+    it('uses default values for `attributes` and `children` if not provided', () => {
+      let element = new XmlElement('foo');
+      assert.deepStrictEqual(element.attributes, Object.create(null));
+      assert.deepStrictEqual(element.children, []);
     });
+  });
 
-    it('has an `attributes` object with a `null` prototype', () => {
-      let { root } = parseXml(xml);
+  describe('`attributes`', () => {
+    it('has a `null` prototype', () => {
+      let { root } = parseXml('<root />');
       assert.strictEqual(Object.getPrototypeOf(root.attributes), null);
     });
 
-    it('has a normalized `attributes` object with unsorted attributes', () => {
-      let { root } = parseXml(xml);
+    it('contains normalized element attributes in definition order', () => {
+      let { root } = parseXml(`<root b="  a &gt; b  &lt; c " a="'foo'" c = '"foo"' 🤔="😼"/>`);
 
       assert.deepEqual(root.attributes, {
         b: '  a > b  < c ',
@@ -59,20 +55,18 @@ describe('`XmlElement`', () => {
         options.sortAttributes = true;
       });
 
-      it('has sorted attributes', () => {
-        let { root } = parseXml(xml, options);
+      it('sorts attributes in alphabetical order', () => {
+        let { root } = parseXml(`<root b="  a &gt; b  &lt; c " a="'foo'" c = '"foo"' 🤔="😼"/>`, options);
         assert.deepEqual(Object.keys(root.attributes), [ 'a', 'b', 'c', '🤔' ]);
       });
     });
   });
 
-  describe('with children', () => {
-    beforeEach(() => {
-      xml = `<root>foo<a>bar</a><b><c>baz</c></b></root>`;
-    });
+  describe('`children`', () => {
+    it('is an array of child nodes', () => {
+      let { root } = parseXml('<root>foo<a>bar</a><b><c>baz</c></b></root>');
+      assert(Array.isArray(root.children));
 
-    it('has an array of children', () => {
-      let { root } = parseXml(xml);
       let [ textNode, aNode, bNode ] = root.children;
 
       assert(textNode instanceof XmlText);
@@ -91,47 +85,130 @@ describe('`XmlElement`', () => {
     });
   });
 
-  describe('with an `xml:space` attribute', () => {
-    describe('when `xml:space` is set to "default"', () => {
-      beforeEach(() => {
-        xml = `<root xml:space="default"></root>`;
-      });
+  describe('`document`', () => {
+    it('is the document', () => {
+      let doc = parseXml('<root/>');
+      assert.strictEqual(doc.root.document, doc);
+    });
+  });
 
-      it("`preserveWhitespace` is `false`", () => {
-        assert.strictEqual(parseXml(xml).preserveWhitespace, false);
+  describe('`isEmpty`', () => {
+    it('is `true` when the element is empty', () => {
+      let { root } = parseXml('<root />');
+      assert.strictEqual(root.isEmpty, true);
+    });
+
+    it('is `false` when the element is not empty', () => {
+      let { root } = parseXml('<root><child /></root>');
+      assert.strictEqual(root.isEmpty, false);
+    });
+  });
+
+  describe('`isRootNode`', () => {
+    describe('when the element is the root element', () => {
+      it('is `true`', () => {
+        assert.strictEqual(parseXml('<root/>').root.isRootNode, true);
       });
     });
 
-    describe('when `xml:space` of the nearest ancestor is set to "default"', () => {
-      beforeEach(() => {
-        xml = `<root xml:space="preserve"><a xml:space="default"><b><c /></b></a></root>`;
+    describe('when the element is not the root element', () => {
+      it('is `false`', () => {
+        assert.strictEqual(parseXml('<a><b/></a>').root.children[0].isRootNode, false);
       });
+    });
+  });
 
-      it('`preserveWhitespace` is `false`', () => {
-        let [ c ] = parseXml(xml).root.children[0].children[0].children;
+  describe('`name`', () => {
+    it('is the name of the element', () => {
+      let { root } = parseXml('<foo />');
+      assert.strictEqual(root.name, 'foo');
+    });
+
+    it('may contain emoji', () => {
+      let { root } = parseXml('<👨‍👨‍👧‍👦></👨‍👨‍👧‍👦>');
+      assert.strictEqual(root.name, '👨‍👨‍👧‍👦');
+    });
+  });
+
+  describe('`parent`', () => {
+    describe('when the element is the root element', () => {
+      it('is the document', () => {
+        let doc = parseXml('<root/>');
+        assert.strictEqual(doc.root.parent, doc);
+      });
+    });
+
+    describe('when the element is not the root element', () => {
+      it('is the parent element', () => {
+        let doc = parseXml('<a><b/></a>');
+        assert.strictEqual(doc.root.children[0].parent, doc.root);
+      });
+    });
+  });
+
+  describe('`preserveWhitespace`', () => {
+    describe('when neither the element nor any ancestor has an `xml:space` attribute', () => {
+      it('is `false`', () => {
+        let { root } = parseXml('<root />');
+        assert.strictEqual(root.preserveWhitespace, false);
+      });
+    });
+
+    describe("when the value of an element's `xml:space` attribute is 'default'", () => {
+      it('is `false`', () => {
+        let { root } = parseXml('<root xml:space="default"/>');
+        assert.strictEqual(root.preserveWhitespace, false);
+      });
+    });
+
+    describe('when the nearest `xml:space` attribute of an ancestor is "default"', () => {
+      it('is `false`', () => {
+        let c = parseXml('<root xml:space="preserve"><a xml:space="default"><b><c /></b></a></root>')
+          .root
+          .children[0]
+          .children[0]
+          .children[0];
+
         assert.strictEqual(c.preserveWhitespace, false);
       });
     });
 
-    describe('when `xml:space` is set to "preserve"', () => {
-      beforeEach(() => {
-        xml = `<root xml:space="preserve"></root>`;
-      });
-
+    describe("when the value of an element's `xml:space` attribute is set to 'preserve'", () => {
       it('`preserveWhitespace` is `true`', () => {
-        assert.strictEqual(parseXml(xml).root.preserveWhitespace, true);
+        let { root } = parseXml('<root xml:space="preserve"></root>');
+        assert.strictEqual(root.preserveWhitespace, true);
       });
     });
 
-    describe('when `xml:space` of the nearest ancestor is set to "preserve"', () => {
-      beforeEach(() => {
-        xml = `<root xml:space="preserve"><a><b><c /></b></a></root>`;
-      });
+    describe('when the nearest `xml:space` attribute of an ancestor is "preserve"', () => {
+      it('is `true`', () => {
+        let c = parseXml('<root xml:space="preserve"><a><b><c /></b></a></root>')
+          .root
+          .children[0]
+          .children[0]
+          .children[0];
 
-      it('`preserveWhitespace` is `true`', () => {
-        let [ c ] = parseXml(xml).root.children[0].children[0].children;
         assert.strictEqual(c.preserveWhitespace, true);
       });
+    });
+  });
+
+  describe('`text`', () => {
+    it('is the text content of the element and its descendants', () => {
+      assert.strictEqual(parseXml('<root><a><b>hello</b></a> there!</root>').root.text, 'hello there!');
+      assert.strictEqual(parseXml('<root><!-- hi --><a/><!-- hi --></root>', { preserveComments: true }).root.text, '');
+    });
+
+    it('may contain emoji', () => {
+      let { root } = parseXml('<root>👧👦</root>');
+      assert.strictEqual(root.text, '👧👦');
+    });
+  });
+
+  describe('`type`', () => {
+    it('is `XmlNode.TYPE_ELEMENT`', () => {
+      let { root } = parseXml('<root />');
+      assert.strictEqual(root.type, XmlNode.TYPE_ELEMENT);
     });
   });
 });
