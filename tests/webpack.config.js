@@ -6,8 +6,7 @@ const webpack = require('webpack');
 
 module.exports = {
   entry: {
-    testConformance: path.resolve(__dirname, 'conformance.test.js'),
-    testIndex: path.resolve(__dirname, 'index.test.js')
+    browserTests: path.resolve(__dirname, 'browser', 'browserTests.js'),
   },
 
   mode: 'development',
