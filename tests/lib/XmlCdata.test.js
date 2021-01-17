@@ -7,11 +7,9 @@ const parseXml = require('../../src');
 const { XmlCdata, XmlNode } = parseXml;
 
 describe('`XmlCdata`', () => {
-  let options;
   let xml;
 
   beforeEach(() => {
-    options = {};
     xml = `<root><![CDATA[ 1 + 2 < 2 + 2 ]]></root>`;
   });
 
@@ -20,24 +18,19 @@ describe('`XmlCdata`', () => {
     assert.strictEqual(node.type, XmlNode.TYPE_TEXT);
   });
 
-  describe('when `options.preserveCdata` is `true`', () => {
-    beforeEach(() => {
-      options.preserveCdata = true;
-    });
+  it('is emitted when `options.preserveCdata` is `true`', () => {
+    let { root } = parseXml(xml, { preserveCdata: true });
+    let [ node ] = root.children;
 
-    it('is emitted', () => {
-      let { root } = parseXml(xml, options);
-      let [ node ] = root.children;
+    assert(node instanceof XmlCdata);
+    assert.strictEqual(node.text, ' 1 + 2 < 2 + 2 ');
+    assert.strictEqual(node.parent, root);
+  });
 
-      assert(node instanceof XmlCdata);
-      assert.strictEqual(node.text, ' 1 + 2 < 2 + 2 ');
-      assert.strictEqual(node.parent, root);
-    });
-
-    it('has the correct type value', () => {
-      let { root } = parseXml(xml, options);
-      let [ node ] = root.children;
-      assert.strictEqual(node.type, XmlNode.TYPE_CDATA);
+  describe('`type`', () => {
+    it('is `XmlNode.TYPE_CDATA`', () => {
+      let { root } = parseXml(xml, { preserveCdata: true });
+      assert.strictEqual(root.children[0].type, XmlNode.TYPE_CDATA);
     });
   });
 });
