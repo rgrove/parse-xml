@@ -95,7 +95,7 @@ class Parser {
   */
   consumeAttributeValue() {
     let { scanner } = this;
-    let quote = scanner.consumeString('"') || scanner.consumeString("'");
+    let quote = scanner.consumeStringFast('"') || scanner.consumeStringFast("'");
 
     if (!quote) {
       return false;
@@ -156,14 +156,14 @@ class Parser {
   consumeCdataSection() {
     let { scanner } = this;
 
-    if (!scanner.consumeString('<![CDATA[')) {
+    if (!scanner.consumeStringFast('<![CDATA[')) {
       return false;
     }
 
     let text = scanner.consumeUntilString(']]>');
     this.validateChars(text);
 
-    if (!scanner.consumeString(']]>')) {
+    if (!scanner.consumeStringFast(']]>')) {
       this.error('Unclosed CDATA section');
     }
 
@@ -213,14 +213,14 @@ class Parser {
   consumeComment() {
     let { scanner } = this;
 
-    if (!scanner.consumeString('<!--')) {
+    if (!scanner.consumeStringFast('<!--')) {
       return false;
     }
 
     let content = scanner.consumeUntilString('--');
     this.validateChars(content);
 
-    if (!scanner.consumeString('-->')) {
+    if (!scanner.consumeStringFast('-->')) {
       if (scanner.peek(2) === '--') {
         this.error("The string `--` isn't allowed inside a comment");
       } else {
@@ -270,7 +270,7 @@ class Parser {
   consumeDoctypeDeclaration() {
     let { scanner } = this;
 
-    if (!scanner.consumeString('<!DOCTYPE')
+    if (!scanner.consumeStringFast('<!DOCTYPE')
         || !this.consumeWhitespace()) {
 
       return false;
@@ -282,7 +282,7 @@ class Parser {
       return true;
     }
 
-    if (!scanner.consumeString('>')) {
+    if (!scanner.consumeStringFast('>')) {
       this.error('Unclosed doctype declaration');
     }
 
@@ -301,7 +301,7 @@ class Parser {
     let { scanner } = this;
     let mark = scanner.charIndex;
 
-    if (!scanner.consumeString('<')) {
+    if (!scanner.consumeStringFast('<')) {
       return false;
     }
 
@@ -354,13 +354,13 @@ class Parser {
       attributes = sortedAttributes;
     }
 
-    let isEmpty = Boolean(scanner.consumeString('/>'));
+    let isEmpty = Boolean(scanner.consumeStringFast('/>'));
     let element = new XmlElement(name, attributes);
 
     element.parent = this.currentNode;
 
     if (!isEmpty) {
-      if (!scanner.consumeString('>')) {
+      if (!scanner.consumeStringFast('>')) {
         this.error(`Unclosed start tag for element \`${name}\``);
       }
 
@@ -380,7 +380,7 @@ class Parser {
       let endTagMark = scanner.charIndex;
       let endTagName;
 
-      if (!scanner.consumeString('</')
+      if (!scanner.consumeStringFast('</')
           || !(endTagName = this.consumeName())
           || endTagName !== name) {
 
@@ -390,7 +390,7 @@ class Parser {
 
       this.consumeWhitespace();
 
-      if (!scanner.consumeString('>')) {
+      if (!scanner.consumeStringFast('>')) {
         this.error(`Unclosed end tag for element ${name}`);
       }
 
@@ -476,7 +476,7 @@ class Parser {
     let { scanner } = this;
     let mark = scanner.charIndex;
 
-    if (!scanner.consumeString('<?')) {
+    if (!scanner.consumeStringFast('<?')) {
       return false;
     }
 
@@ -492,7 +492,7 @@ class Parser {
     }
 
     if (!this.consumeWhitespace()) {
-      if (scanner.consumeString('?>')) {
+      if (scanner.consumeStringFast('?>')) {
         this.addNode(new XmlProcessingInstruction(name));
         return true;
       }
@@ -503,7 +503,7 @@ class Parser {
     let content = scanner.consumeUntilString('?>');
     this.validateChars(content);
 
-    if (!scanner.consumeString('?>')) {
+    if (!scanner.consumeStringFast('?>')) {
       this.error('Unterminated processing instruction');
     }
 
@@ -549,7 +549,7 @@ class Parser {
   consumeReference() {
     let { scanner } = this;
 
-    if (!scanner.consumeString('&')) {
+    if (!scanner.consumeStringFast('&')) {
       return false;
     }
 
@@ -639,7 +639,7 @@ class Parser {
   */
   consumeSystemLiteral() {
     let { scanner } = this;
-    let quote = scanner.consumeString('"') || scanner.consumeString("'");
+    let quote = scanner.consumeStringFast('"') || scanner.consumeStringFast("'");
 
     if (!quote) {
       return false;
@@ -648,7 +648,7 @@ class Parser {
     let value = scanner.consumeUntilString(quote);
     this.validateChars(value);
 
-    if (!scanner.consumeString(quote)) {
+    if (!scanner.consumeStringFast(quote)) {
       this.error('Missing end quote');
     }
 
@@ -685,7 +685,7 @@ class Parser {
   consumeXmlDeclaration() {
     let { scanner } = this;
 
-    if (!scanner.consumeString('<?xml')) {
+    if (!scanner.consumeStringFast('<?xml')) {
       return false;
     }
 
@@ -693,7 +693,7 @@ class Parser {
       this.error('Invalid XML declaration');
     }
 
-    let version = Boolean(scanner.consumeString('version'))
+    let version = Boolean(scanner.consumeStringFast('version'))
       && this.consumeEqual()
       && this.consumeSystemLiteral();
 
@@ -704,7 +704,7 @@ class Parser {
     }
 
     if (this.consumeWhitespace()) {
-      let encoding = Boolean(scanner.consumeString('encoding'))
+      let encoding = Boolean(scanner.consumeStringFast('encoding'))
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 
@@ -712,7 +712,7 @@ class Parser {
         this.consumeWhitespace();
       }
 
-      let standalone = Boolean(scanner.consumeString('standalone'))
+      let standalone = Boolean(scanner.consumeStringFast('standalone'))
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 
@@ -725,7 +725,7 @@ class Parser {
       }
     }
 
-    if (!scanner.consumeString('?>')) {
+    if (!scanner.consumeStringFast('?>')) {
       this.error('Invalid or unclosed XML declaration');
     }
 

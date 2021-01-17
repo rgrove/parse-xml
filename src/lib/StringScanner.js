@@ -26,7 +26,7 @@ class StringScanner {
     this.string = string;
 
     // Create a mapping of character indexes to byte indexes. If the string
-    // contains multi-byte characters, a byte index may not necessarily align
+    // contains multibyte characters, a byte index may not necessarily align
     // with a character index.
     for (let byteIndex = 0, charIndex = 0; charIndex < this.charCount; ++charIndex) {
       this.charsToBytes.push(byteIndex);
@@ -100,23 +100,48 @@ class StringScanner {
   If the given string doesn't exist at the current character index, an empty
   string will be returned and the scanner will not be advanced.
 
-  Note: For performance reasons, this method doesn't support consuming strings
-  that contain multi-byte characters (but the parser doesn't need it to).
-
-  @param {string} string
+  @param {string} stringToConsume
   @returns {string}
   */
-  consumeString(string) {
-    let { length } = string;
+  consumeString(stringToConsume) {
+    if (this.consumeStringFast(stringToConsume)) {
+      return stringToConsume;
+    }
 
-    // Using `peek(1)` to check if the first character of a longer string
-    // matches improves performance by avoiding a more expensive multi-char
-    // `peek()` call when it wouldn't be useful.
-    if ((length === 1 || this.peek(1) === string[0])
-        && this.peek(length) === string) {
+    let { length } = stringToConsume;
+    let charLengthToMatch = charLength(stringToConsume);
 
-      this.advance(length);
-      return string;
+    if (charLengthToMatch !== length
+        && stringToConsume === this.peek(charLengthToMatch)) {
+
+      this.advance(charLengthToMatch);
+      return stringToConsume;
+    }
+
+    return emptyString;
+  }
+
+  /**
+   * Does the same thing as `consumeString()`, but doesn't support consuming
+   * multibyte characters. This can be much faster if you only need to match
+   * single byte characters.
+   *
+   * @param {string} stringToConsume
+   * @returns {string}
+   */
+  consumeStringFast(stringToConsume) {
+    let { length } = stringToConsume;
+
+    if (this.chars[this.charIndex] === stringToConsume[0]) {
+      if (length === 1) {
+        this.advance(1);
+        return stringToConsume;
+      }
+
+      if (this.peek(length) === stringToConsume) {
+        this.advance(length);
+        return stringToConsume;
+      }
     }
 
     return emptyString;
@@ -222,7 +247,7 @@ module.exports = StringScanner;
 
 /**
 Returns the number of characters in the given _string_, which may differ from
-the byte length if the string contains multi-byte characters.
+the byte length if the string contains multibyte characters.
 
 @param {string} string
 @returns {number}
