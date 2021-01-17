@@ -221,8 +221,12 @@ class StringScanner {
       return this.chars[this.charIndex] || emptyString;
     }
 
-    let { charsToBytes, charIndex, string } = this;
-    return string.slice(charsToBytes[charIndex], charsToBytes[charIndex + count]);
+    if (this.isEnd) {
+      return emptyString;
+    }
+
+    let { charsToBytes, charIndex } = this;
+    return this.string.slice(charsToBytes[charIndex], charsToBytes[charIndex + count]);
   }
 
   /**
@@ -235,8 +239,8 @@ class StringScanner {
   @param {number} [index]
   */
   reset(index = 0) {
-    this.charIndex = index > 0
-      ? index
+    this.charIndex = index >= 0
+      ? Math.min(this.charCount, index)
       : Math.max(0, this.charIndex + index);
   }
 }
