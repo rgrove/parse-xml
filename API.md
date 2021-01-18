@@ -169,7 +169,7 @@ Element in an XML document.
 #### Parameters
 
 -   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `attributes` **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>?**  (optional, default `Object.create(null)`)
+-   `attributes`   (optional, default `Object.create(null)`)
 -   `children` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;([XmlCdata](#xmlcdata) \| [XmlComment](#xmlcomment) \| [XmlElement](#xmlelement) \| [XmlProcessingInstruction](#xmlprocessinginstruction) \| [XmlText](#xmltext))>?**  (optional, default `[]`)
 
 #### name
@@ -181,8 +181,6 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 #### attributes
 
 Attributes on this element.
-
-Type: [Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)>
 
 #### children
 
@@ -255,8 +253,6 @@ Type: [string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Globa
 
 Returns a JSON-serializable object representing this node, minus properties
 that could result in circular references.
-
-Returns **[Object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)&lt;[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String), any>** 
 
 #### TYPE_CDATA
 
