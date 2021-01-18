@@ -34,7 +34,7 @@
     "build:types": "tsc --declaration --declarationMap --emitDeclarationOnly --declarationDir dist/types",
     "clean": "rm -rf .eslintcache .nyc_output coverage dist",
     "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
-    "lint": "eslint --cache {src,tests}",
+    "lint": "eslint --cache src tests",
     "prepublishOnly": "npm run clean && npm run build",
     "test": "nyc --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha tests/{**,}/*.test.js --delay --reporter dot",
     "test:browser": "(sleep 5 && open 'http://localhost:8080/tests/browser/') & webpack serve --config tests/webpack.config.js --watch"
