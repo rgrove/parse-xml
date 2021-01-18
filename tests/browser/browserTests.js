@@ -1,6 +1,7 @@
 'use strict';
 
 require('../index.test.js');
+require('../lib/Parser.test.js');
 require('../lib/StringScanner.test.js');
 require('../lib/XmlCdata.test.js');
 require('../lib/XmlComment.test.js');

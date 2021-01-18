@@ -120,7 +120,7 @@ class Parser {
 
       switch (nextChar) {
         case emptyString:
-          this.error('Unclosed attribute');
+          this.error('Unclosed attribute'); /* istanbul ignore next */
           break;
 
         case quote:
@@ -128,11 +128,11 @@ class Parser {
           break matchLoop;
 
         case '&':
-          value += this.consumeReference() || emptyString;
+          value += this.consumeReference();
           continue;
 
         case '<':
-          this.error('Unescaped `<` is not allowed in an attribute value');
+          this.error('Unescaped `<` is not allowed in an attribute value'); /* istanbul ignore next */
           break;
       }
     }
