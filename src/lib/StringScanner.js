@@ -271,21 +271,6 @@ class StringScanner {
   }
 
   /**
-  Returns a string consisting of the characters between the given character
-  index and the current scanner position.
-
-  @param {number} startIndex
-  @returns {string}
-  */
-  getStringFromIndex(startIndex) {
-    let { charsToBytes, charIndex, string } = this;
-
-    return startIndex < charIndex
-      ? string.slice(charsToBytes[startIndex], charsToBytes[charIndex])
-      : emptyString;
-  }
-
-  /**
   Returns the given number of characters starting at the current character
   index, without advancing the scanner and without exceeding the end of the
   input string.

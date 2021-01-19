@@ -258,30 +258,6 @@ describe('StringScanner', () => {
     });
   });
 
-  describe('getStringFromIndex()', () => {
-    it('returns the portion of the string from `startIndex` to the current scanner position', () => {
-      let s = new StringScanner('🥧abcdef😋');
-      s.advance(5);
-      assert.strictEqual(s.getStringFromIndex(2), 'bcd');
-    });
-
-    describe('when `startIndex` is equal to the current scanner position', () => {
-      it('returns an empty string', () => {
-        let s = new StringScanner('🥧abcdef😋');
-        s.advance(5);
-        assert.strictEqual(s.getStringFromIndex(5), '');
-      });
-    });
-
-    describe('when `startIndex` is beyond to the current scanner position', () => {
-      it('returns an empty string', () => {
-        let s = new StringScanner('🥧abcdef😋');
-        s.advance(5);
-        assert.strictEqual(s.getStringFromIndex(6), '');
-      });
-    });
-  });
-
   describe('peek()', () => {
     describe('when `count` is not given', () => {
       it('returns the character at the current scanner position without advancing', () => {
