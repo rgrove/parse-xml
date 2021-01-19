@@ -88,6 +88,20 @@ function isNotXmlChar(char) {
 exports.isNotXmlChar = isNotXmlChar;
 
 /**
+Returns `true` if _char_ is a valid reference character (which may appear
+between `&` and `;` in a reference), `false` otherwise.
+
+@param {string} char
+@returns {boolean}
+@see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-references
+*/
+function isReferenceChar(char) {
+  return char === '#' || isNameChar(char);
+}
+
+exports.isReferenceChar = isReferenceChar;
+
+/**
 Returns `true` if _char_ is an XML whitespace character, `false` otherwise.
 
 @param {string} char

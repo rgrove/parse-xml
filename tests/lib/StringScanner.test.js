@@ -113,7 +113,7 @@ describe('StringScanner', () => {
     describe('when the regex matches at the current scanner position', () => {
       it('consumes and returns the match', () => {
         let s = new StringScanner('🥧abcdef😋');
-        assert.strictEqual(s.consumeMatch(/^.+abc/), '🥧abc');
+        assert.strictEqual(s.consumeMatch(/.+abc/y), '🥧abc');
         assert.strictEqual(s.charIndex, 4);
       });
     });
@@ -121,8 +121,38 @@ describe('StringScanner', () => {
     describe('when the regex does not match at the current scanner position', () => {
       it('returns an empty string and does not advance', () => {
         let s = new StringScanner('🥧abcdef😋');
-        assert.strictEqual(s.consumeMatch(/^xyz/), '');
+        assert.strictEqual(s.consumeMatch(/xyz/y), '');
         assert.strictEqual(s.charIndex, 0);
+      });
+    });
+
+    describe('when the regex does not have a sticky flag', () => {
+      it('throws an error', () => {
+        let s = new StringScanner('🥧abcdef😋');
+
+        assert.throws(() => {
+          s.consumeMatch(/a/);
+        }, {
+          name: 'Error',
+          message:'`regex` must have a sticky flag ("y")'
+        });
+      });
+    });
+  });
+
+  describe('consumeMatchFn()', () => {
+    it('consumes characters as long as the function returns `true`', () => {
+      let s = new StringScanner('🥧abcdef😋');
+      let result = s.consumeMatchFn((char) => char === '🥧' || char === 'a' || char === 'b');
+      assert.strictEqual(result, '🥧ab');
+      assert.strictEqual(s.charIndex, 3);
+    });
+
+    describe('when the scanner is at the end of the input string', () => {
+      it('returns an empty string', () => {
+        let s = new StringScanner('🥧abcdef😋');
+        s.reset(8);
+        assert.strictEqual(s.consumeMatchFn(() => true), '');
       });
     });
   });
@@ -183,7 +213,7 @@ describe('StringScanner', () => {
     describe('when the regex matches', () => {
       it('consumes and returns characters up to the beginning of the match', () => {
         let s = new StringScanner('🥧abcdef😋');
-        assert.strictEqual(s.consumeUntilMatch(/😋/), '🥧abcdef');
+        assert.strictEqual(s.consumeUntilMatch(/😋/g), '🥧abcdef');
         assert.strictEqual(s.charIndex, 7);
       });
     });
@@ -191,8 +221,21 @@ describe('StringScanner', () => {
     describe('when the regex does not match', () => {
       it('returns an empty string and does not advance', () => {
         let s = new StringScanner('🥧abcdef😋');
-        assert.strictEqual(s.consumeUntilMatch(/🤮/), '');
+        assert.strictEqual(s.consumeUntilMatch(/🤮/g), '');
         assert.strictEqual(s.charIndex, 0);
+      });
+    });
+
+    describe('when the regex does not have a global flag', () => {
+      it('throws an error', () => {
+        let s = new StringScanner('🥧abcdef😋');
+
+        assert.throws(() => {
+          s.consumeUntilMatch(/a/);
+        }, {
+          name: 'Error',
+          message:'`regex` must have a global flag ("g")'
+        });
       });
     });
   });

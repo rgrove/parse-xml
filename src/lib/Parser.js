@@ -73,15 +73,19 @@ class Parser {
   */
   addText(text) {
     let { children } = this.currentNode;
-    let prevNode = children[children.length - 1];
 
-    if (prevNode && prevNode instanceof XmlText) {
-      // The previous node is a text node, so we can append to it and avoid
-      // creating another node.
-      prevNode.text += text;
-    } else {
-      this.addNode(new XmlText(text));
+    if (children.length > 0) {
+      let prevNode = children[children.length - 1];
+
+      if (prevNode instanceof XmlText) {
+        // The previous node is a text node, so we can append to it and avoid
+        // creating another node.
+        prevNode.text += text;
+        return;
+      }
     }
+
+    this.addNode(new XmlText(text));
   }
 
   /**
@@ -95,18 +99,20 @@ class Parser {
   */
   consumeAttributeValue() {
     let { scanner } = this;
-    let quote = scanner.consumeStringFast('"') || scanner.consumeStringFast("'");
+    let quote = scanner.peek();
 
-    if (!quote) {
+    if (quote !== '"' && quote !== "'") {
       return false;
     }
+
+    scanner.advance();
 
     let chars;
     let isClosed = false;
     let value = emptyString;
     let regex = quote === '"'
-      ? /^[^"&<]+/
-      : /^[^'&<]+/;
+      ? /[^"&<]+/y
+      : /[^'&<]+/y;
 
     matchLoop: while (!scanner.isEnd) {
       chars = scanner.consumeMatch(regex);
@@ -119,10 +125,6 @@ class Parser {
       let nextChar = scanner.peek();
 
       switch (nextChar) {
-        case emptyString:
-          this.error('Unclosed attribute'); /* istanbul ignore next */
-          break;
-
         case quote:
           isClosed = true;
           break matchLoop;
@@ -134,6 +136,11 @@ class Parser {
         case '<':
           this.error('Unescaped `<` is not allowed in an attribute value'); /* istanbul ignore next */
           break;
+
+        case emptyString:
+          this.error('Unclosed attribute'); /* istanbul ignore next */
+          break;
+
       }
     }
 
@@ -186,7 +193,7 @@ class Parser {
   */
   consumeCharData() {
     let { scanner } = this;
-    let charData = scanner.consumeUntilMatch(/<|&|]]>/);
+    let charData = scanner.consumeUntilMatch(/<|&|]]>/g);
 
     if (!charData) {
       return false;
@@ -194,7 +201,7 @@ class Parser {
 
     this.validateChars(charData);
 
-    if (scanner.peek(3) === ']]>') {
+    if (scanner.peek() === ']' && scanner.peek(3) === ']]>') {
       this.error('Element content may not contain the CDATA section close delimiter `]]>`');
     }
 
@@ -251,9 +258,10 @@ class Parser {
 
     if (ref) {
       this.addText(ref);
+      return true;
     }
 
-    return ref !== false;
+    return false;
   }
 
   /**
@@ -276,9 +284,9 @@ class Parser {
       return false;
     }
 
-    scanner.consumeMatch(/^[^[>]+/);
+    scanner.consumeMatch(/[^[>]+/y);
 
-    if (scanner.consumeMatch(/^\[[\s\S]+?\][\x20\t\r\n]*>/)) {
+    if (scanner.consumeMatch(/\[[\s\S]+?\][\x20\t\r\n]*>/y)) {
       return true;
     }
 
@@ -301,10 +309,11 @@ class Parser {
     let { scanner } = this;
     let mark = scanner.charIndex;
 
-    if (!scanner.consumeStringFast('<')) {
+    if (scanner.peek() !== '<') {
       return false;
     }
 
+    scanner.advance();
     let name = this.consumeName();
 
     if (!name) {
@@ -410,18 +419,13 @@ class Parser {
   @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Eq
   */
   consumeEqual() {
-    let { scanner } = this;
-    let mark = scanner.charIndex;
-
     this.consumeWhitespace();
 
-    if (scanner.peek() === '=') {
-      scanner.advance();
+    if (this.scanner.consumeStringFast('=')) {
       this.consumeWhitespace();
       return true;
     }
 
-    scanner.reset(mark);
     return false;
   }
 
@@ -448,20 +452,9 @@ class Parser {
   @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Name
   */
   consumeName() {
-    let { scanner } = this;
-    let mark = scanner.charIndex;
-
-    if (syntax.isNameStartChar(scanner.peek())) {
-      scanner.advance();
-
-      while (syntax.isNameChar(scanner.peek())) {
-        scanner.advance();
-      }
-
-      return scanner.getStringFromIndex(mark);
-    }
-
-    return emptyString;
+    return syntax.isNameStartChar(this.scanner.peek())
+      ? this.scanner.consumeMatchFn(syntax.isNameChar)
+      : emptyString;
   }
 
   /**
@@ -549,21 +542,13 @@ class Parser {
   consumeReference() {
     let { scanner } = this;
 
-    if (!scanner.consumeStringFast('&')) {
+    if (scanner.peek() !== '&') {
       return false;
     }
 
-    let char;
-    let ref = emptyString;
+    scanner.advance();
 
-    while ((char = scanner.peek())) {
-      if (char !== '#' && !syntax.isNameChar(char)) {
-        break;
-      }
-
-      ref += char;
-      scanner.advance();
-    }
+    let ref = scanner.consumeMatchFn(syntax.isReferenceChar);
 
     if (scanner.consume() !== ';') {
       this.error('Unterminated reference (a reference must end with `;`)');
@@ -664,14 +649,7 @@ class Parser {
   @see https://www.w3.org/TR/2008/REC-xml-20081126/#white
   */
   consumeWhitespace() {
-    let { scanner } = this;
-    let mark = scanner.charIndex;
-
-    while (!scanner.isEnd && syntax.isWhitespace(scanner.peek())) {
-      scanner.advance();
-    }
-
-    return mark < scanner.charIndex;
+    return Boolean(this.scanner.consumeMatchFn(syntax.isWhitespace));
   }
 
   /**
@@ -799,11 +777,15 @@ class Parser {
   @param {string} string
   */
   validateChars(string) {
-    let nonCharIndex = findCharIndex(string, syntax.isNotXmlChar);
+    let charIndex = 0;
 
-    if (nonCharIndex !== -1) {
-      this.scanner.reset(-([ ...string ].length - nonCharIndex));
-      this.error('Invalid character');
+    for (let char of string) {
+      if (syntax.isNotXmlChar(char)) {
+        this.scanner.reset(-([ ...string ].length - charIndex));
+        this.error('Invalid character');
+      }
+
+      charIndex += 1;
     }
   }
 }
@@ -811,28 +793,6 @@ class Parser {
 module.exports = Parser;
 
 // -- Private Functions --------------------------------------------------------
-
-/**
-Returns the multibyte-aware character index (not the byte index) of the first
-character in _string_ for which _testFn_ returns a truthy result, or `-1` if no
-such character is found.
-
-@param {string} string
-@param {(char: string) => boolean} testFn
-@returns {number}
-*/
-function findCharIndex(string, testFn) {
-  let chars = [ ...string ];
-  let { length } = chars;
-
-  for (let i = 0; i < length; ++i) {
-    if (testFn(chars[i])) {
-      return i;
-    }
-  }
-
-  return -1;
-}
 
 /**
 Normalizes the given XML string by stripping a byte order mark (if present) and
