@@ -35,7 +35,7 @@ in a browser via [Unpkg] and use the `parseXml` global.
 
 -   Returns an [object tree](#basic-usage) representing an XML document.
 
--   Works great in Node.js 10+ and in modern browsers.
+-   Works great in Node.js and in modern browsers.
 
 -   Provides [helpful, detailed error messages](#friendly-errors) with context
     when a document is not well-formed.
@@ -178,52 +178,55 @@ Here's how parse-xml stacks up against two comparable libraries, [libxmljs2]
 [xmldoc]:https://github.com/nfarina/xmldoc
 
 ```
-Node.js v12.16.3 / Darwin x64
+Node.js v14.15.4 / Darwin x64
 Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz
 
 Running "Small document (291 bytes)" suite...
+Progress: 100%
 
-  @rgrove/parse-xml 2.0.4:
-    74 904 ops/s, ±0.59%   | fastest
+  @rgrove/parse-xml 3.0.0:
+    77 109 ops/s, ±0.46%   | fastest
 
-  libxmljs2 0.25.3 (native):
-    29 890 ops/s, ±4.15%   | 60.1% slower
+  libxmljs2 0.26.6 (native):
+    29 480 ops/s, ±4.62%   | slowest, 61.77% slower
 
   xmldoc 1.1.2 (sax-js):
-    26 659 ops/s, ±0.67%   | slowest, 64.41% slower
+    36 035 ops/s, ±0.62%   | 53.27% slower
 
 Finished 3 cases!
-  Fastest: @rgrove/parse-xml 2.0.4
-  Slowest: xmldoc 1.1.2 (sax-js)
+  Fastest: @rgrove/parse-xml 3.0.0
+  Slowest: libxmljs2 0.26.6 (native)
 
 Running "Medium document (72081 bytes)" suite...
+Progress: 100%
 
-  @rgrove/parse-xml 2.0.4:
-    455 ops/s, ±0.41%   | 53.76% slower
+  @rgrove/parse-xml 3.0.0:
+    321 ops/s, ±0.99%   | 54.34% slower
 
-  libxmljs2 0.25.3 (native):
-    984 ops/s, ±6.42%   | fastest
+  libxmljs2 0.26.6 (native):
+    703 ops/s, ±10.64%   | fastest
 
   xmldoc 1.1.2 (sax-js):
-    184 ops/s, ±0.75%   | slowest, 81.3% slower
+    235 ops/s, ±0.50%   | slowest, 66.57% slower
 
 Finished 3 cases!
-  Fastest: libxmljs2 0.25.3 (native)
+  Fastest: libxmljs2 0.26.6 (native)
   Slowest: xmldoc 1.1.2 (sax-js)
 
 Running "Large document (1162464 bytes)" suite...
+Progress: 100%
 
-  @rgrove/parse-xml 2.0.4:
-    36 ops/s, ±1.68%   | 41.94% slower
+  @rgrove/parse-xml 3.0.0:
+    20 ops/s, ±0.48%   | 72.97% slower
 
-  libxmljs2 0.25.3 (native):
-    62 ops/s, ±13.04%   | fastest
+  libxmljs2 0.26.6 (native):
+    74 ops/s, ±12.02%   | fastest
 
   xmldoc 1.1.2 (sax-js):
-    15 ops/s, ±0.67%   | slowest, 75.81% slower
+    19 ops/s, ±1.68%   | slowest, 74.32% slower
 
 Finished 3 cases!
-  Fastest: libxmljs2 0.25.3 (native)
+  Fastest: libxmljs2 0.26.6 (native)
   Slowest: xmldoc 1.1.2 (sax-js)
 ```
 
