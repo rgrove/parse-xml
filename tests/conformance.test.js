@@ -74,7 +74,6 @@ const skipTests = new Set([
   'not-wf-sa-168', // claims to test an illegal char, but tests the wrong char
   'not-wf-sa-169', // claims to test an illegal char, but tests the wrong char
   'not-wf-sa-170', // claims to test an illegal char, but tests the wrong char
-  'not-wf-sa-173', // claims to test an illegal char, but tests the wrong char
   'not-wf-sa-175', // claims to test an illegal char, but tests the wrong char
   'not-wf-sa-179', // entity declaration
   'not-wf-sa-180', // entity declaration
