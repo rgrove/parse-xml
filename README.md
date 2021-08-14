@@ -6,19 +6,6 @@ A fast, safe, compliant XML parser for Node.js and browsers.
 [![Bundle size](https://badgen.net/bundlephobia/minzip/@rgrove/parse-xml)](https://bundlephobia.com/result?p=@rgrove/parse-xml)
 [![Test & Lint](https://github.com/rgrove/parse-xml/workflows/Test%20&%20Lint/badge.svg)](https://github.com/rgrove/parse-xml/actions?query=workflow%3A%22Test+%26+Lint%22)
 
-## Contents
-
--   [Installation](#installation)
--   [Features](#features)
--   [Not Features](#not-features)
--   [API](#api)
--   [Examples](#examples)
-    -   [Basic Usage](#basic-usage)
-    -   [Friendly Errors](#friendly-errors)
--   [Why another XML parser?](#why-another-xml-parser)
--   [Benchmark](#benchmark)
--   [License](#license)
-
 ## Installation
 
 ```

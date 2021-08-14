@@ -3,7 +3,7 @@ toc:
     children:
       - parseXml
 
-  - name: Node Classes
+  - name: XML Node Classes
 
     description: |
       All nodes in a parsed XML document are represented by an instance of one

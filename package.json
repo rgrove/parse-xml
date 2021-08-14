@@ -30,7 +30,7 @@
   "types": "./dist/types/index.d.ts",
   "scripts": {
     "build": "webpack && npm run build:types && npm run build:docs",
-    "build:docs": "documentation readme --quiet --access public --config documentation.yml --readme-file API.md --section '@rgrove/parse-xml API Documentation' src",
+    "build:docs": "documentation readme --quiet --access public --config documentation.yml --markdown-toc false --readme-file API.md --section '@rgrove/parse-xml API Documentation' src",
     "build:types": "tsc --declaration --declarationMap --emitDeclarationOnly --declarationDir dist/types",
     "clean": "rm -rf .eslintcache .nyc_output coverage dist",
     "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
