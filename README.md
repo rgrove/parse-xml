@@ -42,7 +42,7 @@ and all their contents, because they're rarely useful and some of their features
 aren't safe when the XML being parsed comes from an untrusted source.
 
 In addition, the only supported character encoding is UTF-8 because it's not
-feasible (or useful) to suppport other character encodings in JavaScript.
+feasible (or useful) to support other character encodings in JavaScript.
 
 ## API
 
