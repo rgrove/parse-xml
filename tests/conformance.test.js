@@ -56,7 +56,6 @@ const skipSections = [
   '4.1 [69]', // PEReference
   '4.2', // Entity Declarations
   '4.3', // Parsed Entities
-  '4.4.8', // parameter entities
 ];
 
 // Ids of tests that should be skipped because they require functionality that
@@ -71,16 +70,11 @@ const skipTests = new Set([
   'not-wf-sa-160', // entity declaration
   'not-wf-sa-161', // entity declaration
   'not-wf-sa-162', // entity declaration
-  'not-wf-sa-168', // claims to test an illegal char, but tests the wrong char
-  'not-wf-sa-169', // claims to test an illegal char, but tests the wrong char
-  'not-wf-sa-170', // claims to test an illegal char, but tests the wrong char
-  'not-wf-sa-175', // claims to test an illegal char, but tests the wrong char
   'not-wf-sa-179', // entity declaration
   'not-wf-sa-180', // entity declaration
   'o-p09fail3', // entity declaration
   'o-p09fail4', // entity declaration
   'o-p09fail5', // entity declaration
-  'rmt-e2e-27', // claims to test an illegal char, but tests the wrong char
   'rmt-e2e-34', // DTD
   'rmt-e2e-55', // DTD
   'rmt-e2e-61', // we don't support charsets other than UTF-8
@@ -91,16 +85,27 @@ const skipTests = new Set([
   'valid-sa-051', // test file is encoded as UTF-16 LE, which we don't support
   'valid-sa-094', // DTD
   'valid-sa-114', // entity declaration
-  'x-ibm-1-0.5-not-wf-P04-ibm04n21.xml', // claims to test an illegal char, but tests the wrong char
-  'x-ibm-1-0.5-not-wf-P04-ibm04n22.xml', // claims to test an illegal char, but tests the wrong char
-  'x-ibm-1-0.5-not-wf-P04-ibm04n23.xml', // claims to test an illegal char, but tests the wrong char
-  'x-ibm-1-0.5-not-wf-P04-ibm04n24.xml', // claims to test an illegal char, but tests the wrong char
-  'x-ibm-1-0.5-not-wf-P04a-ibm04an21.xml', // claims to test an illegal char, but tests the wrong char
-  'x-ibm-1-0.5-not-wf-P04a-ibm04an22.xml', // claims to test an illegal char, but tests the wrong char
-  'x-ibm-1-0.5-not-wf-P04a-ibm04an23.xml', // claims to test an illegal char, but tests the wrong char
-  'x-ibm-1-0.5-not-wf-P04a-ibm04an24.xml', // claims to test an illegal char, but tests the wrong char
   'x-rmt-008', // asserts a failure in XML 1.0 <=4th edition, but we implement 5th edition, which allows this
 ]);
+
+// Mapping of test ids to non-UTF-8 encodings that should be used to read those
+// test files. These are typically tests that contain character sequences that
+// aren't valid in UTF-8 and are intended to cause the parser to fail.
+const specialEncodings = {
+  'not-wf-sa-168': 'utf-16le',
+  'not-wf-sa-169': 'utf-16le',
+  'not-wf-sa-170': 'utf-16le',
+  'not-wf-sa-175': 'utf-16le',
+  'rmt-e2e-27': 'utf-16le',
+  'x-ibm-1-0.5-not-wf-P04-ibm04n21.xml': 'utf-16le',
+  'x-ibm-1-0.5-not-wf-P04-ibm04n22.xml': 'utf-16le',
+  'x-ibm-1-0.5-not-wf-P04-ibm04n23.xml': 'utf-16le',
+  'x-ibm-1-0.5-not-wf-P04-ibm04n24.xml': 'utf-16le',
+  'x-ibm-1-0.5-not-wf-P04a-ibm04an21.xml': 'utf-16le',
+  'x-ibm-1-0.5-not-wf-P04a-ibm04an22.xml': 'utf-16le',
+  'x-ibm-1-0.5-not-wf-P04a-ibm04an23.xml': 'utf-16le',
+  'x-ibm-1-0.5-not-wf-P04a-ibm04an24.xml': 'utf-16le',
+};
 
 // -- Tests --------------------------------------------------------------------
 mapLimit(testSuiteFiles, 10, loadTestSuite, (err, testSuites) => {
@@ -163,13 +168,13 @@ function createTest(testRoot, test) {
   let prefix = `[${attributes.ID}] ${attributes.SECTIONS}:`;
 
   before(done => {
-    readXml(inputPath, (err, xml) => {
+    readXml(inputPath, attributes.ID, (err, xml) => {
       if (err) { return void done(err); }
 
       inputXml = xml;
 
       if (outputPath) {
-        readXml(outputPath, (err, xml) => { // eslint-disable-line no-shadow
+        readXml(outputPath, attributes.ID, (err, xml) => { // eslint-disable-line no-shadow
           if (err) { return void done(err); }
 
           outputXml = xml;
@@ -249,7 +254,7 @@ function createTestCases(testRoot, testCases) {
 function loadTestSuite(filename, cb) {
   filename = path.join(XMLCONF_ROOT, filename);
 
-  readXml(filename, (err, xml) => {
+  readXml(filename, '', (err, xml) => {
     if (err) { return void cb(err); }
 
     let suite;
@@ -267,15 +272,17 @@ function loadTestSuite(filename, cb) {
   });
 }
 
-function readXml(filename, cb) {
+function readXml(filename, testId, cb) {
+  let encoding = specialEncodings[testId] || 'utf-8';
+
   if (typeof window !== 'undefined') {
-    return readXmlBrowser(filename, cb);
+    return readXmlBrowser(filename, encoding, cb);
   }
 
-  require('fs').readFile(filename, { encoding: 'utf8' }, cb);
+  require('fs').readFile(filename, { encoding }, cb);
 }
 
-function readXmlBrowser(filename, cb) {
+function readXmlBrowser(filename, encoding, cb) {
   /* global XMLHttpRequest */
   let req = new XMLHttpRequest();
 
@@ -292,6 +299,6 @@ function readXmlBrowser(filename, cb) {
   });
 
   req.open('GET', path.join('..', filename));
-  req.overrideMimeType('text/plain;charset=utf-8');
+  req.overrideMimeType(`text/plain;charset=${encoding}`);
   req.send();
 }
