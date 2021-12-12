@@ -5,6 +5,15 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
+  devServer: {
+    open: {
+      target: '/tests/browser/',
+    },
+    static: {
+      directory: path.resolve(__dirname, '..'),
+    },
+  },
+
   entry: {
     browserTests: path.resolve(__dirname, 'browser', 'browserTests.js'),
   },
@@ -24,7 +33,9 @@ module.exports = {
   },
 
   plugins: [
-    new webpack.IgnorePlugin(/^fs$/),
+    new webpack.IgnorePlugin({
+      resourceRegExp: /^fs$/,
+    }),
 
     new webpack.ProvidePlugin({
       process: 'process/browser',

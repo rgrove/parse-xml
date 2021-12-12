@@ -6,7 +6,6 @@
 
 
 
-
 ### parseXml
 
 Parses the given XML string and returns an `XmlDocument` instance representing
@@ -14,16 +13,17 @@ the document tree.
 
 #### Parameters
 
--   `xml` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** XML string to parse.
--   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Parsing options.
-    -   `options.ignoreUndefinedEntities` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** When `true`, an undefined named entity (like "&bogus;") will be left in the
+*   `xml` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** XML string to parse.
+*   `options` **[object](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Object)?** Parsing options.
+
+    *   `options.ignoreUndefinedEntities` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** When `true`, an undefined named entity (like "\&bogus;") will be left in the
         output as is instead of causing a parse error. (optional, default `false`)
-    -   `options.preserveCdata` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** When `true`, CDATA sections will be preserved in the document as `XmlCdata`
+    *   `options.preserveCdata` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** When `true`, CDATA sections will be preserved in the document as `XmlCdata`
         nodes. Otherwise CDATA sections will be represented as `XmlText` nodes,
         which keeps the node tree simpler and easier to work with. (optional, default `false`)
-    -   `options.preserveComments` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** When `true`, comments will be preserved in the document as `XmlComment`
+    *   `options.preserveComments` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** When `true`, comments will be preserved in the document as `XmlComment`
         nodes. Otherwise comments will not be included in the node tree. (optional, default `false`)
-    -   `options.sortAttributes` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** When `true`, attributes in an element's `attributes` object will be sorted
+    *   `options.sortAttributes` **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Boolean)** When `true`, attributes in an element's `attributes` object will be sorted
         in alphanumeric order by name. Otherwise they'll retain their original order
         as found in the XML. (optional, default `false`)
 
@@ -64,7 +64,6 @@ a JSON string without any special steps simply by passing it to
 let json = JSON.stringify(parseXml(xml));
 ```
 
-
 ### XmlCdata
 
 **Extends XmlText**
@@ -79,7 +78,7 @@ A comment within an XML document.
 
 #### Parameters
 
--   `content` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**  (optional, default `''`)
+*   `content` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**  (optional, default `''`)
 
 #### content
 
@@ -96,13 +95,13 @@ this node.
 
 #### Parameters
 
--   `children` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;([XmlComment](#xmlcomment) \| [XmlElement](#xmlelement) \| [XmlProcessingInstruction](#xmlprocessinginstruction))>?**  (optional, default `[]`)
+*   `children` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([XmlComment](#xmlcomment) | [XmlElement](#xmlelement) | [XmlProcessingInstruction](#xmlprocessinginstruction))>?**  (optional, default `[]`)
 
 #### children
 
 Child nodes of this document.
 
-Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;([XmlComment](#xmlcomment) \| [XmlElement](#xmlelement) \| [XmlProcessingInstruction](#xmlprocessinginstruction))>
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([XmlComment](#xmlcomment) | [XmlElement](#xmlelement) | [XmlProcessingInstruction](#xmlprocessinginstruction))>
 
 #### root
 
@@ -124,9 +123,9 @@ Element in an XML document.
 
 #### Parameters
 
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `attributes`   (optional, default `Object.create(null)`)
--   `children` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;([XmlCdata](#xmlcdata) \| [XmlComment](#xmlcomment) \| [XmlElement](#xmlelement) \| [XmlProcessingInstruction](#xmlprocessinginstruction) \| [XmlText](#xmltext))>?**  (optional, default `[]`)
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `attributes`   (optional, default `Object.create(null)`)
+*   `children` **[Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([XmlCdata](#xmlcdata) | [XmlComment](#xmlcomment) | [XmlElement](#xmlelement) | [XmlProcessingInstruction](#xmlprocessinginstruction) | [XmlText](#xmltext))>?**  (optional, default `[]`)
 
 #### name
 
@@ -142,7 +141,7 @@ Attributes on this element.
 
 Child nodes of this element.
 
-Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)&lt;([XmlCdata](#xmlcdata) \| [XmlComment](#xmlcomment) \| [XmlElement](#xmlelement) \| [XmlProcessingInstruction](#xmlprocessinginstruction) \| [XmlText](#xmltext))>
+Type: [Array](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/Array)<([XmlCdata](#xmlcdata) | [XmlComment](#xmlcomment) | [XmlElement](#xmlelement) | [XmlProcessingInstruction](#xmlprocessinginstruction) | [XmlText](#xmltext))>
 
 #### isEmpty
 
@@ -164,7 +163,7 @@ Base interface for a node in an XML document.
 
 Parent node of this node, or `null` if this node has no parent.
 
-Type: ([XmlDocument](#xmldocument) \| [XmlElement](#xmlelement) | null)
+Type: ([XmlDocument](#xmldocument) | [XmlElement](#xmlelement) | null)
 
 #### document
 
@@ -181,8 +180,7 @@ Returns **[boolean](https://developer.mozilla.org/docs/Web/JavaScript/Reference/
 
 #### preserveWhitespace
 
--   **See: <https://www.w3.org/TR/2008/REC-xml-20081126/#sec-white-space>
-    **
+*   **See**: <https://www.w3.org/TR/2008/REC-xml-20081126/#sec-white-space>
 
 Whether whitespace should be preserved in the content of this element and
 its children.
@@ -254,8 +252,8 @@ A processing instruction within an XML document.
 
 #### Parameters
 
--   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
--   `content` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**  (optional, default `''`)
+*   `name` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)** 
+*   `content` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**  (optional, default `''`)
 
 #### name
 
@@ -278,7 +276,7 @@ Text content within an XML document.
 
 #### Parameters
 
--   `text` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**  (optional, default `''`)
+*   `text` **[string](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Global_Objects/String)?**  (optional, default `''`)
 
 #### text
 
