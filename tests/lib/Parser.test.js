@@ -89,11 +89,11 @@ describe('Parser', () => {
       it('throws an error', () => {
         assert.throws(() => {
           parseXml('<root>&foo;</root>', {
-            resolveUndefinedEntity: () => 42
+            resolveUndefinedEntity: () => 42,
           });
         }, {
           name: 'TypeError',
-          message: '`resolveUndefinedEntity()` must return a string, `null`, or `undefined`, but returned a value of type number'
+          message: '`resolveUndefinedEntity()` must return a string, `null`, or `undefined`, but returned a value of type number',
         });
       });
     });

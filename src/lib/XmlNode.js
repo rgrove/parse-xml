@@ -83,7 +83,7 @@ class XmlNode {
   toJSON() {
     /** @type {{[key: string]: any}} */
     let json = {
-      type: this.type
+      type: this.type,
     };
 
     if (this.isRootNode) {

@@ -13,7 +13,7 @@ const predefinedEntities = Object.freeze(Object.assign(Object.create(null), {
   apos: "'",
   gt: '>',
   lt: '<',
-  quot: '"'
+  quot: '"',
 }));
 
 exports.predefinedEntities = predefinedEntities;

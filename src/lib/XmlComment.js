@@ -29,7 +29,7 @@ class XmlComment extends XmlNode {
 
   toJSON() {
     return Object.assign(XmlNode.prototype.toJSON.call(this), {
-      content: this.content
+      content: this.content,
     });
   }
 }

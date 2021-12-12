@@ -578,7 +578,7 @@ class Parser {
       if (parsedValue === undefined) {
         let {
           ignoreUndefinedEntities,
-          resolveUndefinedEntity
+          resolveUndefinedEntity,
         } = this.options;
 
         let wrappedRef = `&${ref};`; // for backcompat with <= 2.x
@@ -757,14 +757,14 @@ class Parser {
     let err = new Error(
       `${message} (line ${line}, column ${column})\n`
         + `  ${excerpt}\n`
-        + ' '.repeat(column - excerptStart + 1) + '^\n'
+        + ' '.repeat(column - excerptStart + 1) + '^\n',
     );
 
     Object.assign(err, {
       column,
       excerpt,
       line,
-      pos: charIndex
+      pos: charIndex,
     });
 
     throw err;

@@ -44,7 +44,7 @@ describe('XmlElement', () => {
         b: '  a > b  < c ',
         a: "'foo'",
         c: '"foo"',
-        '🤔': '😼'
+        '🤔': '😼',
       });
 
       assert.deepEqual(Object.keys(root.attributes), [ 'b', 'a', 'c', '🤔' ]);

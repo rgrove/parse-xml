@@ -40,7 +40,7 @@ class XmlProcessingInstruction extends XmlNode {
   toJSON() {
     return Object.assign(XmlNode.prototype.toJSON.call(this), {
       name: this.name,
-      content: this.content
+      content: this.content,
     });
   }
 }

@@ -134,7 +134,7 @@ describe('StringScanner', () => {
           s.consumeMatch(/a/);
         }, {
           name: 'Error',
-          message:'`regex` must have a sticky flag ("y")'
+          message:'`regex` must have a sticky flag ("y")',
         });
       });
     });
@@ -234,7 +234,7 @@ describe('StringScanner', () => {
           s.consumeUntilMatch(/a/);
         }, {
           name: 'Error',
-          message:'`regex` must have a global flag ("g")'
+          message:'`regex` must have a global flag ("g")',
         });
       });
     });

@@ -13,14 +13,14 @@ module.exports = {
 
   module: {
     rules: [{
-      test: /\.js$/
-    }]
+      test: /\.js$/,
+    }],
   },
 
   output: {
     filename: '[name].js',
     library: '[name]',
-    libraryTarget: 'umd'
+    libraryTarget: 'umd',
   },
 
   plugins: [
@@ -36,6 +36,6 @@ module.exports = {
       assert: require.resolve('assert'),
       fs: false,
       path: require.resolve('path-browserify'),
-    }
-  }
+    },
+  },
 };

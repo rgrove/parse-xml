@@ -29,7 +29,7 @@ class XmlText extends XmlNode {
 
   toJSON() {
     return Object.assign(XmlNode.prototype.toJSON.call(this), {
-      text: this.text
+      text: this.text,
     });
   }
 }

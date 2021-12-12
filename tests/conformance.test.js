@@ -228,7 +228,7 @@ function createTest(testRoot, test) {
         assert.equal(
           JSON.stringify(inputDoc, null, 2),
           JSON.stringify(outputDoc, null, 2),
-          description
+          description,
         );
       });
     }
@@ -262,7 +262,7 @@ function loadTestSuite(filename, cb) {
     try {
       suite = {
         doc: parseXml(xml),
-        filename
+        filename,
       };
     } catch (ex) {
       return void cb(ex);
