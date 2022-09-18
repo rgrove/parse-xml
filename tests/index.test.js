@@ -2,9 +2,18 @@
 'use strict';
 
 const assert = require('assert');
-const parseXml = require('../src');
 
-const { XmlDocument, XmlElement, XmlNode } = parseXml;
+const { parseXml, XmlCdata, XmlComment, XmlDocument, XmlElement, XmlNode, XmlProcessingInstruction, XmlText } = require('..');
+
+it('exports XML node classes', () => {
+  assert.equal(typeof XmlCdata, 'function');
+  assert.equal(typeof XmlComment, 'function');
+  assert.equal(typeof XmlDocument, 'function');
+  assert.equal(typeof XmlElement, 'function');
+  assert.equal(typeof XmlNode, 'function');
+  assert.equal(typeof XmlProcessingInstruction, 'function');
+  assert.equal(typeof XmlText, 'function');
+});
 
 describe('parseXml()', () => {
   it('parses an XML string and returns an `XmlDocument`', () => {
@@ -19,15 +28,5 @@ describe('parseXml()', () => {
   it('passes `options` to the parser', () => {
     let doc = parseXml('<!-- hi --><root />', { preserveComments: true });
     assert.strictEqual(doc.children[0].type, XmlNode.TYPE_COMMENT);
-  });
-
-  it('includes static references to all XML node classes', () => {
-    assert(parseXml.XmlCdata);
-    assert(parseXml.XmlComment);
-    assert(parseXml.XmlDocument);
-    assert(parseXml.XmlElement);
-    assert(parseXml.XmlNode);
-    assert(parseXml.XmlProcessingInstruction);
-    assert(parseXml.XmlText);
   });
 });

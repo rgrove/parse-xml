@@ -2,7 +2,8 @@
 'use strict';
 
 const assert = require('assert');
-const StringScanner = require('../../src/lib/StringScanner');
+
+const { StringScanner } = require('../../dist/lib/StringScanner');
 
 describe('StringScanner', () => {
   describe('charCount', () => {

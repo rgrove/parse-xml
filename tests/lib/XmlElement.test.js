@@ -2,9 +2,8 @@
 'use strict';
 
 const assert = require('assert');
-const parseXml = require('../../src');
 
-const { XmlElement, XmlNode, XmlText } = parseXml;
+const { parseXml, XmlElement, XmlNode, XmlText } = require('../..');
 
 describe('XmlElement', () => {
   let options;

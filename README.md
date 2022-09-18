@@ -10,9 +10,9 @@ A fast, safe, compliant XML parser for Node.js and browsers.
 npm install @rgrove/parse-xml
 ```
 
-Or, if you like living dangerously, you can load [the minified UMD bundle][umd] in a browser via [Unpkg] and use the `parseXml` global.
+Or, if you like living dangerously, you can load [the minified bundle][bundle] in a browser via [Unpkg] and use the `parseXml` global.
 
-[umd]:https://unpkg.com/@rgrove/parse-xml/dist/umd/parse-xml.min.js
+[bundle]:https://unpkg.com/@rgrove/parse-xml/dist/bundle.min.js
 [Unpkg]:https://unpkg.com/
 
 ## Features
@@ -43,9 +43,18 @@ See [API.md](API.md) for complete API docs.
 
 ### Basic Usage
 
+**ESM**
+
 ```js
-const parseXml = require('@rgrove/parse-xml');
-let doc = parseXml('<kittens fuzzy="yes">I like fuzzy kittens.</kittens>');
+import { parseXml } from '@rgrove/parse-xml';
+parseXml('<kittens fuzzy="yes">I like fuzzy kittens.</kittens>');
+```
+
+**CommonJS**
+
+```js
+const { parseXml } = require('@rgrove/parse-xml');
+parseXml('<kittens fuzzy="yes">I like fuzzy kittens.</kittens>');
 ```
 
 The result is an [`XmlDocument`] instance containing the parsed document, with a structure that looks like this (some properties and methods are excluded for clarity; see the [API docs](API.md) for details):

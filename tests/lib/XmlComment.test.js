@@ -2,9 +2,8 @@
 'use strict';
 
 const assert = require('assert');
-const parseXml = require('../../src');
 
-const { XmlComment, XmlNode } = parseXml;
+const { parseXml, XmlComment, XmlNode } = require('../..');
 
 describe('XmlComment', () => {
   it("isn't emitted by default", () => {

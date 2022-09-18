@@ -2,9 +2,8 @@
 'use strict';
 
 const assert = require('assert');
-const parseXml = require('../../src');
 
-const { XmlNode, XmlText } = parseXml;
+const { parseXml, XmlNode, XmlText } = require('../..');
 
 describe('XmlText', () => {
   it('is emitted by the parser', () => {

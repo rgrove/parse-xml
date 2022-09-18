@@ -3,10 +3,11 @@
 'use strict';
 
 const assert = require('assert');
-const mapLimit = require('async/mapLimit');
 const path = require('path');
 
-const parseXml = require('../src');
+const mapLimit = require('async/mapLimit');
+
+const { parseXml } = require('..');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
 const XMLCONF_ROOT = path.resolve(__dirname, 'fixtures/xmlconf');
@@ -283,7 +284,6 @@ function readXml(filename, testId, cb) {
 }
 
 function readXmlBrowser(filename, encoding, cb) {
-  /* global XMLHttpRequest */
   let req = new XMLHttpRequest();
 
   req.addEventListener('error', () => {

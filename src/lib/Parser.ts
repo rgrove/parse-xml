@@ -1,77 +1,111 @@
-'use strict';
+import { StringScanner } from './StringScanner.js';
+import * as syntax from './syntax.js';
+import { XmlCdata } from './XmlCdata.js';
+import { XmlComment } from './XmlComment.js';
+import { XmlDocument } from './XmlDocument.js';
+import { XmlElement } from './XmlElement.js';
+import { XmlProcessingInstruction } from './XmlProcessingInstruction.js';
+import { XmlText } from './XmlText.js';
 
-const StringScanner = require('./StringScanner');
-const syntax = require('./syntax');
-const XmlCdata = require('./XmlCdata');
-const XmlComment = require('./XmlComment');
-const XmlDocument = require('./XmlDocument');
-const XmlElement = require('./XmlElement');
-const XmlProcessingInstruction = require('./XmlProcessingInstruction');
-const XmlText = require('./XmlText');
+import type { XmlNode } from './XmlNode.js';
+
+export type ParserOptions = {
+  /**
+   * When `true`, an undefined named entity (like "&bogus;") will be left in the
+   * output as is instead of causing a parse error.
+   *
+   * @default false
+   */
+  ignoreUndefinedEntities?: boolean;
+
+  /**
+   * When `true`, CDATA sections will be preserved in the document as `XmlCdata`
+   * nodes. Otherwise CDATA sections will be represented as `XmlText` nodes,
+   * which keeps the node tree simpler and easier to work with.
+   *
+   * @default false
+   */
+  preserveCdata?: boolean;
+
+  /**
+   * When `true`, comments will be preserved in the document as `XmlComment`
+   * nodes. Otherwise comments will not be included in the node tree.
+   *
+   * @default false
+   */
+  preserveComments?: boolean;
+
+  /**
+   * When an undefined named entity is encountered, this function will be called
+   * with the entity as its only argument. It should return a string value with
+   * which to replace the entity, or `null` or `undefined` to treat the entity
+   * as undefined (which may result in a parse error depending on the value of
+   * `ignoreUndefinedEntities`).
+   */
+  resolveUndefinedEntity?: (entity: string) => string | null | undefined;
+
+  /**
+   * When `true`, attributes in an element's `attributes` object will be sorted
+   * in alphanumeric order by name. Otherwise they'll retain their original
+   * order as found in the XML.
+   *
+   * @default false
+   */
+  sortAttributes?: boolean;
+};
 
 const emptyString = '';
 
 /**
-Parses an XML string into an `XmlDocument`.
+ * Parses an XML string into an `XmlDocument`.
+ *
+ * @private
+ */
+export class Parser {
+  readonly document: XmlDocument;
 
-@private
-*/
-class Parser {
+  private currentNode: XmlDocument | XmlElement;
+  private readonly options: ParserOptions;
+  private readonly scanner: StringScanner;
+
   /**
-  @param {string} xml
-    XML string to parse.
-
-  @param {object} [options]
-    Parsing options.
-
-    @param {boolean} [options.ignoreUndefinedEntities=false]
-    @param {boolean} [options.preserveCdata=false]
-    @param {boolean} [options.preserveComments=false]
-    @param {(entity: string) => string?} [options.resolveUndefinedEntity]
-    @param {boolean} [options.sortAttributes=false]
-  */
-  constructor(xml, options = {}) {
-    /** @type {XmlDocument} */
+   * @param xml XML string to parse.
+   * @param options Parser options.
+   */
+  constructor(xml: string, options: ParserOptions = {}) {
     this.document = new XmlDocument();
-
-    /** @type {XmlDocument|XmlElement} */
     this.currentNode = this.document;
-
     this.options = options;
     this.scanner = new StringScanner(normalizeXmlString(xml));
 
     this.consumeProlog();
 
     if (!this.consumeElement()) {
-      this.error('Root element is missing or invalid');
+      throw this.error('Root element is missing or invalid');
     }
 
     while (this.consumeMisc()) {} // eslint-disable-line no-empty
 
     if (!this.scanner.isEnd) {
-      this.error('Extra content at the end of the document');
+      throw this.error('Extra content at the end of the document');
     }
   }
 
   /**
-  Adds the given `XmlNode` as a child of `this.currentNode`.
-
-  @param {XmlNode} node
-  */
-  addNode(node) {
+   * Adds the given `XmlNode` as a child of `this.currentNode`.
+   */
+  addNode(node: XmlNode) {
     node.parent = this.currentNode;
 
-    // @ts-ignore
+    // @ts-expect-error: TODO: improve this
     this.currentNode.children.push(node);
   }
 
   /**
-  Adds the given _text_ to the document, either by appending it to a preceding
-  `XmlText` node (if possible) or by creating a new `XmlText` node.
-
-  @param {string} text
-  */
-  addText(text) {
+   * Adds the given _text_ to the document, either by appending it to a
+   * preceding `XmlText` node (if possible) or by creating a new `XmlText` node.
+   */
+  addText(text: string) {
     let { children } = this.currentNode;
 
     if (children.length > 0) {
@@ -89,15 +123,16 @@ class Parser {
   }
 
   /**
-  Consumes an `AttValue` (attribute value) if possible.
-
-  @returns {string|false}
-    Contents of the `AttValue` minus quotes, or `false` if nothing was consumed.
-    An empty string indicates that an `AttValue` was consumed but was empty.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-AttValue
-  */
-  consumeAttributeValue() {
+   * Consumes an `AttValue` (attribute value) if possible.
+   *
+   * @returns
+   *   Contents of the `AttValue` minus quotes, or `false` if nothing was
+   *   consumed. An empty string indicates that an `AttValue` was consumed but
+   *   was empty.
+   *
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-AttValue
+   */
+  consumeAttributeValue(): string | false {
     let { scanner } = this;
     let quote = scanner.peek();
 
@@ -134,18 +169,16 @@ class Parser {
           continue;
 
         case '<':
-          this.error('Unescaped `<` is not allowed in an attribute value'); /* istanbul ignore next */
-          break;
+          throw this.error('Unescaped `<` is not allowed in an attribute value');
 
         case emptyString:
-          this.error('Unclosed attribute'); /* istanbul ignore next */
-          break;
+          throw this.error('Unclosed attribute');
 
       }
     }
 
     if (!isClosed) {
-      this.error('Unclosed attribute');
+      throw this.error('Unclosed attribute');
     }
 
     scanner.advance();
@@ -153,14 +186,12 @@ class Parser {
   }
 
   /**
-  Consumes a CDATA section if possible.
-
-  @returns {boolean}
-    Whether a CDATA section was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-cdata-sect
-  */
-  consumeCdataSection() {
+   * Consumes a CDATA section if possible.
+   *
+   * @returns Whether a CDATA section was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-cdata-sect
+   */
+  consumeCdataSection(): boolean {
     let { scanner } = this;
 
     if (!scanner.consumeStringFast('<![CDATA[')) {
@@ -171,7 +202,7 @@ class Parser {
     this.validateChars(text);
 
     if (!scanner.consumeStringFast(']]>')) {
-      this.error('Unclosed CDATA section');
+      throw this.error('Unclosed CDATA section');
     }
 
     if (this.options.preserveCdata) {
@@ -184,14 +215,12 @@ class Parser {
   }
 
   /**
-  Consumes character data if possible.
-
-  @returns {boolean}
-    Whether character data was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#dt-chardata
-  */
-  consumeCharData() {
+   * Consumes character data if possible.
+   *
+   * @returns Whether character data was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#dt-chardata
+   */
+  consumeCharData(): boolean {
     let { scanner } = this;
     let charData = scanner.consumeUntilMatch(/<|&|]]>/g);
 
@@ -202,7 +231,7 @@ class Parser {
     this.validateChars(charData);
 
     if (scanner.peek() === ']' && scanner.peek(3) === ']]>') {
-      this.error('Element content may not contain the CDATA section close delimiter `]]>`');
+      throw this.error('Element content may not contain the CDATA section close delimiter `]]>`');
     }
 
     this.addText(charData);
@@ -210,14 +239,12 @@ class Parser {
   }
 
   /**
-  Consumes a comment if possible.
-
-  @returns {boolean}
-    Whether a comment was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Comment
-  */
-  consumeComment() {
+   * Consumes a comment if possible.
+   *
+   * @returns Whether a comment was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Comment
+   */
+  consumeComment(): boolean {
     let { scanner } = this;
 
     if (!scanner.consumeStringFast('<!--')) {
@@ -229,10 +256,10 @@ class Parser {
 
     if (!scanner.consumeStringFast('-->')) {
       if (scanner.peek(2) === '--') {
-        this.error("The string `--` isn't allowed inside a comment");
-      } else {
-        this.error('Unclosed comment');
+        throw this.error("The string `--` isn't allowed inside a comment");
       }
+
+      throw this.error('Unclosed comment');
     }
 
     if (this.options.preserveComments) {
@@ -243,17 +270,15 @@ class Parser {
   }
 
   /**
-  Consumes a reference in a content context if possible.
-
-  This differs from `consumeReference()` in that a consumed reference will be
-  added to the document as a text node instead of returned.
-
-  @returns {boolean}
-    Whether a reference was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#entproc
-  */
-  consumeContentReference() {
+   * Consumes a reference in a content context if possible.
+   *
+   * This differs from `consumeReference()` in that a consumed reference will be
+   * added to the document as a text node instead of returned.
+   *
+   * @returns Whether a reference was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#entproc
+   */
+  consumeContentReference(): boolean {
     let ref = this.consumeReference();
 
     if (ref) {
@@ -265,17 +290,15 @@ class Parser {
   }
 
   /**
-  Consumes a doctype declaration if possible.
-
-  This is a loose implementation since doctype declarations are currently
-  discarded without further parsing.
-
-  @returns {boolean}
-    Whether a doctype declaration was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#dtd
-  */
-  consumeDoctypeDeclaration() {
+   * Consumes a doctype declaration if possible.
+   *
+   * This is a loose implementation since doctype declarations are currently
+   * discarded without further parsing.
+   *
+   * @returns Whether a doctype declaration was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#dtd
+   */
+  consumeDoctypeDeclaration(): boolean {
     let { scanner } = this;
 
     if (!scanner.consumeStringFast('<!DOCTYPE')
@@ -291,21 +314,19 @@ class Parser {
     }
 
     if (!scanner.consumeStringFast('>')) {
-      this.error('Unclosed doctype declaration');
+      throw this.error('Unclosed doctype declaration');
     }
 
     return true;
   }
 
   /**
-  Consumes an element if possible.
-
-  @returns {boolean}
-    Whether an element was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-element
-  */
-  consumeElement() {
+   * Consumes an element if possible.
+   *
+   * @returns Whether an element was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-element
+   */
+  consumeElement(): boolean {
     let { scanner } = this;
     let mark = scanner.charIndex;
 
@@ -334,18 +355,18 @@ class Parser {
         && this.consumeAttributeValue();
 
       if (attrValue === false) {
-        this.error('Attribute value expected');
+        throw this.error('Attribute value expected');
       }
 
       if (attrName in attributes) {
-        this.error(`Duplicate attribute: ${attrName}`);
+        throw this.error(`Duplicate attribute: ${attrName}`);
       }
 
       if (attrName === 'xml:space'
           && attrValue !== 'default'
           && attrValue !== 'preserve') {
 
-        this.error('Value of the `xml:space` attribute must be "default" or "preserve"');
+        throw this.error('Value of the `xml:space` attribute must be "default" or "preserve"');
       }
 
       attributes[attrName] = attrValue;
@@ -356,7 +377,7 @@ class Parser {
       let sortedAttributes = Object.create(null);
 
       for (let i = 0; i < attrNames.length; ++i) {
-        let attrName = attrNames[i];
+        let attrName = attrNames[i] as string;
         sortedAttributes[attrName] = attributes[attrName];
       }
 
@@ -370,7 +391,7 @@ class Parser {
 
     if (!isEmpty) {
       if (!scanner.consumeStringFast('>')) {
-        this.error(`Unclosed start tag for element \`${name}\``);
+        throw this.error(`Unclosed start tag for element \`${name}\``);
       }
 
       this.currentNode = element;
@@ -394,13 +415,13 @@ class Parser {
           || endTagName !== name) {
 
         scanner.reset(endTagMark);
-        this.error(`Missing end tag for element ${name}`);
+        throw this.error(`Missing end tag for element ${name}`);
       }
 
       this.consumeWhitespace();
 
       if (!scanner.consumeStringFast('>')) {
-        this.error(`Unclosed end tag for element ${name}`);
+        throw this.error(`Unclosed end tag for element ${name}`);
       }
 
       this.currentNode = element.parent;
@@ -411,14 +432,12 @@ class Parser {
   }
 
   /**
-  Consumes an `Eq` production if possible.
-
-  @returns {boolean}
-    Whether an `Eq` production was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Eq
-  */
-  consumeEqual() {
+   * Consumes an `Eq` production if possible.
+   *
+   * @returns Whether an `Eq` production was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Eq
+   */
+  consumeEqual(): boolean {
     this.consumeWhitespace();
 
     if (this.scanner.consumeStringFast('=')) {
@@ -430,42 +449,36 @@ class Parser {
   }
 
   /**
-  Consumes `Misc` content if possible.
-
-  @returns {boolean}
-    Whether anything was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Misc
-  */
-  consumeMisc() {
+   * Consumes `Misc` content if possible.
+   *
+   * @returns Whether anything was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Misc
+   */
+  consumeMisc(): boolean {
     return this.consumeComment()
       || this.consumeProcessingInstruction()
       || this.consumeWhitespace();
   }
 
   /**
-  Consumes one or more `Name` characters if possible.
-
-  @returns {string}
-    `Name` characters, or an empty string if none were consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Name
-  */
-  consumeName() {
+   * Consumes one or more `Name` characters if possible.
+   *
+   * @returns `Name` characters, or an empty string if none were consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Name
+   */
+  consumeName(): string {
     return syntax.isNameStartChar(this.scanner.peek())
       ? this.scanner.consumeMatchFn(syntax.isNameChar)
       : emptyString;
   }
 
   /**
-  Consumes a processing instruction if possible.
-
-  @returns {boolean}
-    Whether a processing instruction was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-pi
-  */
-  consumeProcessingInstruction() {
+   * Consumes a processing instruction if possible.
+   *
+   * @returns Whether a processing instruction was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-pi
+   */
+  consumeProcessingInstruction(): boolean {
     let { scanner } = this;
     let mark = scanner.charIndex;
 
@@ -478,10 +491,10 @@ class Parser {
     if (name) {
       if (name.toLowerCase() === 'xml') {
         scanner.reset(mark);
-        this.error("XML declaration isn't allowed here");
+        throw this.error("XML declaration isn't allowed here");
       }
     } else {
-      this.error('Invalid processing instruction');
+      throw this.error('Invalid processing instruction');
     }
 
     if (!this.consumeWhitespace()) {
@@ -490,14 +503,14 @@ class Parser {
         return true;
       }
 
-      this.error('Whitespace is required after a processing instruction name');
+      throw this.error('Whitespace is required after a processing instruction name');
     }
 
     let content = scanner.consumeUntilString('?>');
     this.validateChars(content);
 
     if (!scanner.consumeStringFast('?>')) {
-      this.error('Unterminated processing instruction');
+      throw this.error('Unterminated processing instruction');
     }
 
     this.addNode(new XmlProcessingInstruction(name, content));
@@ -505,14 +518,12 @@ class Parser {
   }
 
   /**
-  Consumes a prolog if possible.
-
-  @returns {boolean}
-    Whether a prolog was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-prolog-dtd
-  */
-  consumeProlog() {
+   * Consumes a prolog if possible.
+   *
+   * @returns Whether a prolog was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-prolog-dtd
+   */
+  consumeProlog(): boolean {
     let { scanner } = this;
     let mark = scanner.charIndex;
 
@@ -528,18 +539,18 @@ class Parser {
   }
 
   /**
-  Consumes a reference if possible.
-
-  This differs from `consumeContentReference()` in that a consumed reference
-  will be returned rather than added to the document.
-
-  @returns {string|false}
-    Parsed reference value, or `false` if nothing was consumed (to distinguish
-    from a reference that resolves to an empty string).
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Reference
-  */
-  consumeReference() {
+   * Consumes a reference if possible.
+   *
+   * This differs from `consumeContentReference()` in that a consumed reference
+   * will be returned rather than added to the document.
+   *
+   * @returns
+   *   Parsed reference value, or `false` if nothing was consumed (to
+   *   distinguish from a reference that resolves to an empty string).
+   *
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Reference
+   */
+  consumeReference(): string | false {
     let { scanner } = this;
 
     if (scanner.peek() !== '&') {
@@ -551,7 +562,7 @@ class Parser {
     let ref = scanner.consumeMatchFn(syntax.isReferenceChar);
 
     if (scanner.consume() !== ';') {
-      this.error('Unterminated reference (a reference must end with `;`)');
+      throw this.error('Unterminated reference (a reference must end with `;`)');
     }
 
     let parsedValue;
@@ -563,13 +574,13 @@ class Parser {
         : parseInt(ref.slice(1), 10); // Decimal codepoint.
 
       if (isNaN(codePoint)) {
-        this.error('Invalid character reference');
+        throw this.error('Invalid character reference');
       }
 
       parsedValue = String.fromCodePoint(codePoint);
 
       if (!syntax.isXmlChar(parsedValue)) {
-        this.error('Character reference resolves to an invalid character');
+        throw this.error('Character reference resolves to an invalid character');
       }
     } else {
       // This is an entity reference.
@@ -602,7 +613,7 @@ class Parser {
         }
 
         scanner.reset(-wrappedRef.length);
-        this.error(`Named entity isn't defined: ${wrappedRef}`);
+        throw this.error(`Named entity isn't defined: ${wrappedRef}`);
       }
     }
 
@@ -610,19 +621,19 @@ class Parser {
   }
 
   /**
-  Consumes a `SystemLiteral` if possible.
-
-  A `SystemLiteral` is similar to an attribute value, but allows the characters
-  `<` and `&` and doesn't replace references.
-
-  @returns {string|false}
-    Value of the `SystemLiteral` minus quotes, or `false` if nothing was
-    consumed. An empty string indicates that a `SystemLiteral` was consumed but
-    was empty.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-SystemLiteral
-  */
-  consumeSystemLiteral() {
+   * Consumes a `SystemLiteral` if possible.
+   *
+   * A `SystemLiteral` is similar to an attribute value, but allows the
+   * characters `<` and `&` and doesn't replace references.
+   *
+   * @returns
+   *   Value of the `SystemLiteral` minus quotes, or `false` if nothing was
+   *   consumed. An empty string indicates that a `SystemLiteral` was consumed
+   *   but was empty.
+   *
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-SystemLiteral
+   */
+  consumeSystemLiteral(): string | false {
     let { scanner } = this;
     let quote = scanner.consumeStringFast('"') || scanner.consumeStringFast("'");
 
@@ -634,33 +645,29 @@ class Parser {
     this.validateChars(value);
 
     if (!scanner.consumeStringFast(quote)) {
-      this.error('Missing end quote');
+      throw this.error('Missing end quote');
     }
 
     return value;
   }
 
   /**
-  Consumes one or more whitespace characters if possible.
-
-  @returns {boolean}
-    Whether any whitespace characters were consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#white
-  */
-  consumeWhitespace() {
+   * Consumes one or more whitespace characters if possible.
+   *
+   * @returns Whether any whitespace characters were consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#white
+   */
+  consumeWhitespace(): boolean {
     return Boolean(this.scanner.consumeMatchFn(syntax.isWhitespace));
   }
 
   /**
-  Consumes an XML declaration if possible.
-
-  @returns {boolean}
-    Whether an XML declaration was consumed.
-
-  @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-XMLDecl
-  */
-  consumeXmlDeclaration() {
+   * Consumes an XML declaration if possible.
+   *
+   * @returns Whether an XML declaration was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-XMLDecl
+   */
+  consumeXmlDeclaration(): boolean {
     let { scanner } = this;
 
     if (!scanner.consumeStringFast('<?xml')) {
@@ -668,7 +675,7 @@ class Parser {
     }
 
     if (!this.consumeWhitespace()) {
-      this.error('Invalid XML declaration');
+      throw this.error('Invalid XML declaration');
     }
 
     let version = Boolean(scanner.consumeStringFast('version'))
@@ -676,9 +683,9 @@ class Parser {
       && this.consumeSystemLiteral();
 
     if (version === false) {
-      this.error('XML version is missing or invalid');
+      throw this.error('XML version is missing or invalid');
     } else if (!/^1\.[0-9]+$/.test(version)) {
-      this.error('Invalid character in version number');
+      throw this.error('Invalid character in version number');
     }
 
     if (this.consumeWhitespace()) {
@@ -696,7 +703,7 @@ class Parser {
 
       if (standalone) {
         if (standalone !== 'yes' && standalone !== 'no') {
-          this.error('Only "yes" and "no" are permitted as values of `standalone`');
+          throw this.error('Only "yes" and "no" are permitted as values of `standalone`');
         }
 
         this.consumeWhitespace();
@@ -704,18 +711,16 @@ class Parser {
     }
 
     if (!scanner.consumeStringFast('?>')) {
-      this.error('Invalid or unclosed XML declaration');
+      throw this.error('Invalid or unclosed XML declaration');
     }
 
     return true;
   }
 
   /**
-  Throws an error at the current scanner position.
-
-  @param {string} message
-  */
-  error(message) {
+   * Throws an error at the current scanner position.
+   */
+  error(message: string) {
     let { charIndex, string: xml } = this.scanner;
     let column = 1;
     let excerpt = '';
@@ -767,22 +772,20 @@ class Parser {
       pos: charIndex,
     });
 
-    throw err;
+    return err;
   }
 
   /**
-  Throws an invalid character error if any character in the given _string_ isn't
-  a valid XML character.
-
-  @param {string} string
-  */
-  validateChars(string) {
+   * Throws an invalid character error if any character in the given _string_
+   * isn't a valid XML character.
+   */
+  validateChars(string: string) {
     let charIndex = 0;
 
     for (let char of string) {
       if (syntax.isNotXmlChar(char)) {
         this.scanner.reset(-([ ...string ].length - charIndex));
-        this.error('Invalid character');
+        throw this.error('Invalid character');
       }
 
       charIndex += 1;
@@ -790,23 +793,16 @@ class Parser {
   }
 }
 
-module.exports = Parser;
-
 // -- Private Functions --------------------------------------------------------
 
 /**
-Normalizes the given XML string by stripping a byte order mark (if present) and
-replacing CRLF sequences and lone CR characters with LF characters.
-
-@param {string} xml
-@returns {string}
-*/
-function normalizeXmlString(xml) {
+ * Normalizes the given XML string by stripping a byte order mark (if present)
+ * and replacing CRLF sequences and lone CR characters with LF characters.
+ */
+function normalizeXmlString(xml: string): string {
   if (xml[0] === '\uFEFF') {
     xml = xml.slice(1);
   }
 
   return xml.replace(/\r\n?/g, '\n');
 }
-
-/** @typedef {import('./XmlNode')} XmlNode */

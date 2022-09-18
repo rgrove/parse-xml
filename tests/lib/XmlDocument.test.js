@@ -2,9 +2,8 @@
 'use strict';
 
 const assert = require('assert');
-const parseXml = require('../../src');
 
-const { XmlDocument, XmlNode } = parseXml;
+const { parseXml, XmlComment, XmlDocument, XmlElement, XmlNode } = require('../..');
 
 describe('XmlDocument', () => {
   describe('is emitted by the parser', () => {
@@ -15,10 +14,21 @@ describe('XmlDocument', () => {
     assert.strictEqual(JSON.stringify(parseXml('<root />')), '{"type":"document","children":[{"type":"element","isRootNode":true,"name":"root","attributes":{},"children":[]}]}');
   });
 
-  describe('constructor', () => {
-    it("defaults `children` to an empty array if it's not provided", () => {
+  describe('children', () => {
+    it("defaults to an empty array", () => {
       let doc = new XmlDocument();
       assert.deepStrictEqual(doc.children, []);
+    });
+
+    it("may be set by the constructor", () => {
+      let doc = new XmlDocument([
+        new XmlElement('foo'),
+        new XmlComment('this is a comment'),
+      ]);
+
+      assert.strictEqual(doc.children.length, 2);
+      assert.strictEqual(doc.children[0].name, 'foo');
+      assert.strictEqual(doc.children[1].content, 'this is a comment');
     });
   });
 
@@ -37,7 +47,9 @@ describe('XmlDocument', () => {
 
   describe('root', () => {
     it('is the root element of the document', () => {
-      let doc = parseXml('<root />');
+      let doc = parseXml('<?xml version="1.0"?><!-- comment --><root /><!-- comment -->', {
+        preserveComments: true,
+      });
       assert.strictEqual(doc.root.type, XmlNode.TYPE_ELEMENT);
       assert.strictEqual(doc.root.name, 'root');
     });

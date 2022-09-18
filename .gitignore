@@ -8,3 +8,4 @@ tmp/
 .eslintcache
 package-lock.json
 pnpm-lock.yaml
+tsconfig.tsbuildinfo

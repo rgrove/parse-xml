@@ -2,6 +2,55 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.0.0 (git)
+
+parse-xml has been rewritten in TypeScript. The API is unchanged, but the `parseXml()` function is now a named export rather than a default export, which will require a small change to how you import it. See below for details.
+
+### Breaking Changes
+
+-   The `parseXml()` function is now a named export rather than the default export. Please update your `import` and `require` statements accordingly:
+
+    **ESM**
+
+    ```diff
+    -import parseXml from '@rgrove/parse-xml';
+    +import { parseXml } from '@rgrove/parse-xml';
+    ```
+
+    **CommonJS**
+
+    ```diff
+    -const parseXml = require('@rgrove/parse-xml');
+    +const { parseXml } = require('@rgrove/parse-xml');
+    ```
+
+-   XML node classes (`XmlNode`, `XmlDocument`, `XmlElement`, etc.) are now named exports of the `@rgrove/parse-xml` package rather than properties on the `parseXml()` function. This is unlikely to affect most people since there aren't many reasons to use these classes directly.
+
+    **ESM**
+
+    ```diff
+    -import parseXml from '@rgrove/parse-xml';
+    -const { XmlNode } = parseXml;
+    +import { parseXml, XmlNode } from '@rgrove/parse-xml';
+    ```
+
+    **CommonJS**
+
+    ```diff
+    -const parseXml = require('@rgrove/parse-xml');
+    -const { XmlNode } = parseXml;
+    +const { parseXml, XmlNode } = require('@rgrove/parse-xml');
+    ```
+
+-   The minified browser bundle, which was previously located at `dist/umd/parse-xml.min.js`, is now located at `dist/bundle.min.js`. This is unlikely to affect most people because this bundle isn't used by Node.js or by browser bundlers like webpack. It's only a convenience for people who want to load parse-xml directly from a CDN like unpkg with a `<script>` element and use it as a global.
+
+    ```diff
+    -<script src="https://unpkg.com/@rgrove/parse-xml@3.0.0/dist/umd/parse-xml.min.js"></script>
+    +<script src="https://unpkg.com/@rgrove/parse-xml@4.0.0/dist/bundle.min.js"></script>
+    ```
+
+-   Node.js 12 is no longer supported. Node.js 14 is now the minimum supported version.
+
 ## 3.0.0 (2021-01-23)
 
 This release includes significant changes under the hood (such as a brand new parser!), but backwards compatibility has been a high priority. Most users should be able to upgrade without needing to make any changes (or with only minimal changes).
