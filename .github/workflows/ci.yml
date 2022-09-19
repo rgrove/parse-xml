@@ -1,4 +1,4 @@
-name: Test & Lint
+name: CI
 on: [ push, pull_request ]
 
 jobs:
@@ -19,6 +19,10 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
 
-      - run: npm install
-      - run: npm test
-      - run: npm run lint
+      - uses: pnpm/action-setup@10693b3829bf86eb2572aef5f3571dcf5ca9287d # v2.2.2
+        with:
+          version: ^7.11.0
+          run_install: true
+
+      - run: pnpm test
+      - run: pnpm lint

@@ -28,14 +28,15 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          cache: npm
           node-version: lts/*
 
-      - name: Install dependencies
-        run: npm install
+      - uses: pnpm/action-setup@10693b3829bf86eb2572aef5f3571dcf5ca9287d # v2.2.2
+        with:
+          version: ^7.11.0
+          run_install: true
 
       - name: Build docs
-        run: npm run build:docs
+        run: pnpm build:docs
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
