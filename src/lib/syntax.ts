@@ -17,10 +17,6 @@ export const predefinedEntities: Readonly<{[name: string]: string;}> = Object.fr
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameChar
  */
 export function isNameChar(char: string): boolean {
-  if (isNameStartChar(char)) {
-    return true;
-  }
-
   let cp = getCodePoint(char);
 
   return cp === 0x2D // -
@@ -28,7 +24,8 @@ export function isNameChar(char: string): boolean {
     || (cp >= 0x30 && cp <= 0x39) // 0-9
     || cp === 0xB7
     || (cp >= 0x300 && cp <= 0x36F)
-    || (cp >= 0x203F && cp <= 0x2040);
+    || (cp >= 0x203F && cp <= 0x2040)
+    || isNameStartChar(char, cp);
 }
 
 /**
@@ -36,9 +33,7 @@ export function isNameChar(char: string): boolean {
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameStartChar
  */
-export function isNameStartChar(char: string): boolean {
-  let cp = getCodePoint(char);
-
+export function isNameStartChar(char: string, cp = getCodePoint(char)): boolean {
   return cp === 0x3A // :
     || cp === 0x5F // _
     || (cp >= 0x41 && cp <= 0x5A) // A-Z
