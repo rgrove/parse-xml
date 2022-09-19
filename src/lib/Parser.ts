@@ -97,7 +97,9 @@ export class Parser {
   addNode(node: XmlNode) {
     node.parent = this.currentNode;
 
-    // @ts-expect-error: TODO: improve this
+    // @ts-expect-error: XmlDocument has a more limited set of possible children
+    // than XmlElement so TypeScript is unhappy, but we always do the right
+    // thing.
     this.currentNode.children.push(node);
   }
 
