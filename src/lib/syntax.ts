@@ -58,15 +58,6 @@ export function isNameStartChar(char: string): boolean {
 }
 
 /**
- * Returns `true` if _char_ is not a valid XML `Char`, `false` otherwise.
- *
- * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Char
- */
-export function isNotXmlChar(char: string): boolean {
-  return !isXmlChar(char);
-}
-
-/**
  * Returns `true` if _char_ is a valid reference character (which may appear
  * between `&` and `;` in a reference), `false` otherwise.
  *

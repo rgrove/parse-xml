@@ -785,7 +785,7 @@ export class Parser {
     let charIndex = 0;
 
     for (let char of string) {
-      if (syntax.isNotXmlChar(char)) {
+      if (!syntax.isXmlChar(char)) {
         this.scanner.reset(-([ ...string ].length - charIndex));
         throw this.error('Invalid character');
       }
