@@ -4,6 +4,10 @@ A fast, safe, compliant XML parser for Node.js and browsers.
 
 [![npm version](https://badge.fury.io/js/%40rgrove%2Fparse-xml.svg)](https://badge.fury.io/js/%40rgrove%2Fparse-xml) [![Bundle size](https://badgen.net/bundlephobia/minzip/@rgrove/parse-xml)](https://bundlephobia.com/result?p=@rgrove/parse-xml) [![Test & Lint](https://github.com/rgrove/parse-xml/workflows/Test%20&%20Lint/badge.svg)](https://github.com/rgrove/parse-xml/actions?query=workflow%3A%22Test+%26+Lint%22)
 
+## Links
+
+- [API Docs](https://rgrove.github.io/parse-xml/)
+
 ## Installation
 
 ```
@@ -34,10 +38,6 @@ Or, if you like living dangerously, you can load [the minified bundle][bundle] i
 This parser currently discards document type declarations (`<!DOCTYPE ... >`) and all their contents, because they're rarely useful and some of their features aren't safe when the XML being parsed comes from an untrusted source.
 
 In addition, the only supported character encoding is UTF-8 because it's not feasible (or useful) to support other character encodings in JavaScript.
-
-## API
-
-See [API.md](API.md) for complete API docs.
 
 ## Examples
 

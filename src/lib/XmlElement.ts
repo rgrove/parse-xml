@@ -8,28 +8,20 @@ import type { XmlText } from './XmlText.js';
 
 /**
  * Element in an XML document.
- *
- * @public
  */
 export class XmlElement extends XmlNode {
   /**
    * Attributes on this element.
-   *
-   * @public
    */
   attributes: {[attrName: string]: string};
 
   /**
    * Child nodes of this element.
-   *
-   * @public
    */
   children: Array<XmlCdata | XmlComment | XmlElement | XmlProcessingInstruction | XmlText>;
 
   /**
    * Name of this element.
-   *
-   * @public
    */
   name: string;
 
@@ -46,9 +38,7 @@ export class XmlElement extends XmlNode {
   }
 
   /**
-   * Whether this node is empty (meaning it has no children).
-   *
-   * @public
+   * Whether this element is empty (meaning it has no children).
    */
   get isEmpty(): boolean {
     return this.children.length === 0;
@@ -70,8 +60,6 @@ export class XmlElement extends XmlNode {
 
   /**
    * Text content of this element and all its descendants.
-   *
-   * @public
    */
   get text(): string {
     return this.children

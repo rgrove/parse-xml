@@ -4,64 +4,46 @@ import type { XmlElement } from './XmlElement.js';
 
 /**
  * Base interface for a node in an XML document.
- *
- * @public
  */
 export class XmlNode {
   /**
    * Type value for an `XmlCdata` node.
-   *
-   * @public
    */
   static readonly TYPE_CDATA = 'cdata';
 
   /**
    * Type value for an `XmlComment` node.
-   *
-   * @public
    */
   static readonly TYPE_COMMENT = 'comment';
 
   /**
    * Type value for an `XmlDocument` node.
-   *
-   * @public
    */
   static readonly TYPE_DOCUMENT = 'document';
 
   /**
    * Type value for an `XmlElement` node.
-   *
-   * @public
    */
   static readonly TYPE_ELEMENT = 'element';
 
   /**
    * Type value for an `XmlProcessingInstruction` node.
-   *
-   * @public
    */
   static readonly TYPE_PROCESSING_INSTRUCTION = 'pi';
 
   /**
    * Type value for an `XmlText` node.
-   *
-   * @public
    */
   static readonly TYPE_TEXT = 'text';
 
   /**
    * Parent node of this node, or `null` if this node has no parent.
-   *
-   * @public
    */
   parent: XmlDocument | XmlElement | null = null;
 
   /**
    * Document that contains this node, or `null` if this node is not associated
    * with a document.
-   *
-   * @public
    */
   get document(): XmlDocument | null {
     return this.parent?.document ?? null;
@@ -69,8 +51,6 @@ export class XmlNode {
 
   /**
    * Whether this node is the root node of the document.
-   *
-   * @public
    */
   get isRootNode(): boolean {
     return this.parent !== null && this.parent === this.document;
@@ -86,7 +66,6 @@ export class XmlNode {
    * the nearest ancestor that does (if any).
    *
    * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-white-space
-   * @public
    */
   get preserveWhitespace(): boolean {
     return Boolean(this.parent?.preserveWhitespace);
@@ -101,8 +80,6 @@ export class XmlNode {
    *
    * The `XmlNode` class itself is a base class and doesn't have its own type
    * name.
-   *
-   * @public
    */
   get type() {
     return '';
@@ -111,8 +88,6 @@ export class XmlNode {
   /**
    * Returns a JSON-serializable object representing this node, minus properties
    * that could result in circular references.
-   *
-   * @public
    */
   toJSON(): JsonObject {
     let json: JsonObject = {

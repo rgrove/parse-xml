@@ -1,8 +1,6 @@
 const emptyString = '';
 
-/**
- * @private
- */
+/** @private */
 export class StringScanner {
   charIndex: number;
   readonly string: string;
@@ -12,9 +10,6 @@ export class StringScanner {
   private readonly charsToBytes: number[];
   private readonly multiByteMode: boolean;
 
-  /**
-   * @param {string} string
-   */
   constructor(string: string) {
     this.chars = [ ...string ];
     this.charCount = this.chars.length;

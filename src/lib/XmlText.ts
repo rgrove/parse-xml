@@ -2,14 +2,10 @@ import { XmlNode } from './XmlNode.js';
 
 /**
  * Text content within an XML document.
- *
- * @public
  */
 export class XmlText extends XmlNode {
   /**
    * Text content of this node.
-   *
-   * @public
    */
   text: string;
 

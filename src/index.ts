@@ -2,6 +2,7 @@ import { Parser } from './lib/Parser.js';
 
 import type { ParserOptions } from './lib/Parser.js';
 
+export * from './lib/types.js';
 export { XmlCdata } from './lib/XmlCdata.js';
 export { XmlComment } from './lib/XmlComment.js';
 export { XmlDocument } from './lib/XmlDocument.js';
@@ -9,6 +10,8 @@ export { XmlElement } from './lib/XmlElement.js';
 export { XmlNode } from './lib/XmlNode.js';
 export { XmlProcessingInstruction } from './lib/XmlProcessingInstruction.js';
 export { XmlText } from './lib/XmlText.js';
+
+export type { ParserOptions } from './lib/Parser.js';
 
 /**
  * Parses the given XML string and returns an `XmlDocument` instance
@@ -21,7 +24,6 @@ export { XmlText } from './lib/XmlText.js';
  *
  * @param xml XML string to parse.
  * @param options Parser options.
- * @public
  */
 export function parseXml(xml: string, options: ParserOptions) {
   return (new Parser(xml, options)).document;

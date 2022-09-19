@@ -2,21 +2,15 @@ import { XmlNode } from './XmlNode.js';
 
 /**
  * A comment within an XML document.
- *
- * @public
  */
 export class XmlComment extends XmlNode {
+  /**
+   * Content of this comment.
+   */
   content: string;
 
   constructor(content = '') {
     super();
-
-    /**
-     * Content of this comment.
-     *
-     * @type {string}
-     * @public
-     */
     this.content = content;
   }
 

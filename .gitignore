@@ -2,6 +2,7 @@
 .vscode/
 coverage/
 dist/
+docs/
 node_modules/
 tmp/
 .DS_Store

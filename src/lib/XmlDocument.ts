@@ -5,16 +5,12 @@ import type { XmlComment } from './XmlComment.js';
 import type { XmlProcessingInstruction } from './XmlProcessingInstruction.js';
 
 /**
- * Represents an XML document. All elements within the document are descendants of
- * this node.
- *
- * @public
+ * Represents an XML document. All elements within the document are descendants
+ * of this node.
  */
 export class XmlDocument extends XmlNode {
   /**
    * Child nodes of this document.
-   *
-   * @public
    */
   readonly children: Array<XmlComment | XmlProcessingInstruction | XmlElement>;
 
@@ -29,8 +25,6 @@ export class XmlDocument extends XmlNode {
 
   /**
    * Root element of this document, or `null` if this document is empty.
-   *
-   * @public
    */
   get root(): XmlElement | null {
     for (let child of this.children) {
@@ -44,8 +38,6 @@ export class XmlDocument extends XmlNode {
 
   /**
    * Text content of this document and all its descendants.
-   *
-   * @public
    */
   get text(): string {
     return this.children

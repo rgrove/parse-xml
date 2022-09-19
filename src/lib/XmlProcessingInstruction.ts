@@ -2,22 +2,16 @@ import { XmlNode } from './XmlNode.js';
 
 /**
  * A processing instruction within an XML document.
- *
- * @public
  */
 export class XmlProcessingInstruction extends XmlNode {
   /**
    * Content of this processing instruction.
-   *
-   * @public
    */
   content: string;
 
   /**
    * Name of this processing instruction. Also sometimes referred to as the
    * processing instruction "target".
-   *
-   * @public
    */
   name: string;
 
