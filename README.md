@@ -7,6 +7,8 @@ A fast, safe, compliant XML parser for Node.js and browsers.
 ## Links
 
 - [API Docs](https://rgrove.github.io/parse-xml/)
+- [GitHub](https://github.com/rgrove/parse-xml)
+- [npm](https://www.npmjs.com/package/@rgrove/parse-xml)
 
 ## Installation
 
