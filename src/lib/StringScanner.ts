@@ -1,41 +1,34 @@
 const emptyString = '';
+const surrogatePair = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
+const surrogateStart = /[\uD800-\uDFFF]/;
 
 /** @private */
 export class StringScanner {
   charIndex: number;
   readonly string: string;
 
-  private readonly chars: string[];
   private readonly charCount: number;
-  private readonly charsToBytes: number[];
+  private readonly charsToBytes: number[] | undefined;
   private readonly multiByteMode: boolean;
 
   constructor(string: string) {
-    this.chars = [ ...string ];
-    this.charCount = this.chars.length;
+    this.charCount = this.charLength(string, true);
     this.charIndex = 0;
-    this.charsToBytes = new Array(this.charCount);
-    this.multiByteMode = false;
+    this.multiByteMode = this.charCount !== string.length;
     this.string = string;
 
-    let { chars, charCount, charsToBytes } = this;
+    if (this.multiByteMode) {
+      let charsToBytes = [];
 
-    if (charCount === string.length) {
-      // There are no multibyte characters in the input string, so char indexes
-      // and byte indexes are the same.
-      for (let i = 0; i < charCount; ++i) {
-        charsToBytes[i] = i;
-      }
-    } else {
-      // Create a mapping of character indexes to byte indexes. When the string
+      // Create a mapping of character indexes to byte indexes. Since the string
       // contains multibyte characters, a byte index may not necessarily align
       // with a character index.
-      for (let byteIndex = 0, charIndex = 0; charIndex < charCount; ++charIndex) {
+      for (let byteIndex = 0, charIndex = 0; charIndex < this.charCount; ++charIndex) {
         charsToBytes[charIndex] = byteIndex;
-        byteIndex += (chars[charIndex] as string).length;
+        byteIndex += surrogateStart.test(string.charAt(byteIndex)) ? 2 : 1;
       }
 
-      this.multiByteMode = true;
+      this.charsToBytes = charsToBytes;
     }
   }
 
@@ -49,20 +42,47 @@ export class StringScanner {
   // -- Protected Methods ------------------------------------------------------
 
   /**
-   * Returns the number of characters in the given _string_, which may differ
-   * from the byte length if the string contains multibyte characters.
+   * Returns the character at the given character index, or an empty string if
+   * the index is out of bounds.
    */
-  _charLength(string: string): number {
-    let { length } = string;
+  protected charAt(charIndex: number): string {
+    let { multiByteMode, string } = this;
 
-    if (length < 2 || !this.multiByteMode) {
-      return length;
+    if (!multiByteMode) {
+      return string.charAt(charIndex);
     }
 
+    let byteIndex = this.charIndexToByteIndex(charIndex);
+    let char = string.charAt(byteIndex);
+
+    // If the character is the start of a surrogate pair, return the entire
+    // pair.
+    return surrogateStart.test(char)
+      ? char + string.charAt(byteIndex + 1)
+      : char;
+  }
+
+  /**
+   * Returns the byte index of the given character index in the string. The two
+   * may differ in strings that contain multibyte characters.
+   */
+  protected charIndexToByteIndex(charIndex: number = this.charIndex): number {
+    return this.multiByteMode
+      ? (this.charsToBytes as number[])[charIndex] as number
+      : charIndex;
+  }
+
+  /**
+   * Returns the number of characters in the given string, which may differ from
+   * the byte length if the string contains multibyte characters.
+   */
+  protected charLength(string: string, multiByteSafe = this.multiByteMode): number {
     // We could get the char length with `[ ...string ].length`, but that's
-    // actually slower than this approach, which replaces surrogate pairs with
-    // single-byte characters.
-    return string.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '_').length;
+    // actually slower than replacing surrogate pairs with single-byte
+    // characters and then counting the result.
+    return multiByteSafe
+      ? string.replace(surrogatePair, '_').length
+      : string.length;
   }
 
   // -- Public Methods ---------------------------------------------------------
@@ -101,7 +121,7 @@ export class StringScanner {
       throw new Error('`regex` must have a sticky flag ("y")');
     }
 
-    regex.lastIndex = this.charsToBytes[this.charIndex] as number;
+    regex.lastIndex = this.charIndexToByteIndex();
 
     let result = regex.exec(this.string);
 
@@ -110,7 +130,7 @@ export class StringScanner {
     }
 
     let match = result[0] as string;
-    this.advance(this._charLength(match));
+    this.advance(this.charLength(match));
     return match;
   }
 
@@ -120,6 +140,7 @@ export class StringScanner {
    * input is reached.
    */
   consumeMatchFn(fn: (char: string) => boolean): string {
+    let { string } = this;
     let startIndex = this.charIndex;
 
     while (!this.isEnd && fn(this.peek())) {
@@ -127,7 +148,7 @@ export class StringScanner {
     }
 
     return this.charIndex > startIndex
-      ? this.string.slice(this.charsToBytes[startIndex], this.charsToBytes[this.charIndex])
+      ? string.slice(this.charIndexToByteIndex(startIndex), this.charIndexToByteIndex(this.charIndex))
       : emptyString;
   }
 
@@ -148,7 +169,7 @@ export class StringScanner {
     }
 
     let { length } = stringToConsume;
-    let charLengthToMatch = this._charLength(stringToConsume);
+    let charLengthToMatch = this.charLength(stringToConsume);
 
     if (charLengthToMatch !== length
         && stringToConsume === this.peek(charLengthToMatch)) {
@@ -198,17 +219,18 @@ export class StringScanner {
       throw new Error('`regex` must have a global flag ("g")');
     }
 
-    let byteIndex = this.charsToBytes[this.charIndex] as number;
+    let { charIndex, string } = this;
+    let byteIndex = this.charIndexToByteIndex(charIndex);
     regex.lastIndex = byteIndex;
 
-    let match = regex.exec(this.string);
+    let match = regex.exec(string);
 
     if (match === null || match.index === byteIndex) {
       return emptyString;
     }
 
-    let result = this.string.slice(byteIndex, match.index);
-    this.advance(this._charLength(result));
+    let result = string.slice(byteIndex, match.index);
+    this.advance(this.charLength(result));
     return result;
   }
 
@@ -219,8 +241,8 @@ export class StringScanner {
    * Returns the consumed string, or an empty string if nothing was consumed.
    */
   consumeUntilString(searchString: string): string {
-    let { charIndex, charsToBytes, string } = this;
-    let byteIndex = charsToBytes[charIndex];
+    let { charIndex, string } = this;
+    let byteIndex = this.charIndexToByteIndex(charIndex);
     let matchByteIndex = string.indexOf(searchString, byteIndex);
 
     if (matchByteIndex <= 0) {
@@ -228,7 +250,7 @@ export class StringScanner {
     }
 
     let result = string.slice(byteIndex, matchByteIndex);
-    this.advance(this._charLength(result));
+    this.advance(this.charLength(result));
     return result;
   }
 
@@ -238,18 +260,24 @@ export class StringScanner {
    * input string.
    */
   peek(count = 1): string {
+    let { charIndex } = this;
+
     // Inlining this comparison instead of checking `this.isEnd` improves perf
     // slightly since `peek()` is called so frequently.
-    if (this.charIndex >= this.charCount) {
+    if (charIndex >= this.charCount) {
       return emptyString;
     }
 
+    let { string } = this;
+
     if (count === 1) {
-      return this.chars[this.charIndex] as string;
+      return this.charAt(charIndex);
     }
 
-    let { charsToBytes, charIndex } = this;
-    return this.string.slice(charsToBytes[charIndex], charsToBytes[charIndex + count]);
+    return string.slice(
+      this.charIndexToByteIndex(charIndex),
+      this.charIndexToByteIndex(charIndex + count),
+    );
   }
 
   /**
