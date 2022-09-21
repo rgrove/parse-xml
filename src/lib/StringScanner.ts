@@ -1,6 +1,5 @@
 const emptyString = '';
 const surrogatePair = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
-const surrogateStart = /[\uD800-\uDFFF]/;
 
 /** @private */
 export class StringScanner {
@@ -25,7 +24,7 @@ export class StringScanner {
       // with a character index.
       for (let byteIndex = 0, charIndex = 0; charIndex < this.charCount; ++charIndex) {
         charsToBytes[charIndex] = byteIndex;
-        byteIndex += surrogateStart.test(string.charAt(byteIndex)) ? 2 : 1;
+        byteIndex += (string.codePointAt(byteIndex) as number) > 65535 ? 2 : 1;
       }
 
       this.charsToBytes = charsToBytes;
@@ -42,33 +41,12 @@ export class StringScanner {
   // -- Protected Methods ------------------------------------------------------
 
   /**
-   * Returns the character at the given character index, or an empty string if
-   * the index is out of bounds.
-   */
-  protected charAt(charIndex: number): string {
-    let { multiByteMode, string } = this;
-
-    if (!multiByteMode) {
-      return string.charAt(charIndex);
-    }
-
-    let byteIndex = this.charIndexToByteIndex(charIndex);
-    let char = string.charAt(byteIndex);
-
-    // If the character is the start of a surrogate pair, return the entire
-    // pair.
-    return surrogateStart.test(char)
-      ? char + string.charAt(byteIndex + 1)
-      : char;
-  }
-
-  /**
    * Returns the byte index of the given character index in the string. The two
    * may differ in strings that contain multibyte characters.
    */
   protected charIndexToByteIndex(charIndex: number = this.charIndex): number {
     return this.multiByteMode
-      ? (this.charsToBytes as number[])[charIndex] as number
+      ? (this.charsToBytes as number[])[charIndex] ?? Infinity
       : charIndex;
   }
 
@@ -140,16 +118,15 @@ export class StringScanner {
    * input is reached.
    */
   consumeMatchFn(fn: (char: string) => boolean): string {
-    let { string } = this;
-    let startIndex = this.charIndex;
+    let char;
+    let match = emptyString;
 
-    while (!this.isEnd && fn(this.peek())) {
+    while ((char = this.peek()) && fn(char)) {
+      match += char;
       this.advance();
     }
 
-    return this.charIndex > startIndex
-      ? string.slice(this.charIndexToByteIndex(startIndex), this.charIndexToByteIndex(this.charIndex))
-      : emptyString;
+    return match;
   }
 
   /**
@@ -260,7 +237,7 @@ export class StringScanner {
    * input string.
    */
   peek(count = 1): string {
-    let { charIndex } = this;
+    let { charIndex, multiByteMode, string } = this;
 
     // Inlining this comparison instead of checking `this.isEnd` improves perf
     // slightly since `peek()` is called so frequently.
@@ -268,13 +245,11 @@ export class StringScanner {
       return emptyString;
     }
 
-    let { string } = this;
-
-    if (count === 1) {
-      return this.charAt(charIndex);
+    if (count === 1 && !multiByteMode) {
+      return string.charAt(charIndex);
     }
 
-    return string.slice(
+    return this.string.slice(
       this.charIndexToByteIndex(charIndex),
       this.charIndexToByteIndex(charIndex + count),
     );
