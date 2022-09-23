@@ -224,7 +224,7 @@ export class Parser {
    */
   consumeCharData(): boolean {
     let { scanner } = this;
-    let charData = scanner.consumeUntilMatch(/<|&|]]>/g);
+    let charData = scanner.consumeUntilMatch(syntax.endCharData);
 
     if (!charData) {
       return false;
@@ -579,11 +579,11 @@ export class Parser {
         throw this.error('Invalid character reference');
       }
 
-      parsedValue = String.fromCodePoint(codePoint);
-
-      if (!syntax.isXmlChar(parsedValue)) {
+      if (!syntax.isXmlCodePoint(codePoint)) {
         throw this.error('Character reference resolves to an invalid character');
       }
+
+      parsedValue = String.fromCodePoint(codePoint);
     } else {
       // This is an entity reference.
       parsedValue = syntax.predefinedEntities[ref];
@@ -782,15 +782,19 @@ export class Parser {
    * isn't a valid XML character.
    */
   validateChars(string: string) {
-    let charIndex = 0;
+    let { length } = string;
 
-    for (let char of string) {
-      if (!syntax.isXmlChar(char)) {
-        this.scanner.reset(-([ ...string ].length - charIndex));
+    for (let i = 0; i < length; ++i) {
+      let cp = string.codePointAt(i);
+
+      if (cp === undefined || !syntax.isXmlCodePoint(cp)) {
+        this.scanner.reset(-([ ...string ].length - i));
         throw this.error('Invalid character');
       }
 
-      charIndex += 1;
+      if (cp > 65535) {
+        i += 1;
+      }
     }
   }
 }

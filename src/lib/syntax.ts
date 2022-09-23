@@ -1,4 +1,12 @@
 /**
+ * Regular expression that matches one or more characters that signal the end of
+ * XML `CharData` content.
+ *
+ * @see https://www.w3.org/TR/2008/REC-xml-20081126/#dt-chardata
+ */
+export const endCharData = /<|&|]]>/g;
+
+/**
  * Mapping of predefined entity names to their replacement values.
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-predefined-ent
@@ -19,9 +27,13 @@ export const predefinedEntities: Readonly<{[name: string]: string;}> = Object.fr
 export function isNameChar(char: string): boolean {
   let cp = getCodePoint(char);
 
-  return cp === 0x2D // -
-    || cp === 0x2E // .
+  // Including the most common NameStartChars here improves performance
+  // slightly.
+  return (cp >= 0x61 && cp <= 0x7A) // a-z
+    || (cp >= 0x41 && cp <= 0x5A) // A-Z
     || (cp >= 0x30 && cp <= 0x39) // 0-9
+    || cp === 0x2D // -
+    || cp === 0x2E // .
     || cp === 0xB7
     || (cp >= 0x300 && cp <= 0x36F)
     || (cp >= 0x203F && cp <= 0x2040)
@@ -34,10 +46,10 @@ export function isNameChar(char: string): boolean {
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameStartChar
  */
 export function isNameStartChar(char: string, cp = getCodePoint(char)): boolean {
-  return cp === 0x3A // :
-    || cp === 0x5F // _
+  return (cp >= 0x61 && cp <= 0x7A) // a-z
     || (cp >= 0x41 && cp <= 0x5A) // A-Z
-    || (cp >= 0x61 && cp <= 0x7A) // a-z
+    || cp === 0x3A // :
+    || cp === 0x5F // _
     || (cp >= 0xC0 && cp <= 0xD6)
     || (cp >= 0xD8 && cp <= 0xF6)
     || (cp >= 0xF8 && cp <= 0x2FF)
@@ -77,13 +89,12 @@ export function isWhitespace(char: string): boolean {
 }
 
 /**
- * Returns `true` if _char_ is a valid XML `Char`, `false` otherwise.
+ * Returns `true` if _codepoint_ is a valid XML `Char` code point, `false`
+ * otherwise.
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Char
  */
-export function isXmlChar(char: string): boolean {
-  let cp = getCodePoint(char);
-
+export function isXmlCodePoint(cp: number): boolean {
   return cp === 0x9
     || cp === 0xA
     || cp === 0xD
