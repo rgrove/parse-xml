@@ -6,6 +6,8 @@ All notable changes to parse-xml are documented in this file. The format is base
 
 parse-xml has been rewritten in TypeScript. The API is unchanged, but the `parseXml()` function is now a named export rather than a default export, which will require a small change to how you import it. See below for details.
 
+This release also contains major performance improvements. Parsing is now 1.4x to 2.5x as fast as it was in 3.0.0, depending on the document being parsed.
+
 ### Breaking Changes
 
 -   The `parseXml()` function is now a named export rather than the default export. Please update your `import` and `require` statements accordingly:
@@ -53,7 +55,9 @@ parse-xml has been rewritten in TypeScript. The API is unchanged, but the `parse
 
 ### Other Changes
 
--   The package now includes a browser-specific entry point that's optimized for minification. Using parse-xml with a minifying bundler like webpack should now result in a smaller bundle.
+-   Parsing performance has been improved significantly, and is now 1.4x to 2.5x as fast as it was in 3.0.0, depending on the document being parsed.
+
+-   The package now includes a browser-specific entry point that's optimized for minification. Using parse-xml with a minifying bundler like webpack or esbuild should now result in a smaller bundle.
 
 ## 3.0.0 (2021-01-23)
 
