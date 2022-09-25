@@ -226,19 +226,6 @@ describe('StringScanner', () => {
         assert.strictEqual(s.charIndex, 0);
       });
     });
-
-    describe('when the regex does not have a global flag', () => {
-      it('throws an error', () => {
-        let s = new StringScanner('🥧abcdef😋');
-
-        assert.throws(() => {
-          s.consumeUntilMatch(/a/);
-        }, {
-          name: 'Error',
-          message:'`regex` must have a global flag ("g")',
-        });
-      });
-    });
   });
 
   describe('consumeUntilString()', () => {

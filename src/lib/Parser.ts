@@ -9,50 +9,6 @@ import { XmlText } from './XmlText.js';
 
 import type { XmlNode } from './XmlNode.js';
 
-export type ParserOptions = {
-  /**
-   * When `true`, an undefined named entity (like "&bogus;") will be left in the
-   * output as is instead of causing a parse error.
-   *
-   * @default false
-   */
-  ignoreUndefinedEntities?: boolean;
-
-  /**
-   * When `true`, CDATA sections will be preserved in the document as `XmlCdata`
-   * nodes. Otherwise CDATA sections will be represented as `XmlText` nodes,
-   * which keeps the node tree simpler and easier to work with.
-   *
-   * @default false
-   */
-  preserveCdata?: boolean;
-
-  /**
-   * When `true`, comments will be preserved in the document as `XmlComment`
-   * nodes. Otherwise comments will not be included in the node tree.
-   *
-   * @default false
-   */
-  preserveComments?: boolean;
-
-  /**
-   * When an undefined named entity is encountered, this function will be called
-   * with the entity as its only argument. It should return a string value with
-   * which to replace the entity, or `null` or `undefined` to treat the entity
-   * as undefined (which may result in a parse error depending on the value of
-   * `ignoreUndefinedEntities`).
-   */
-  resolveUndefinedEntity?: (entity: string) => string | null | undefined;
-
-  /**
-   * When `true`, attributes in an element's `attributes` object will be sorted
-   * in alphanumeric order by name. Otherwise they'll retain their original
-   * order as found in the XML.
-   *
-   * @default false
-   */
-  sortAttributes?: boolean;
-};
 
 const emptyString = '';
 
@@ -109,9 +65,10 @@ export class Parser {
    */
   addText(text: string) {
     let { children } = this.currentNode;
+    let { length } = children;
 
-    if (children.length > 0) {
-      let prevNode = children[children.length - 1];
+    if (length > 0) {
+      let prevNode = children[length - 1];
 
       if (prevNode instanceof XmlText) {
         // The previous node is a text node, so we can append to it and avoid
@@ -122,6 +79,56 @@ export class Parser {
     }
 
     this.addNode(new XmlText(text));
+  }
+
+  /**
+   * Consumes element attributes.
+   *
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-starttags
+   */
+  consumeAttributes(): Record<string, string> {
+    let attributes = Object.create(null);
+
+    while (this.consumeWhitespace()) {
+      let attrName = this.consumeName();
+
+      if (!attrName) {
+        break;
+      }
+
+      let attrValue = this.consumeEqual() && this.consumeAttributeValue();
+
+      if (attrValue === false) {
+        throw this.error('Attribute value expected');
+      }
+
+      if (attrName in attributes) {
+        throw this.error(`Duplicate attribute: ${attrName}`);
+      }
+
+      if (attrName === 'xml:space'
+          && attrValue !== 'default'
+          && attrValue !== 'preserve') {
+
+        throw this.error('Value of the `xml:space` attribute must be "default" or "preserve"');
+      }
+
+      attributes[attrName] = attrValue;
+    }
+
+    if (this.options.sortAttributes) {
+      let attrNames = Object.keys(attributes).sort();
+      let sortedAttributes = Object.create(null);
+
+      for (let i = 0; i < attrNames.length; ++i) {
+        let attrName = attrNames[i] as string;
+        sortedAttributes[attrName] = attributes[attrName];
+      }
+
+      attributes = sortedAttributes;
+    }
+
+    return attributes;
   }
 
   /**
@@ -148,20 +155,18 @@ export class Parser {
     let isClosed = false;
     let value = emptyString;
     let regex = quote === '"'
-      ? /[^"&<]+/y
-      : /[^'&<]+/y;
+      ? syntax.attValueCharDoubleQuote
+      : syntax.attValueCharSingleQuote;
 
     matchLoop: while (!scanner.isEnd) {
       chars = scanner.consumeMatch(regex);
 
       if (chars) {
         this.validateChars(chars);
-        value += chars.replace(/[\t\r\n]/g, ' ');
+        value += chars.replace(syntax.attValueNormalizedWhitespace, ' ');
       }
 
-      let nextChar = scanner.peek();
-
-      switch (nextChar) {
+      switch (scanner.peek()) {
         case quote:
           isClosed = true;
           break matchLoop;
@@ -174,8 +179,7 @@ export class Parser {
           throw this.error('Unescaped `<` is not allowed in an attribute value');
 
         case emptyString:
-          throw this.error('Unclosed attribute');
-
+          break matchLoop;
       }
     }
 
@@ -232,7 +236,7 @@ export class Parser {
 
     this.validateChars(charData);
 
-    if (scanner.peek() === ']' && scanner.peek(3) === ']]>') {
+    if (scanner.peek(3) === ']]>') {
       throw this.error('Element content may not contain the CDATA section close delimiter `]]>`');
     }
 
@@ -332,11 +336,10 @@ export class Parser {
     let { scanner } = this;
     let mark = scanner.charIndex;
 
-    if (scanner.peek() !== '<') {
+    if (!scanner.consumeStringFast('<')) {
       return false;
     }
 
-    scanner.advance();
     let name = this.consumeName();
 
     if (!name) {
@@ -344,48 +347,7 @@ export class Parser {
       return false;
     }
 
-    let attributes = Object.create(null);
-
-    while (this.consumeWhitespace()) {
-      let attrName = this.consumeName();
-
-      if (!attrName) {
-        continue;
-      }
-
-      let attrValue = this.consumeEqual()
-        && this.consumeAttributeValue();
-
-      if (attrValue === false) {
-        throw this.error('Attribute value expected');
-      }
-
-      if (attrName in attributes) {
-        throw this.error(`Duplicate attribute: ${attrName}`);
-      }
-
-      if (attrName === 'xml:space'
-          && attrValue !== 'default'
-          && attrValue !== 'preserve') {
-
-        throw this.error('Value of the `xml:space` attribute must be "default" or "preserve"');
-      }
-
-      attributes[attrName] = attrValue;
-    }
-
-    if (this.options.sortAttributes) {
-      let attrNames = Object.keys(attributes).sort();
-      let sortedAttributes = Object.create(null);
-
-      for (let i = 0; i < attrNames.length; ++i) {
-        let attrName = attrNames[i] as string;
-        sortedAttributes[attrName] = attributes[attrName];
-      }
-
-      attributes = sortedAttributes;
-    }
-
+    let attributes = this.consumeAttributes();
     let isEmpty = Boolean(scanner.consumeStringFast('/>'));
     let element = new XmlElement(name, attributes);
 
@@ -397,17 +359,16 @@ export class Parser {
       }
 
       this.currentNode = element;
-      this.consumeCharData();
 
-      while (
+      do {
+        this.consumeCharData();
+      } while (
         this.consumeElement()
           || this.consumeContentReference()
           || this.consumeCdataSection()
           || this.consumeProcessingInstruction()
           || this.consumeComment()
-      ) {
-        this.consumeCharData();
-      }
+      );
 
       let endTagMark = scanner.charIndex;
       let endTagName;
@@ -555,11 +516,9 @@ export class Parser {
   consumeReference(): string | false {
     let { scanner } = this;
 
-    if (scanner.peek() !== '&') {
+    if (!scanner.consumeStringFast('&')) {
       return false;
     }
-
-    scanner.advance();
 
     let ref = scanner.consumeMatchFn(syntax.isReferenceChar);
 
@@ -785,9 +744,9 @@ export class Parser {
     let { length } = string;
 
     for (let i = 0; i < length; ++i) {
-      let cp = string.codePointAt(i);
+      let cp = string.codePointAt(i) as number;
 
-      if (cp === undefined || !syntax.isXmlCodePoint(cp)) {
+      if (!syntax.isXmlCodePoint(cp)) {
         this.scanner.reset(-([ ...string ].length - i));
         throw this.error('Invalid character');
       }
@@ -812,3 +771,49 @@ function normalizeXmlString(xml: string): string {
 
   return xml.replace(/\r\n?/g, '\n');
 }
+
+// -- Types --------------------------------------------------------------------
+export type ParserOptions = {
+  /**
+   * When `true`, an undefined named entity (like "&bogus;") will be left in the
+   * output as is instead of causing a parse error.
+   *
+   * @default false
+   */
+  ignoreUndefinedEntities?: boolean;
+
+  /**
+   * When `true`, CDATA sections will be preserved in the document as `XmlCdata`
+   * nodes. Otherwise CDATA sections will be represented as `XmlText` nodes,
+   * which keeps the node tree simpler and easier to work with.
+   *
+   * @default false
+   */
+  preserveCdata?: boolean;
+
+  /**
+   * When `true`, comments will be preserved in the document as `XmlComment`
+   * nodes. Otherwise comments will not be included in the node tree.
+   *
+   * @default false
+   */
+  preserveComments?: boolean;
+
+  /**
+   * When an undefined named entity is encountered, this function will be called
+   * with the entity as its only argument. It should return a string value with
+   * which to replace the entity, or `null` or `undefined` to treat the entity
+   * as undefined (which may result in a parse error depending on the value of
+   * `ignoreUndefinedEntities`).
+   */
+  resolveUndefinedEntity?: (entity: string) => string | null | undefined;
+
+  /**
+   * When `true`, attributes in an element's `attributes` object will be sorted
+   * in alphanumeric order by name. Otherwise they'll retain their original
+   * order as found in the XML.
+   *
+   * @default false
+   */
+  sortAttributes?: boolean;
+};

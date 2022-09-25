@@ -8,12 +8,14 @@ export class StringScanner {
 
   private readonly charCount: number;
   private readonly charsToBytes: number[] | undefined;
+  private readonly length: number;
   private readonly multiByteMode: boolean;
 
   constructor(string: string) {
     this.charCount = this.charLength(string, true);
     this.charIndex = 0;
-    this.multiByteMode = this.charCount !== string.length;
+    this.length = string.length;
+    this.multiByteMode = this.charCount !== this.length;
     this.string = string;
 
     if (this.multiByteMode) {
@@ -141,18 +143,16 @@ export class StringScanner {
       return stringToConsume;
     }
 
-    if (!this.multiByteMode) {
-      return emptyString;
-    }
+    if (this.multiByteMode) {
+      let { length } = stringToConsume;
+      let charLengthToMatch = this.charLength(stringToConsume);
 
-    let { length } = stringToConsume;
-    let charLengthToMatch = this.charLength(stringToConsume);
+      if (charLengthToMatch !== length
+          && stringToConsume === this.peek(charLengthToMatch)) {
 
-    if (charLengthToMatch !== length
-        && stringToConsume === this.peek(charLengthToMatch)) {
-
-      this.advance(charLengthToMatch);
-      return stringToConsume;
+        this.advance(charLengthToMatch);
+        return stringToConsume;
+      }
     }
 
     return emptyString;
@@ -160,22 +160,15 @@ export class StringScanner {
 
   /**
    * Does the same thing as `consumeString()`, but doesn't support consuming
-   * multibyte characters. This can be much faster if you only need to match
-   * single byte characters.
+   * multibyte characters. This can be faster if you only need to match single
+   * byte characters.
    */
   consumeStringFast(stringToConsume: string): string {
-    if (this.peek() === stringToConsume[0]) {
-      let { length } = stringToConsume;
+    let { length } = stringToConsume;
 
-      if (length === 1) {
-        this.advance();
-        return stringToConsume;
-      }
-
-      if (this.peek(length) === stringToConsume) {
-        this.advance(length);
-        return stringToConsume;
-      }
+    if (this.peek(length) === stringToConsume) {
+      this.advance(length);
+      return stringToConsume;
     }
 
     return emptyString;
@@ -183,43 +176,34 @@ export class StringScanner {
 
   /**
    * Consumes characters until the given global regex is matched, advancing the
-   * scanner up to (but not beyond) the beginning of the match and updating the
-   * `lastIndex` property of the regex.
-   *
-   * The regex must have a global flag ("g") so that its `lastIndex` prop can be
-   * used to begin the search at the current scanner position.
+   * scanner up to (but not beyond) the beginning of the match. If the regex
+   * doesn't match, nothing will be consumed.
    *
    * Returns the consumed string, or an empty string if nothing was consumed.
    */
   consumeUntilMatch(regex: RegExp): string {
-    if (!regex.global) {
-      throw new Error('`regex` must have a global flag ("g")');
-    }
+    let restOfString = this.string.slice(this.charIndexToByteIndex());
+    let matchByteIndex = restOfString.search(regex);
 
-    let { charIndex, string } = this;
-    let byteIndex = this.charIndexToByteIndex(charIndex);
-    regex.lastIndex = byteIndex;
-
-    let match = regex.exec(string);
-
-    if (match === null || match.index === byteIndex) {
+    if (matchByteIndex <= 0) {
       return emptyString;
     }
 
-    let result = string.slice(byteIndex, match.index);
+    let result = restOfString.slice(0, matchByteIndex);
     this.advance(this.charLength(result));
     return result;
   }
 
   /**
    * Consumes characters until the given string is found, advancing the scanner
-   * up to (but not beyond) that point.
+   * up to (but not beyond) that point. If the string is never found, nothing
+   * will be consumed.
    *
    * Returns the consumed string, or an empty string if nothing was consumed.
    */
   consumeUntilString(searchString: string): string {
-    let { charIndex, string } = this;
-    let byteIndex = this.charIndexToByteIndex(charIndex);
+    let { string } = this;
+    let byteIndex = this.charIndexToByteIndex();
     let matchByteIndex = string.indexOf(searchString, byteIndex);
 
     if (matchByteIndex <= 0) {
@@ -239,20 +223,20 @@ export class StringScanner {
   peek(count = 1): string {
     let { charIndex, multiByteMode, string } = this;
 
-    // Inlining this comparison instead of checking `this.isEnd` improves perf
-    // slightly since `peek()` is called so frequently.
-    if (charIndex >= this.charCount) {
-      return emptyString;
+    if (multiByteMode) {
+      // Inlining this comparison instead of checking `this.isEnd` improves perf
+      // slightly since `peek()` is called so frequently.
+      if (charIndex >= this.charCount) {
+        return emptyString;
+      }
+
+      return string.slice(
+        this.charIndexToByteIndex(charIndex),
+        this.charIndexToByteIndex(charIndex + count),
+      );
     }
 
-    if (count === 1 && !multiByteMode) {
-      return string.charAt(charIndex);
-    }
-
-    return this.string.slice(
-      this.charIndexToByteIndex(charIndex),
-      this.charIndexToByteIndex(charIndex + count),
-    );
+    return string.slice(charIndex, charIndex + count);
   }
 
   /**

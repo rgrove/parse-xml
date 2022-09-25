@@ -1,10 +1,34 @@
 /**
+ * Regular expression that matches one or more `AttValue` characters in a
+ * double-quoted attribute value.
+ *
+ * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-AttValue
+ */
+export const attValueCharDoubleQuote = /[^"&<]+/y;
+
+/**
+ * Regular expression that matches one or more `AttValue` characters in a
+ * single-quoted attribute value.
+ *
+ * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-AttValue
+ */
+export const attValueCharSingleQuote = /[^'&<]+/y;
+
+/**
+ * Regular expression that matches a whitespace character that should be
+ * normalized to a space character in an attribute value.
+ *
+ * @see https://www.w3.org/TR/2008/REC-xml-20081126/#AVNormalize
+ */
+export const attValueNormalizedWhitespace = /[\t\n]/g;
+
+/**
  * Regular expression that matches one or more characters that signal the end of
  * XML `CharData` content.
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#dt-chardata
  */
-export const endCharData = /<|&|]]>/g;
+export const endCharData = /<|&|]]>/;
 
 /**
  * Mapping of predefined entity names to their replacement values.
