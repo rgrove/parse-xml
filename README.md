@@ -16,16 +16,13 @@ A fast, safe, compliant XML parser for Node.js and browsers.
 npm install @rgrove/parse-xml
 ```
 
-Or, if you like living dangerously, you can load [the minified bundle][bundle] in a browser via [Unpkg] and use the `parseXml` global.
-
-[bundle]:https://unpkg.com/@rgrove/parse-xml/dist/global.min.js
-[Unpkg]:https://unpkg.com/
+Or, if you like living dangerously, you can load [the minified bundle](https://unpkg.com/@rgrove/parse-xml/dist/global.min.js) in a browser via [Unpkg](https://unpkg.com/) and use the `parseXml` global.
 
 ## Features
 
--   Returns an [object tree](#basic-usage) representing an XML document.
+-   Returns a convenient [object tree](#basic-usage) representing an XML document.
 
--   Works great in Node.js and in modern browsers.
+-   Works great in Node.js and browsers.
 
 -   Provides [helpful, detailed error messages](#friendly-errors) with context when a document is not well-formed.
 
@@ -33,7 +30,11 @@ Or, if you like living dangerously, you can load [the minified bundle][bundle] i
 
 -   Passes all relevant tests in the [XML Conformance Test Suite](https://www.w3.org/XML/Test/).
 
--   It's [fast](#benchmark), [small](https://bundlephobia.com/result?p=@rgrove/parse-xml), and has no dependencies.
+-   Written in TypeScript and compiled to ES2020 JavaScript for Node.js and ES2017 JavaScript for browsers. The browser build is also optimized for minification.
+
+-   Extremely [fast](#benchmark) and surprisingly [small](https://bundlephobia.com/result?p=@rgrove/parse-xml).
+
+-   Zero dependencies.
 
 ## Not Features
 
@@ -59,7 +60,7 @@ const { parseXml } = require('@rgrove/parse-xml');
 parseXml('<kittens fuzzy="yes">I like fuzzy kittens.</kittens>');
 ```
 
-The result is an [`XmlDocument`] instance containing the parsed document, with a structure that looks like this (some properties and methods are excluded for clarity; see the [API docs](API.md) for details):
+The result is an [`XmlDocument`](https://rgrove.github.io/parse-xml/classes/XmlDocument.html) instance containing the parsed document, with a structure that looks like this (some properties and methods are excluded for clarity; see the [API docs](https://rgrove.github.io/parse-xml/) for details):
 
 ```js
 {
@@ -84,7 +85,11 @@ The result is an [`XmlDocument`] instance containing the parsed document, with a
 }
 ```
 
-[`XmlDocument`]:API.md#xmldocument
+All parse-xml objects have `toJSON()` methods that return JSON-serializable objects, so you can easily convert an XML document to JSON:
+
+```js
+let json = JSON.stringify(parseXml(xml));
+```
 
 ### Friendly Errors
 
