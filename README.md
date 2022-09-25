@@ -18,7 +18,7 @@ npm install @rgrove/parse-xml
 
 Or, if you like living dangerously, you can load [the minified bundle][bundle] in a browser via [Unpkg] and use the `parseXml` global.
 
-[bundle]:https://unpkg.com/@rgrove/parse-xml/dist/bundle.min.js
+[bundle]:https://unpkg.com/@rgrove/parse-xml/dist/global.min.js
 [Unpkg]:https://unpkg.com/
 
 ## Features

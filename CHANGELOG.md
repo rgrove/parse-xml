@@ -42,14 +42,18 @@ parse-xml has been rewritten in TypeScript. The API is unchanged, but the `parse
     +const { parseXml, XmlNode } = require('@rgrove/parse-xml');
     ```
 
--   The minified browser bundle, which was previously located at `dist/umd/parse-xml.min.js`, is now located at `dist/bundle.min.js`. This is unlikely to affect most people because this bundle isn't used by Node.js or by browser bundlers like webpack. It's only a convenience for people who want to load parse-xml directly from a CDN like unpkg with a `<script>` element and use it as a global.
+-   The minified browser-ready global bundle, which was previously located at `dist/umd/parse-xml.min.js`, is now located at `dist/global.min.js`. This is unlikely to affect most people because this file isn't used by Node.js or by browser bundlers like webpack. It's only a convenience for people who want to load parse-xml directly from a CDN like unpkg with a `<script>` element and use it via a `parseXml()` global.
 
     ```diff
     -<script src="https://unpkg.com/@rgrove/parse-xml@3.0.0/dist/umd/parse-xml.min.js"></script>
-    +<script src="https://unpkg.com/@rgrove/parse-xml@4.0.0/dist/bundle.min.js"></script>
+    +<script src="https://unpkg.com/@rgrove/parse-xml@4.0.0/dist/global.min.js"></script>
     ```
 
 -   Node.js 12 is no longer supported. Node.js 14 is now the minimum supported version.
+
+### Other Changes
+
+-   The package now includes a browser-specific entry point that's optimized for minification. Using parse-xml with a minifying bundler like webpack should now result in a smaller bundle.
 
 ## 3.0.0 (2021-01-23)
 

@@ -27,8 +27,9 @@
     "src",
     "LICENSE"
   ],
-  "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "main": "./dist/index.js",
+  "browser": "./dist/browser.js",
   "scripts": {
     "build": "npm run build:js && npm run build:bundle && npm run build:docs",
     "build:bundle": "./scripts/esbuild.js",
@@ -42,7 +43,7 @@
     "prepublishOnly": "npm run clean && npm run build",
     "test": "npm run build:js && nyc --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha",
     "test:watch": "npm run build:js && concurrently --kill-others-on-fail --names build,mocha 'npm run build:js -- --watch' 'mocha --watch'",
-    "test:browser": "npm run build:js && concurrently --kill-others-on-fail --names build,webpack 'npm run build:js -- --watch' 'webpack serve --config tests/webpack.config.js'"
+    "test:browser": "npm run build:js && npm run build:bundle && concurrently --kill-others-on-fail --names build:bundle,build:js,webpack 'npm run build:bundle -- --watch' 'npm run build:js -- --watch' 'webpack serve --config tests/webpack.config.js'"
   },
   "devDependencies": {
     "@rgrove/eslint-config": "^5.0.0",
