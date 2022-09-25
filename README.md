@@ -149,63 +149,61 @@ Also, it was fun.
 
 ## Benchmark
 
-Here's how parse-xml stacks up against two comparable libraries, [libxmljs2] (which is based on the native libxml library) and [xmldoc] (which is based on [sax-js]).
+Here's how parse-xml stacks up against two comparable libraries, [libxmljs2](https://github.com/marudor/libxmljs2) (which is based on the native libxml library) and [xmldoc](https://github.com/nfarina/xmldoc) (which is based on [sax-js](https://github.com/isaacs/sax-js)).
 
-[libxmljs2]:https://github.com/marudor/libxmljs2
-[sax-js]:https://github.com/isaacs/sax-js
-[xmldoc]:https://github.com/nfarina/xmldoc
+While libxmljs2 is faster at parsing medium and large documents, its performance comes at the expense of a large C dependency, no browser support, and a [history of security vulnerabilities](https://www.cvedetails.com/vulnerability-list/vendor_id-1962/product_id-3311/Xmlsoft-Libxml2.html) in the underlying libxml2 library.
 
 ```
-Node.js v14.15.4 / Darwin x64
-Intel(R) Core(TM) i7-6920HQ CPU @ 2.90GHz
+Node.js v18.9.1 / Darwin arm64
+Apple M1 Max
 
 Running "Small document (291 bytes)" suite...
 Progress: 100%
 
-  @rgrove/parse-xml 3.0.0:
-    77 109 ops/s, ±0.46%   | fastest
+  @rgrove/parse-xml 4.0.0:
+    189 074 ops/s, ±0.10%   | fastest
 
-  libxmljs2 0.26.6 (native):
-    29 480 ops/s, ±4.62%   | slowest, 61.77% slower
+  libxmljs2 0.30.1 (native):
+    74 006 ops/s, ±0.32%    | 60.86% slower
 
-  xmldoc 1.1.2 (sax-js):
-    36 035 ops/s, ±0.62%   | 53.27% slower
+  xmldoc 1.2.0 (sax-js):
+    68 045 ops/s, ±0.08%    | slowest, 64.01% slower
 
 Finished 3 cases!
-  Fastest: @rgrove/parse-xml 3.0.0
-  Slowest: libxmljs2 0.26.6 (native)
+  Fastest: @rgrove/parse-xml 4.0.0
+  Slowest: xmldoc 1.2.0 (sax-js)
 
 Running "Medium document (72081 bytes)" suite...
 Progress: 100%
 
-  @rgrove/parse-xml 3.0.0:
-    321 ops/s, ±0.99%   | 54.34% slower
+  @rgrove/parse-xml 4.0.0:
+    1 066 ops/s, ±0.11%   | 49.12% slower
 
-  libxmljs2 0.26.6 (native):
-    703 ops/s, ±10.64%   | fastest
+  libxmljs2 0.30.1 (native):
+    2 095 ops/s, ±2.68%   | fastest
 
-  xmldoc 1.1.2 (sax-js):
-    235 ops/s, ±0.50%   | slowest, 66.57% slower
+  xmldoc 1.2.0 (sax-js):
+    459 ops/s, ±0.10%     | slowest, 78.09% slower
 
 Finished 3 cases!
-  Fastest: libxmljs2 0.26.6 (native)
-  Slowest: xmldoc 1.1.2 (sax-js)
+  Fastest: libxmljs2 0.30.1 (native)
+  Slowest: xmldoc 1.2.0 (sax-js)
 
 Running "Large document (1162464 bytes)" suite...
 Progress: 100%
 
-  @rgrove/parse-xml 3.0.0:
-    20 ops/s, ±0.48%   | 72.97% slower
+  @rgrove/parse-xml 4.0.0:
+    91 ops/s, ±0.11%    | 51.85% slower
 
-  libxmljs2 0.26.6 (native):
-    74 ops/s, ±12.02%   | fastest
+  libxmljs2 0.30.1 (native):
+    189 ops/s, ±0.99%   | fastest
 
-  xmldoc 1.1.2 (sax-js):
-    19 ops/s, ±1.68%   | slowest, 74.32% slower
+  xmldoc 1.2.0 (sax-js):
+    39 ops/s, ±0.08%    | slowest, 79.37% slower
 
 Finished 3 cases!
-  Fastest: libxmljs2 0.26.6 (native)
-  Slowest: xmldoc 1.1.2 (sax-js)
+  Fastest: libxmljs2 0.30.1 (native)
+  Slowest: xmldoc 1.2.0 (sax-js)
 ```
 
 See the [parse-xml-benchmark](https://github.com/rgrove/parse-xml-benchmark) repo for instructions on running this benchmark yourself.
