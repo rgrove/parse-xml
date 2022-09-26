@@ -2,7 +2,7 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 4.0.0 (git)
+## 4.0.0 (2022-09-25)
 
 parse-xml has been rewritten in TypeScript. The API is unchanged, but the `parseXml()` function is now a named export rather than a default export, which will require a small change to how you import it. See below for details.
 
@@ -55,7 +55,7 @@ This release also contains major performance improvements. Parsing is now 1.4x t
 
 ### Other Changes
 
--   Parsing performance has been improved significantly, and is now 1.4x to 2.5x as fast as it was in 3.0.0, depending on the document being parsed.
+-   Parsing performance has been improved significantly, and is now 1.4 to 2.5 times as fast as it was in 3.0.0, depending on the document being parsed.
 
 -   The package now includes a browser-specific entry point that's optimized for minification. Using parse-xml with a minifying bundler like webpack or esbuild should now result in a smaller bundle.
 
