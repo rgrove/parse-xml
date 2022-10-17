@@ -25,6 +25,6 @@ export type { ParserOptions } from './lib/Parser.js';
  * @param xml XML string to parse.
  * @param options Parser options.
  */
-export function parseXml(xml: string, options: ParserOptions) {
+export function parseXml(xml: string, options?: ParserOptions) {
   return (new Parser(xml, options)).document;
 }
