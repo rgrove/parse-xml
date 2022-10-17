@@ -2,6 +2,12 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.0.1 (2022-10-17)
+
+### Fixed
+
+-   The `parseXml()` function's `options` argument is now correctly marked as optional. [[#23](https://github.com/rgrove/parse-xml/issues/23)]
+
 ## 4.0.0 (2022-09-25)
 
 parse-xml has been rewritten in TypeScript. The API is unchanged, but the `parseXml()` function is now a named export rather than a default export, which will require a small change to how you import it. See below for details.
