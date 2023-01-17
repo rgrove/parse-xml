@@ -23,6 +23,22 @@ describe('XmlText', () => {
     });
   });
 
+  describe('offset', () => {
+    describe('when `options.includeOffsets` is `false`', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml('<root> foo &amp; bar\r\nbaz </root>');
+        assert.strictEqual(root.children[0].offset, -1);
+      });
+    });
+
+    describe('when `options.includeOffsets` is `true`', () => {
+      it('is the byte offset of the text node', () => {
+        let { root } = parseXml('<root> foo </root>', { includeOffsets: true });
+        assert.strictEqual(root.children[0].offset, 6);
+      });
+    });
+  });
+
   describe('text', () => {
     it('is the text content of the text node', () => {
       let { root } = parseXml('<root> foo &amp;  bar\r\nbaz </root>');

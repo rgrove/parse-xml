@@ -15,6 +15,23 @@ describe('XmlNode', () => {
     });
   });
 
+  describe('toJSON()', () => {
+    describe('when `offset` is `-1`', () => {
+      it('doesn\'t include an `offset` property', () => {
+        let node = new XmlNode();
+        assert.strictEqual(node.toJSON().offset, undefined);
+      });
+    });
+
+    describe('when `offset` is greater than -1', () => {
+      it('includes an `offset` property', () => {
+        let node = new XmlNode();
+        node.offset = 0;
+        assert.strictEqual(node.toJSON().offset, 0);
+      });
+    });
+  });
+
   describe('type', () => {
     it('is an empty string', () => {
       let node = new XmlNode();

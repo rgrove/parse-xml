@@ -52,6 +52,23 @@ describe('Parser', () => {
     });
   });
 
+  describe('when `options.includeOffsets` is `true`', () => {
+    it('the offset is a byte offset, not a character offset', () => {
+      let { root } = parseXml('<root><cat>🐈</cat><dog>🐕</dog></root>', { includeOffsets: true });
+      assert.strictEqual(root.children[1].offset, 19);
+    });
+
+    it('a byte order mark character is counted in the offset', () => {
+      let { root } = parseXml('\uFEFF<root>foo</root>', { includeOffsets: true });
+      assert.strictEqual(root.children[0].offset, 7);
+    });
+
+    it('a carriage return character is not counted in the offset', () => {
+      let { root } = parseXml('<root>\rfoo</root>', { includeOffsets: true });
+      assert.strictEqual(root.children[0].offset, 6);
+    });
+  });
+
   describe('when `options.resolveUndefinedEntity` is set', () => {
     beforeEach(() => {
       options.resolveUndefinedEntity = (ref) => {

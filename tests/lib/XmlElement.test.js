@@ -129,6 +129,24 @@ describe('XmlElement', () => {
     });
   });
 
+  describe('offset', () => {
+    describe('when `options.includeOffsets` is `false`', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml('<root />');
+        assert.strictEqual(root.offset, -1);
+      });
+    });
+
+    describe('when `options.includeOffsets` is `true`', () => {
+      it('is the offset of the element in the document', () => {
+        let { root } = parseXml('<a><b><c /></b></a>', { includeOffsets: true });
+        assert.strictEqual(root.offset, 0);
+        assert.strictEqual(root.children[0].offset, 3);
+        assert.strictEqual(root.children[0].children[0].offset, 6);
+      });
+    });
+  });
+
   describe('parent', () => {
     describe('when the element is the root element', () => {
       it('is the document', () => {

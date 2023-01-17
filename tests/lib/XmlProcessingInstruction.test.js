@@ -30,6 +30,22 @@ describe('XmlProcessingInstruction', () => {
     });
   });
 
+  describe('offset', () => {
+    describe('when `options.includeOffsets` is `false`', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml('<root><?foo?></root>');
+        assert.strictEqual(root.children[0].offset, -1);
+      });
+    });
+
+    describe('when `options.includeOffsets` is `true`', () => {
+      it('is the byte offset of the processing instruction', () => {
+        let { root } = parseXml('<root><?foo?></root>', { includeOffsets: true });
+        assert.strictEqual(root.children[0].offset, 6);
+      });
+    });
+  });
+
   describe('parent', () => {
     it('is the parent element', () => {
       let { root } = parseXml('<root><?foo?></root>');

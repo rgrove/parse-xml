@@ -35,6 +35,22 @@ describe('XmlComment', () => {
     });
   });
 
+  describe('offset', () => {
+    describe('when `options.includeOffsets` is `false`', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
+        assert.strictEqual(root.children[0].offset, -1);
+      });
+    });
+
+    describe('when `options.includeOffsets` is `true`', () => {
+      it('is the byte offset of the comment', () => {
+        let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { includeOffsets: true, preserveComments: true });
+        assert.strictEqual(root.children[0].offset, 6);
+      });
+    });
+  });
+
   describe('parent', () => {
     it('is the parent node', () => {
       let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });

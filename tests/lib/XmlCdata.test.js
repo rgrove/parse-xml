@@ -26,6 +26,22 @@ describe('XmlCdata', () => {
     assert.strictEqual(node.parent, root);
   });
 
+  describe('offset', () => {
+    describe('when `options.includeOffsets` is `false`', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml(xml, { preserveCdata: true });
+        assert.strictEqual(root.children[0].offset, -1);
+      });
+    });
+
+    describe('when `options.includeOffsets` is `true`', () => {
+      it('is the byte offset of the CDATA section', () => {
+        let { root } = parseXml(xml, { includeOffsets: true, preserveCdata: true });
+        assert.strictEqual(root.children[0].offset, 6);
+      });
+    });
+  });
+
   describe('type', () => {
     it('is `XmlNode.TYPE_CDATA`', () => {
       let { root } = parseXml(xml, { preserveCdata: true });

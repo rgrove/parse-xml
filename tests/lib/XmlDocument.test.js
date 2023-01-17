@@ -39,6 +39,22 @@ describe('XmlDocument', () => {
     });
   });
 
+  describe('offset', () => {
+    describe('when `options.includeOffsets` is `false`', () => {
+      it('is `-1`', () => {
+        let doc = parseXml('<root />');
+        assert.strictEqual(doc.offset, -1);
+      });
+    });
+
+    describe('when `options.includeOffsets` is `true`', () => {
+      it('is the byte offset of the document (which is always `0`)', () => {
+        let doc = parseXml('<root />', { includeOffsets: true });
+        assert.strictEqual(doc.offset, 0);
+      });
+    });
+  });
+
   describe('parent', () => {
     it('is `null`', () => {
       assert.strictEqual(parseXml('<root />').parent, null);
