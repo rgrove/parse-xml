@@ -773,8 +773,8 @@ export class Parser {
 // -- Private Functions --------------------------------------------------------
 
 /**
- * Normalizes the given XML string by stripping a byte order mark (if present)
- * and replacing CRLF sequences and lone CR characters with LF characters.
+ * Normalizes the given XML string by replacing CRLF sequences and lone CR
+ * characters with LF characters.
  */
 function normalizeXmlString(xml: string): string {
   return xml.replace(/\r\n?/g, '\n');
