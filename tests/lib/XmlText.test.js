@@ -23,18 +23,39 @@ describe('XmlText', () => {
     });
   });
 
-  describe('offset', () => {
-    describe('when `options.includeOffsets` is `false`', () => {
+  describe('when `options.includeOffsets` is `false`', () => {
+    describe('start', () => {
       it('is `-1`', () => {
         let { root } = parseXml('<root> foo &amp; bar\r\nbaz </root>');
-        assert.strictEqual(root.children[0].offset, -1);
+        assert.strictEqual(root.children[0].start, -1);
       });
     });
 
-    describe('when `options.includeOffsets` is `true`', () => {
-      it('is the byte offset of the text node', () => {
+    describe('end', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml('<root> foo &amp; bar\r\nbaz </root>');
+        assert.strictEqual(root.children[0].end, -1);
+      });
+    });
+  });
+
+  describe('when `options.includeOffsets` is `true`', () => {
+    describe('start', () => {
+      it('is the starting byte offset of the text node', () => {
         let { root } = parseXml('<root> foo </root>', { includeOffsets: true });
-        assert.strictEqual(root.children[0].offset, 6);
+        assert.strictEqual(root.children[0].start, 6);
+      });
+    });
+
+    describe('end', () => {
+      it('is the ending byte offset of the text node', () => {
+        let { root } = parseXml('<root> foo </root>', { includeOffsets: true });
+        assert.strictEqual(root.children[0].end, 11);
+      });
+
+      it('is correct after multiple text nodes have been merged', () => {
+        let { root } = parseXml('<root>one&amp;two<!-- comment -->three</root>', { includeOffsets: true });
+        assert.strictEqual(root.children[0].end, 38);
       });
     });
   });

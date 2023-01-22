@@ -28,16 +28,18 @@ export class Parser {
    * @param options Parser options.
    */
   constructor(xml: string, options: ParserOptions = {}) {
-    this.document = new XmlDocument();
-    this.currentNode = this.document;
+    let doc = this.document = new XmlDocument();
+    let scanner = this.scanner = new StringScanner(xml);
+
+    this.currentNode = doc;
     this.options = options;
-    this.scanner = new StringScanner(xml);
 
     if (this.options.includeOffsets) {
-      this.document.offset = 0;
+      doc.start = 0;
+      doc.end = xml.length;
     }
 
-    this.scanner.consumeStringFast('\uFEFF'); // byte order mark
+    scanner.consumeStringFast('\uFEFF'); // byte order mark
     this.consumeProlog();
 
     if (!this.consumeElement()) {
@@ -46,7 +48,7 @@ export class Parser {
 
     while (this.consumeMisc()) {} // eslint-disable-line no-empty
 
-    if (!this.scanner.isEnd) {
+    if (!scanner.isEnd) {
       throw this.error('Extra content at the end of the document');
     }
   }
@@ -58,7 +60,8 @@ export class Parser {
     node.parent = this.currentNode;
 
     if (this.options.includeOffsets) {
-      node.offset = this.scanner.charIndexToByteIndex(charIndex);
+      node.start = this.scanner.charIndexToByteIndex(charIndex);
+      node.end = this.scanner.charIndexToByteIndex();
     }
 
     // @ts-expect-error: XmlDocument has a more limited set of possible children
@@ -84,6 +87,11 @@ export class Parser {
         // The previous node is a text node, so we can append to it and avoid
         // creating another node.
         prevNode.text += text;
+
+        if (this.options.includeOffsets) {
+          prevNode.end = this.scanner.charIndexToByteIndex();
+        }
+
         return;
       }
     }
@@ -801,15 +809,10 @@ export type ParserOptions = {
   ignoreUndefinedEntities?: boolean;
 
   /**
-   * When `true`, the byte offset of each node in the input string will be
-   * made available via an `offset` property on the node.
-   *
-   * Note that this offset doesn't take into account any carriage return (`\r`)
-   * characters in the input string because carriage returns are removed during
-   * a normalization step before parsing begins.
+   * When `true`, the starting and ending byte offsets of each node in the input
+   * string will be made available via `start` and `end` properties on the node.
    *
    * @default false
-   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-line-ends
    */
   includeOffsets?: boolean;
 

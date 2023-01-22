@@ -37,12 +37,6 @@ export class XmlNode {
   static readonly TYPE_TEXT = 'text';
 
   /**
-   * Byte offset of this node in the original XML string, or `-1` if the offset
-   * is unknown.
-   */
-  offset = -1;
-
-  /**
    * Parent node of this node, or `null` if this node has no parent.
    */
   parent: XmlDocument | XmlElement | null = null;
@@ -54,6 +48,12 @@ export class XmlNode {
   get document(): XmlDocument | null {
     return this.parent?.document ?? null;
   }
+
+  /**
+   * Ending byte offset of this node in the original XML string, or `-1` if the
+   * offset is unknown.
+   */
+  end = -1;
 
   /**
    * Whether this node is the root node of the document.
@@ -76,6 +76,12 @@ export class XmlNode {
   get preserveWhitespace(): boolean {
     return Boolean(this.parent?.preserveWhitespace);
   }
+
+  /**
+   * Starting byte offset of this node in the original XML string, or `-1` if
+   * the offset is unknown.
+   */
+  start = -1;
 
   /**
    * Type of this node.
@@ -108,8 +114,9 @@ export class XmlNode {
       json.preserveWhitespace = true;
     }
 
-    if (this.offset !== -1) {
-      json.offset = this.offset;
+    if (this.start !== -1) {
+      json.start = this.start;
+      json.end = this.end;
     }
 
     return json;

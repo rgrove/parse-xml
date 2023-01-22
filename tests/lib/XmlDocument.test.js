@@ -39,18 +39,34 @@ describe('XmlDocument', () => {
     });
   });
 
-  describe('offset', () => {
-    describe('when `options.includeOffsets` is `false`', () => {
+  describe('when `options.includeOffsets` is `false`', () => {
+    describe('start', () => {
       it('is `-1`', () => {
         let doc = parseXml('<root />');
-        assert.strictEqual(doc.offset, -1);
+        assert.strictEqual(doc.start, -1);
       });
     });
 
-    describe('when `options.includeOffsets` is `true`', () => {
-      it('is the byte offset of the document (which is always `0`)', () => {
+    describe('end', () => {
+      it('is `-1`', () => {
+        let doc = parseXml('<root />');
+        assert.strictEqual(doc.end, -1);
+      });
+    });
+  });
+
+  describe('when `options.includeOffsets` is `true`', () => {
+    describe('start', () => {
+      it('is the starting byte offset of the document', () => {
         let doc = parseXml('<root />', { includeOffsets: true });
-        assert.strictEqual(doc.offset, 0);
+        assert.strictEqual(doc.start, 0);
+      });
+    });
+
+    describe('end', () => {
+      it('is the ending byte offset of the document', () => {
+        let doc = parseXml('<root />', { includeOffsets: true });
+        assert.strictEqual(doc.end, 8);
       });
     });
   });

@@ -129,20 +129,38 @@ describe('XmlElement', () => {
     });
   });
 
-  describe('offset', () => {
-    describe('when `options.includeOffsets` is `false`', () => {
+  describe('when `options.includeOffsets` is `false`', () => {
+    describe('start', () => {
       it('is `-1`', () => {
         let { root } = parseXml('<root />');
-        assert.strictEqual(root.offset, -1);
+        assert.strictEqual(root.start, -1);
       });
     });
 
-    describe('when `options.includeOffsets` is `true`', () => {
-      it('is the offset of the element in the document', () => {
+    describe('end', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml('<root />');
+        assert.strictEqual(root.end, -1);
+      });
+    });
+  });
+
+  describe('when `options.includeOffsets` is `true`', () => {
+    describe('start', () => {
+      it('is the starting byte offset of the element', () => {
         let { root } = parseXml('<a><b><c /></b></a>', { includeOffsets: true });
-        assert.strictEqual(root.offset, 0);
-        assert.strictEqual(root.children[0].offset, 3);
-        assert.strictEqual(root.children[0].children[0].offset, 6);
+        assert.strictEqual(root.start, 0);
+        assert.strictEqual(root.children[0].start, 3);
+        assert.strictEqual(root.children[0].children[0].start, 6);
+      });
+    });
+
+    describe('end', () => {
+      it('is the ending byte offset of the element', () => {
+        let { root } = parseXml('<a><b><c /></b></a>', { includeOffsets: true });
+        assert.strictEqual(root.end, 19);
+        assert.strictEqual(root.children[0].end, 15);
+        assert.strictEqual(root.children[0].children[0].end, 11);
       });
     });
   });
