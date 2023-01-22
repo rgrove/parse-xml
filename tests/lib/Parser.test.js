@@ -40,6 +40,11 @@ describe('Parser', () => {
     assert.strictEqual(doc.root.name, 'root');
   });
 
+  it('normalizes whitespace in attribute values', () => {
+    let { root } = parseXml('<root attr=" one two\tthree\nfour\r\nfive\rsix " />');
+    assert.strictEqual(root.attributes.attr, ' one two three four five six ');
+  });
+
   describe('when `options.ignoreUndefinedEntities` is `true`', () => {
     beforeEach(() => {
       options.ignoreUndefinedEntities = true;

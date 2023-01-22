@@ -31,7 +31,7 @@ export class Parser {
     this.document = new XmlDocument();
     this.currentNode = this.document;
     this.options = options;
-    this.scanner = new StringScanner(normalizeXmlString(xml));
+    this.scanner = new StringScanner(xml);
 
     if (this.options.includeOffsets) {
       this.document.offset = 0;
@@ -74,6 +74,8 @@ export class Parser {
   addText(text: string, charIndex: number) {
     let { children } = this.currentNode;
     let { length } = children;
+
+    text = normalizeLineBreaks(text);
 
     if (length > 0) {
       let prevNode = children[length - 1];
@@ -221,7 +223,7 @@ export class Parser {
     }
 
     if (this.options.preserveCdata) {
-      this.addNode(new XmlCdata(text), startIndex);
+      this.addNode(new XmlCdata(normalizeLineBreaks(text)), startIndex);
     } else {
       this.addText(text, startIndex);
     }
@@ -280,7 +282,7 @@ export class Parser {
     }
 
     if (this.options.preserveComments) {
-      this.addNode(new XmlComment(content.trim()), startIndex);
+      this.addNode(new XmlComment(normalizeLineBreaks(content.trim())), startIndex);
     }
 
     return true;
@@ -488,7 +490,7 @@ export class Parser {
       throw this.error('Unterminated processing instruction');
     }
 
-    this.addNode(new XmlProcessingInstruction(name, content), startIndex);
+    this.addNode(new XmlProcessingInstruction(name, normalizeLineBreaks(content)), startIndex);
     return true;
   }
 
@@ -773,11 +775,19 @@ export class Parser {
 // -- Private Functions --------------------------------------------------------
 
 /**
- * Normalizes the given XML string by replacing CRLF sequences and lone CR
- * characters with LF characters.
+ * Normalizes line breaks in the given text by replacing CRLF sequences and lone
+ * CR characters with LF characters.
  */
-function normalizeXmlString(xml: string): string {
-  return xml.replace(/\r\n?/g, '\n');
+function normalizeLineBreaks(text: string): string {
+  let i = 0;
+
+  while ((i = text.indexOf('\r', i)) !== -1) {
+    text = text[i + 1] === '\n'
+      ? text.slice(0, i) + text.slice(i + 1)
+      : text.slice(0, i) + '\n' + text.slice(i + 1);
+  }
+
+  return text;
 }
 
 // -- Types --------------------------------------------------------------------
