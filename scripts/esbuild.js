@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 'use strict';
 
-const { build } = require('esbuild');
+const { build, context } = require('esbuild');
 
 const pkg = require('../package.json');
 
@@ -14,6 +14,7 @@ const options = {
   },
   bundle: true,
   entryPoints: ['./src/index.ts'],
+  logLevel: 'info',
   mangleProps: /^consume([A-Z]|$)|^(addNode|addText|advance|charCount|charIndex|charIndex|charIndexToByteIndex|charLength|charsToBytes|currentNode|error|isEnd|multiByteMode|peek|reset|scanner|syntax|validateChars)$/,
   sourcemap: true,
   target: 'es2017',
@@ -21,26 +22,38 @@ const options = {
 };
 
 async function main() {
-  await Promise.all([
-    // CommonJS browser bundle.
-    build({
-      ...options,
-      format: 'cjs',
-      outfile: './dist/browser.js',
-      watch,
-    }),
+  // CommonJS browser bundle.
+  let cjsOptions = {
+    ...options,
+    format: 'cjs',
+    outfile: './dist/browser.js',
+  };
 
-    // Minified global bundle.
-    build({
-      ...options,
-      footer: {
-        js: 'parseXml=parseXml.parseXml',
-      },
-      globalName: 'parseXml',
-      minify: true,
-      outfile: './dist/global.min.js',
-    }),
-  ]);
+  // Minified global bundle.
+  let globalOptions = {
+    ...options,
+    footer: {
+      js: 'parseXml=parseXml.parseXml',
+    },
+    globalName: 'parseXml',
+    minify: true,
+    outfile: './dist/global.min.js',
+  };
+
+  if (watch) {
+    let cjsContext = await context(cjsOptions);
+    let globalContext = await context(globalOptions);
+
+    await Promise.all([
+      cjsContext.watch(),
+      globalContext.watch(),
+    ]);
+  } else {
+    await Promise.all([
+      build(cjsOptions),
+      build(globalOptions),
+    ]);
+  }
 }
 
 main().catch((error) => {
