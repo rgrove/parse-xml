@@ -42,18 +42,24 @@ export class XmlNode {
   parent: XmlDocument | XmlElement | null = null;
 
   /**
-   * Document that contains this node, or `null` if this node is not associated
-   * with a document.
+   * Starting byte offset of this node in the original XML string, or `-1` if
+   * the offset is unknown.
    */
-  get document(): XmlDocument | null {
-    return this.parent?.document ?? null;
-  }
+  start = -1;
 
   /**
    * Ending byte offset of this node in the original XML string, or `-1` if the
    * offset is unknown.
    */
   end = -1;
+
+  /**
+   * Document that contains this node, or `null` if this node is not associated
+   * with a document.
+   */
+  get document(): XmlDocument | null {
+    return this.parent?.document ?? null;
+  }
 
   /**
    * Whether this node is the root node of the document.
@@ -76,12 +82,6 @@ export class XmlNode {
   get preserveWhitespace(): boolean {
     return Boolean(this.parent?.preserveWhitespace);
   }
-
-  /**
-   * Starting byte offset of this node in the original XML string, or `-1` if
-   * the offset is unknown.
-   */
-  start = -1;
 
   /**
    * Type of this node.
