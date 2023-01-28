@@ -38,7 +38,7 @@
     "build:js": "tsc",
     "clean": "rm -rf .nyc_output coverage dist",
     "coverage": "nyc --reporter html --report-dir coverage pnpm test && open coverage/index.html",
-    "lint": "pnpm run lint:js && pnpm run lint:ts",
+    "lint": "pnpm run build:js && pnpm run lint:js",
     "lint:js": "eslint .",
     "lint:ts": "tsc --noEmit",
     "prepublishOnly": "pnpm run clean && pnpm run build",
