@@ -43,8 +43,8 @@
     "lint:ts": "tsc --noEmit",
     "prepublishOnly": "pnpm run clean && pnpm run build",
     "test": "pnpm run build:js && nyc --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha",
-    "test:watch": "pnpm run build:js && concurrently --kill-others-on-fail --names build,mocha 'pnpm run build:js -- --watch' 'mocha --watch'",
-    "test:browser": "pnpm run build:js && pnpm run build:bundle && concurrently --kill-others-on-fail --names build:bundle,build:js,webpack 'pnpm run build:bundle -- --watch' 'pnpm run build:js -- --watch' 'webpack serve --config tests/webpack.config.js'"
+    "test:watch": "pnpm run build:js && concurrently --kill-others-on-fail --names build,mocha 'pnpm run build:js --watch' 'mocha --watch'",
+    "test:browser": "pnpm run build:js && pnpm run build:bundle && concurrently --kill-others-on-fail --names build:bundle,build:js,webpack 'pnpm run build:bundle --watch' 'pnpm run build:js --watch' 'webpack serve --config tests/webpack.config.js'"
   },
   "devDependencies": {
     "@rgrove/eslint-config": "^5.0.0",
