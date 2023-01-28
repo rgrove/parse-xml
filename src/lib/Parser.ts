@@ -9,7 +9,6 @@ import { XmlText } from './XmlText.js';
 
 import type { XmlNode } from './XmlNode.js';
 
-
 const emptyString = '';
 
 /**
@@ -29,11 +28,18 @@ export class Parser {
    * @param options Parser options.
    */
   constructor(xml: string, options: ParserOptions = {}) {
-    this.document = new XmlDocument();
-    this.currentNode = this.document;
-    this.options = options;
-    this.scanner = new StringScanner(normalizeXmlString(xml));
+    let doc = this.document = new XmlDocument();
+    let scanner = this.scanner = new StringScanner(xml);
 
+    this.currentNode = doc;
+    this.options = options;
+
+    if (this.options.includeOffsets) {
+      doc.start = 0;
+      doc.end = xml.length;
+    }
+
+    scanner.consumeStringFast('\uFEFF'); // byte order mark
     this.consumeProlog();
 
     if (!this.consumeElement()) {
@@ -42,7 +48,7 @@ export class Parser {
 
     while (this.consumeMisc()) {} // eslint-disable-line no-empty
 
-    if (!this.scanner.isEnd) {
+    if (!scanner.isEnd) {
       throw this.error('Extra content at the end of the document');
     }
   }
@@ -50,8 +56,13 @@ export class Parser {
   /**
    * Adds the given `XmlNode` as a child of `this.currentNode`.
    */
-  addNode(node: XmlNode) {
+  addNode(node: XmlNode, charIndex: number) {
     node.parent = this.currentNode;
+
+    if (this.options.includeOffsets) {
+      node.start = this.scanner.charIndexToByteIndex(charIndex);
+      node.end = this.scanner.charIndexToByteIndex();
+    }
 
     // @ts-expect-error: XmlDocument has a more limited set of possible children
     // than XmlElement so TypeScript is unhappy, but we always do the right
@@ -63,9 +74,11 @@ export class Parser {
    * Adds the given _text_ to the document, either by appending it to a
    * preceding `XmlText` node (if possible) or by creating a new `XmlText` node.
    */
-  addText(text: string) {
+  addText(text: string, charIndex: number) {
     let { children } = this.currentNode;
     let { length } = children;
+
+    text = normalizeLineBreaks(text);
 
     if (length > 0) {
       let prevNode = children[length - 1];
@@ -74,11 +87,16 @@ export class Parser {
         // The previous node is a text node, so we can append to it and avoid
         // creating another node.
         prevNode.text += text;
+
+        if (this.options.includeOffsets) {
+          prevNode.end = this.scanner.charIndexToByteIndex();
+        }
+
         return;
       }
     }
 
-    this.addNode(new XmlText(text));
+    this.addNode(new XmlText(text), charIndex);
   }
 
   /**
@@ -199,6 +217,7 @@ export class Parser {
    */
   consumeCdataSection(): boolean {
     let { scanner } = this;
+    let startIndex = scanner.charIndex;
 
     if (!scanner.consumeStringFast('<![CDATA[')) {
       return false;
@@ -212,9 +231,9 @@ export class Parser {
     }
 
     if (this.options.preserveCdata) {
-      this.addNode(new XmlCdata(text));
+      this.addNode(new XmlCdata(normalizeLineBreaks(text)), startIndex);
     } else {
-      this.addText(text);
+      this.addText(text, startIndex);
     }
 
     return true;
@@ -228,6 +247,7 @@ export class Parser {
    */
   consumeCharData(): boolean {
     let { scanner } = this;
+    let startIndex = scanner.charIndex;
     let charData = scanner.consumeUntilMatch(syntax.endCharData);
 
     if (!charData) {
@@ -240,7 +260,7 @@ export class Parser {
       throw this.error('Element content may not contain the CDATA section close delimiter `]]>`');
     }
 
-    this.addText(charData);
+    this.addText(charData, startIndex);
     return true;
   }
 
@@ -252,6 +272,7 @@ export class Parser {
    */
   consumeComment(): boolean {
     let { scanner } = this;
+    let startIndex = scanner.charIndex;
 
     if (!scanner.consumeStringFast('<!--')) {
       return false;
@@ -269,7 +290,7 @@ export class Parser {
     }
 
     if (this.options.preserveComments) {
-      this.addNode(new XmlComment(content.trim()));
+      this.addNode(new XmlComment(normalizeLineBreaks(content.trim())), startIndex);
     }
 
     return true;
@@ -285,10 +306,11 @@ export class Parser {
    * @see https://www.w3.org/TR/2008/REC-xml-20081126/#entproc
    */
   consumeContentReference(): boolean {
+    let startIndex = this.scanner.charIndex;
     let ref = this.consumeReference();
 
     if (ref) {
-      this.addText(ref);
+      this.addText(ref, startIndex);
       return true;
     }
 
@@ -334,7 +356,7 @@ export class Parser {
    */
   consumeElement(): boolean {
     let { scanner } = this;
-    let mark = scanner.charIndex;
+    let startIndex = scanner.charIndex;
 
     if (!scanner.consumeStringFast('<')) {
       return false;
@@ -343,7 +365,7 @@ export class Parser {
     let name = this.consumeName();
 
     if (!name) {
-      scanner.reset(mark);
+      scanner.reset(startIndex);
       return false;
     }
 
@@ -390,7 +412,7 @@ export class Parser {
       this.currentNode = element.parent;
     }
 
-    this.addNode(element);
+    this.addNode(element, startIndex);
     return true;
   }
 
@@ -443,7 +465,7 @@ export class Parser {
    */
   consumeProcessingInstruction(): boolean {
     let { scanner } = this;
-    let mark = scanner.charIndex;
+    let startIndex = scanner.charIndex;
 
     if (!scanner.consumeStringFast('<?')) {
       return false;
@@ -453,7 +475,7 @@ export class Parser {
 
     if (name) {
       if (name.toLowerCase() === 'xml') {
-        scanner.reset(mark);
+        scanner.reset(startIndex);
         throw this.error("XML declaration isn't allowed here");
       }
     } else {
@@ -462,7 +484,7 @@ export class Parser {
 
     if (!this.consumeWhitespace()) {
       if (scanner.consumeStringFast('?>')) {
-        this.addNode(new XmlProcessingInstruction(name));
+        this.addNode(new XmlProcessingInstruction(name), startIndex);
         return true;
       }
 
@@ -476,7 +498,7 @@ export class Parser {
       throw this.error('Unterminated processing instruction');
     }
 
-    this.addNode(new XmlProcessingInstruction(name, content));
+    this.addNode(new XmlProcessingInstruction(name, normalizeLineBreaks(content)), startIndex);
     return true;
   }
 
@@ -488,7 +510,7 @@ export class Parser {
    */
   consumeProlog(): boolean {
     let { scanner } = this;
-    let mark = scanner.charIndex;
+    let startIndex = scanner.charIndex;
 
     this.consumeXmlDeclaration();
 
@@ -498,7 +520,7 @@ export class Parser {
       while (this.consumeMisc()) {} // eslint-disable-line no-empty
     }
 
-    return mark < scanner.charIndex;
+    return startIndex < scanner.charIndex;
   }
 
   /**
@@ -761,15 +783,19 @@ export class Parser {
 // -- Private Functions --------------------------------------------------------
 
 /**
- * Normalizes the given XML string by stripping a byte order mark (if present)
- * and replacing CRLF sequences and lone CR characters with LF characters.
+ * Normalizes line breaks in the given text by replacing CRLF sequences and lone
+ * CR characters with LF characters.
  */
-function normalizeXmlString(xml: string): string {
-  if (xml[0] === '\uFEFF') {
-    xml = xml.slice(1);
+function normalizeLineBreaks(text: string): string {
+  let i = 0;
+
+  while ((i = text.indexOf('\r', i)) !== -1) {
+    text = text[i + 1] === '\n'
+      ? text.slice(0, i) + text.slice(i + 1)
+      : text.slice(0, i) + '\n' + text.slice(i + 1);
   }
 
-  return xml.replace(/\r\n?/g, '\n');
+  return text;
 }
 
 // -- Types --------------------------------------------------------------------
@@ -781,6 +807,14 @@ export type ParserOptions = {
    * @default false
    */
   ignoreUndefinedEntities?: boolean;
+
+  /**
+   * When `true`, the starting and ending byte offsets of each node in the input
+   * string will be made available via `start` and `end` properties on the node.
+   *
+   * @default false
+   */
+  includeOffsets?: boolean;
 
   /**
    * When `true`, CDATA sections will be preserved in the document as `XmlCdata`

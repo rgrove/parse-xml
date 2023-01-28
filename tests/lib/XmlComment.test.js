@@ -35,6 +35,38 @@ describe('XmlComment', () => {
     });
   });
 
+  describe('when `options.includeOffsets` is `false`', () => {
+    describe('start', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
+        assert.strictEqual(root.children[0].start, -1);
+      });
+    });
+
+    describe('end', () => {
+      it('is `-1`', () => {
+        let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
+        assert.strictEqual(root.children[0].end, -1);
+      });
+    });
+  });
+
+  describe('when `options.includeOffsets` is `true`', () => {
+    describe('start', () => {
+      it('is the starting byte offset of the comment', () => {
+        let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { includeOffsets: true, preserveComments: true });
+        assert.strictEqual(root.children[0].start, 6);
+      });
+    });
+
+    describe('end', () => {
+      it('is the ending byte offset of the comment', () => {
+        let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { includeOffsets: true, preserveComments: true });
+        assert.strictEqual(root.children[0].end, 29);
+      });
+    });
+  });
+
   describe('parent', () => {
     it('is the parent node', () => {
       let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });

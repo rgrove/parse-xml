@@ -20,7 +20,7 @@ export const attValueCharSingleQuote = /[^'&<]+/y;
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#AVNormalize
  */
-export const attValueNormalizedWhitespace = /[\t\n]/g;
+export const attValueNormalizedWhitespace = /\r\n|[\n\r\t]/g;
 
 /**
  * Regular expression that matches one or more characters that signal the end of

@@ -42,6 +42,18 @@ export class XmlNode {
   parent: XmlDocument | XmlElement | null = null;
 
   /**
+   * Starting byte offset of this node in the original XML string, or `-1` if
+   * the offset is unknown.
+   */
+  start = -1;
+
+  /**
+   * Ending byte offset of this node in the original XML string, or `-1` if the
+   * offset is unknown.
+   */
+  end = -1;
+
+  /**
    * Document that contains this node, or `null` if this node is not associated
    * with a document.
    */
@@ -100,6 +112,11 @@ export class XmlNode {
 
     if (this.preserveWhitespace) {
       json.preserveWhitespace = true;
+    }
+
+    if (this.start !== -1) {
+      json.start = this.start;
+      json.end = this.end;
     }
 
     return json;

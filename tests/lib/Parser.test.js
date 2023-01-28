@@ -40,6 +40,11 @@ describe('Parser', () => {
     assert.strictEqual(doc.root.name, 'root');
   });
 
+  it('normalizes whitespace in attribute values', () => {
+    let { root } = parseXml('<root attr=" one two\tthree\nfour\r\nfive\rsix " />');
+    assert.strictEqual(root.attributes.attr, ' one two three four five six ');
+  });
+
   describe('when `options.ignoreUndefinedEntities` is `true`', () => {
     beforeEach(() => {
       options.ignoreUndefinedEntities = true;
@@ -49,6 +54,28 @@ describe('Parser', () => {
       let { root } = parseXml('<root foo="bar &bogus; baz">&quux;</root>', options);
       assert.strictEqual(root.attributes.foo, 'bar &bogus; baz');
       assert.strictEqual(root.text, '&quux;');
+    });
+  });
+
+  describe('when `options.includeOffsets` is `true`', () => {
+    it('the start offset is a byte offset, not a character offset', () => {
+      let { root } = parseXml('<root><cat>🐈</cat><dog>🐕</dog></root>', { includeOffsets: true });
+      assert.strictEqual(root.children[1].start, 19);
+    });
+
+    it('the end offset is a byte offset, not a character offset', () => {
+      let { root } = parseXml('<root><cat>🐈</cat><dog>🐕</dog></root>', { includeOffsets: true });
+      assert.strictEqual(root.children[1].end, 32);
+    });
+
+    it('a byte order mark character is counted in the offset', () => {
+      let { root } = parseXml('\uFEFF<root>foo</root>', { includeOffsets: true });
+      assert.strictEqual(root.children[0].start, 7);
+    });
+
+    it('a carriage return character is not counted in the offset', () => {
+      let { root } = parseXml('<root>\rfoo</root>', { includeOffsets: true });
+      assert.strictEqual(root.children[0].start, 6);
     });
   });
 

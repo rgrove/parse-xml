@@ -43,16 +43,6 @@ export class StringScanner {
   // -- Protected Methods ------------------------------------------------------
 
   /**
-   * Returns the byte index of the given character index in the string. The two
-   * may differ in strings that contain multibyte characters.
-   */
-  protected charIndexToByteIndex(charIndex: number = this.charIndex): number {
-    return this.multiByteMode
-      ? (this.charsToBytes as number[])[charIndex] ?? Infinity
-      : charIndex;
-  }
-
-  /**
    * Returns the number of characters in the given string, which may differ from
    * the byte length if the string contains multibyte characters.
    */
@@ -73,6 +63,16 @@ export class StringScanner {
    */
   advance(count = 1) {
     this.charIndex = Math.min(this.charCount, this.charIndex + count);
+  }
+
+  /**
+   * Returns the byte index of the given character index in the string. The two
+   * may differ in strings that contain multibyte characters.
+   */
+  charIndexToByteIndex(charIndex: number = this.charIndex): number {
+    return this.multiByteMode
+      ? (this.charsToBytes as number[])[charIndex] ?? Infinity
+      : charIndex;
   }
 
   /**
