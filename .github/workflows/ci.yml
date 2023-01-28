@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  testAndLint:
+  test:
     runs-on: ubuntu-latest
 
     strategy:
@@ -29,8 +29,22 @@ jobs:
 
       - uses: pnpm/action-setup@c3b53f6a16e57305370b4ae5a540c2077a1d50dd # v2.2.4
         with:
-          version: ^7.25.1
           run_install: true
 
       - run: pnpm test
+
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: lts/*
+
+      - uses: pnpm/action-setup@c3b53f6a16e57305370b4ae5a540c2077a1d50dd # v2.2.4
+        with:
+          run_install: true
+
       - run: pnpm lint
