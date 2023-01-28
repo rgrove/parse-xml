@@ -2,6 +2,29 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.1.0 (git)
+
+### Minor Changes
+
+-   Added a new `includeOffsets` parser option. [[#25](https://github.com/rgrove/parse-xml/pull/25)]
+
+    When `true`, the starting and ending byte offsets of each node in the input string will be made available via `start` and `end` properties on the node. The default is `false`.
+
+    This option is useful if you want to preserve the original source text of each node when later serializing a document back to XML. Previously, the original source text was always discarded, which meant that if you parsed a document and then serialized it, the original source text would be lost.
+
+    ```js
+    const { parseXml } = require('@rgrove/parse-xml');
+
+    let xml = '<root><child /></root>';
+    let doc = parseXml(xml, { includeOffsets: true });
+
+    console.log(doc.root.toJSON());
+    // => { type: 'element', name: 'root', start: 0, end: 22, ... }
+
+    console.log(doc.root.children[0].toJSON());
+    // => { type: 'element', name: 'child', start: 6, end: 15, ... }
+    ```
+
 ## 4.0.1 (2022-10-17)
 
 ### Fixed
@@ -71,7 +94,7 @@ This release includes significant changes under the hood (such as a brand new pa
 
 ### Added
 
--   XML declarations (like `<?xml version="1.0"?>`) and processing instructions are now included in parsed documents as `XmlProcessingInstruction` nodes (with the `type` value "pi"). Previously they were discarded.
+-   XML processing instructions are now included in parsed documents as `XmlProcessingInstruction` nodes (with the `type` value "pi"). Previously they were discarded.
 
 -   A new `sortAttributes` option. When `true`, attributes will be sorted in alphabetical order in an element's `attributes` object (which is no longer the default behavior).
 
