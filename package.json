@@ -32,19 +32,19 @@
   "main": "./dist/index.js",
   "browser": "./dist/browser.js",
   "scripts": {
-    "build": "npm run build:js && npm run build:bundle && npm run build:docs",
+    "build": "pnpm run build:js && pnpm run build:bundle && pnpm run build:docs",
     "build:bundle": "./scripts/esbuild.js",
     "build:docs": "typedoc src/index.ts",
     "build:js": "tsc",
     "clean": "rm -rf .nyc_output coverage dist",
-    "coverage": "nyc --reporter html --report-dir coverage npm test && open coverage/index.html",
-    "lint": "npm run lint:js && npm run lint:ts",
+    "coverage": "nyc --reporter html --report-dir coverage pnpm test && open coverage/index.html",
+    "lint": "pnpm run lint:js && pnpm run lint:ts",
     "lint:js": "eslint .",
     "lint:ts": "tsc --noEmit",
-    "prepublishOnly": "npm run clean && npm run build",
-    "test": "npm run build:js && nyc --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha",
-    "test:watch": "npm run build:js && concurrently --kill-others-on-fail --names build,mocha 'npm run build:js -- --watch' 'mocha --watch'",
-    "test:browser": "npm run build:js && npm run build:bundle && concurrently --kill-others-on-fail --names build:bundle,build:js,webpack 'npm run build:bundle -- --watch' 'npm run build:js -- --watch' 'webpack serve --config tests/webpack.config.js'"
+    "prepublishOnly": "pnpm run clean && pnpm run build",
+    "test": "pnpm run build:js && nyc --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha",
+    "test:watch": "pnpm run build:js && concurrently --kill-others-on-fail --names build,mocha 'pnpm run build:js -- --watch' 'mocha --watch'",
+    "test:browser": "pnpm run build:js && pnpm run build:bundle && concurrently --kill-others-on-fail --names build:bundle,build:js,webpack 'pnpm run build:bundle -- --watch' 'pnpm run build:js -- --watch' 'webpack serve --config tests/webpack.config.js'"
   },
   "devDependencies": {
     "@rgrove/eslint-config": "^5.0.0",
