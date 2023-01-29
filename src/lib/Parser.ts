@@ -2,6 +2,7 @@ import { StringScanner } from './StringScanner.js';
 import * as syntax from './syntax.js';
 import { XmlCdata } from './XmlCdata.js';
 import { XmlComment } from './XmlComment.js';
+import { XmlDeclaration } from './XmlDeclaration.js';
 import { XmlDocument } from './XmlDocument.js';
 import { XmlElement } from './XmlElement.js';
 import { XmlProcessingInstruction } from './XmlProcessingInstruction.js';
@@ -652,6 +653,7 @@ export class Parser {
    */
   consumeXmlDeclaration(): boolean {
     let { scanner } = this;
+    let startIndex = scanner.charIndex;
 
     if (!scanner.consumeStringFast('<?xml')) {
       return false;
@@ -671,8 +673,11 @@ export class Parser {
       throw this.error('Invalid character in version number');
     }
 
+    let encoding;
+    let standalone;
+
     if (this.consumeWhitespace()) {
-      let encoding = Boolean(scanner.consumeStringFast('encoding'))
+      encoding = Boolean(scanner.consumeStringFast('encoding'))
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 
@@ -680,7 +685,7 @@ export class Parser {
         this.consumeWhitespace();
       }
 
-      let standalone = Boolean(scanner.consumeStringFast('standalone'))
+      standalone = Boolean(scanner.consumeStringFast('standalone'))
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 
@@ -695,6 +700,10 @@ export class Parser {
 
     if (!scanner.consumeStringFast('?>')) {
       throw this.error('Invalid or unclosed XML declaration');
+    }
+
+    if (this.options.preserveXmlDeclaration) {
+      this.addNode(new XmlDeclaration(version, encoding || null, standalone || null), startIndex);
     }
 
     return true;
@@ -832,6 +841,17 @@ export type ParserOptions = {
    * @default false
    */
   preserveComments?: boolean;
+
+  /**
+   * When `true`, an XML declaration (if present) will be preserved in the
+   * document as an `XmlDeclaration` node. Otherwise the declaration will not be
+   * included in the node tree.
+   *
+   * Note that when this is `true` and an XML declaration is present, the
+   * XML declaration will be the first child of the document (normally the root
+   * node would be first).
+   */
+  preserveXmlDeclaration?: boolean;
 
   /**
    * When an undefined named entity is encountered, this function will be called

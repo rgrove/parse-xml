@@ -25,6 +25,22 @@ All notable changes to parse-xml are documented in this file. The format is base
     // => { type: 'element', name: 'child', start: 6, end: 15, ... }
     ```
 
+-   Added a new `preserveXmlDeclaration` parser option.
+
+    When `true`, an `XmlDeclaration` node representing the XML declaration (if there is one) will be included in the parsed document. When `false`, the XML declaration will be discarded. The default is `false`, which matches the behavior of previous versions.
+
+    This option is useful if you want to preserve the XML declaration when later serializing a document back to XML. Previously, the XML declaration was always discarded, which meant that if you parsed a document with an XML declaration and then serialized it, the original XML declaration would be lost.
+
+    ```js
+    const { parseXml } = require('@rgrove/parse-xml');
+
+    let xml = '<?xml version="1.0" encoding="UTF-8"?><root />';
+    let doc = parseXml(xml, { preserveXmlDeclaration: true });
+
+    console.log(doc.children[0].toJSON());
+    // => { type: 'xmldecl', version: '1.0', encoding: 'UTF-8' }
+    ```
+
 ## 4.0.1 (2022-10-17)
 
 ### Fixed

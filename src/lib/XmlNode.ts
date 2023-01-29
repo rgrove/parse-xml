@@ -37,6 +37,11 @@ export class XmlNode {
   static readonly TYPE_TEXT = 'text';
 
   /**
+   * Type value for an `XmlDeclaration` node.
+   */
+  static readonly TYPE_XML_DECLARATION = 'xmldecl';
+
+  /**
    * Parent node of this node, or `null` if this node has no parent.
    */
   parent: XmlDocument | XmlElement | null = null;
@@ -62,10 +67,13 @@ export class XmlNode {
   }
 
   /**
-   * Whether this node is the root node of the document.
+   * Whether this node is the root node of the document (also known as the
+   * document element).
    */
   get isRootNode(): boolean {
-    return this.parent !== null && this.parent === this.document;
+    return this.parent !== null
+      && this.parent === this.document
+      && this.type === XmlNode.TYPE_ELEMENT;
   }
 
   /**

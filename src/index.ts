@@ -5,6 +5,7 @@ import type { ParserOptions } from './lib/Parser.js';
 export * from './lib/types.js';
 export { XmlCdata } from './lib/XmlCdata.js';
 export { XmlComment } from './lib/XmlComment.js';
+export { XmlDeclaration } from './lib/XmlDeclaration.js';
 export { XmlDocument } from './lib/XmlDocument.js';
 export { XmlElement } from './lib/XmlElement.js';
 export { XmlNode } from './lib/XmlNode.js';
