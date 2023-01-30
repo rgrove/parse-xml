@@ -29,14 +29,14 @@ export class XmlDeclaration extends XmlNode {
 
   constructor(
     version: string,
-    encoding: string | null = null,
-    standalone: string | null = null,
+    encoding?: string,
+    standalone?: string,
   ) {
     super();
 
     this.version = version;
-    this.encoding = encoding;
-    this.standalone = standalone;
+    this.encoding = encoding ?? null;
+    this.standalone = standalone ?? null;
   }
 
   override get type() {
@@ -45,15 +45,12 @@ export class XmlDeclaration extends XmlNode {
 
   override toJSON() {
     let json = XmlNode.prototype.toJSON.call(this);
-
     json.version = this.version;
 
-    if (this.encoding !== null) {
-      json.encoding = this.encoding;
-    }
-
-    if (this.standalone !== null) {
-      json.standalone = this.standalone;
+    for (let key of ['encoding', 'standalone'] as const) {
+      if (this[key] !== null) {
+        json[key] = this[key];
+      }
     }
 
     return json;

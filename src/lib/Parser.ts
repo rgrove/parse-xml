@@ -703,7 +703,7 @@ export class Parser {
     }
 
     if (this.options.preserveXmlDeclaration) {
-      this.addNode(new XmlDeclaration(version, encoding || null, standalone || null), startIndex);
+      this.addNode(new XmlDeclaration(version, encoding || undefined, standalone || undefined), startIndex);
     }
 
     return true;
