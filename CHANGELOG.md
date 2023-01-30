@@ -41,6 +41,34 @@ All notable changes to parse-xml are documented in this file. The format is base
     // => { type: 'xmldecl', version: '1.0', encoding: 'UTF-8' }
     ```
 
+-   Added a new `preserveDocumentType` parser option.
+
+    When `true`, an `XmlDocumentType` node representing a document type declaration (if there is one) will be included in the parsed document. When `false`, any document type declaration encountered will be discarded. The default is `false`, which matches the behavior of previous versions.
+
+    Note that the parser only includes the document type declaration in the node tree; it doesn't actually validate the document against the DTD, load external DTDs, or resolve custom entity references.
+
+    This option is useful if you want to preserve the document type declaration when later serializing a document back to XML. Previously, the document type declaration was always discarded, which meant that if you parsed a document with a document type declaration and then serialized it, the original document type declaration would be lost.
+
+    ```js
+    const { parseXml } = require('@rgrove/parse-xml');
+
+    let xml = '<!DOCTYPE root SYSTEM "root.dtd"><root />';
+    let doc = parseXml(xml, { preserveDocumentType: true });
+
+    console.log(doc.children[0].toJSON());
+    // => { type: 'doctype', name: 'root', systemId: 'root.dtd' }
+
+    xml = '<!DOCTYPE kittens [<!ELEMENT kittens (#PCDATA)>]><kittens />';
+    doc = parseXml(xml, { preserveDocumentType: true });
+
+    console.log(doc.children[0].toJSON());
+    // => {
+    //   type: 'doctype',
+    //   name: 'kittens',
+    //   internalSubset: '<!ELEMENT kittens (#PCDATA)>'
+    // }
+    ```
+
 ## 4.0.1 (2022-10-17)
 
 ### Fixed
