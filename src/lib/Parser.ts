@@ -4,6 +4,7 @@ import { XmlCdata } from './XmlCdata.js';
 import { XmlComment } from './XmlComment.js';
 import { XmlDeclaration } from './XmlDeclaration.js';
 import { XmlDocument } from './XmlDocument.js';
+import { XmlDocumentType } from './XmlDocumentType.js';
 import { XmlElement } from './XmlElement.js';
 import { XmlProcessingInstruction } from './XmlProcessingInstruction.js';
 import { XmlText } from './XmlText.js';
@@ -329,21 +330,66 @@ export class Parser {
    */
   consumeDoctypeDeclaration(): boolean {
     let { scanner } = this;
+    let startIndex = scanner.charIndex;
 
-    if (!scanner.consumeStringFast('<!DOCTYPE')
-        || !this.consumeWhitespace()) {
-
+    if (!scanner.consumeStringFast('<!DOCTYPE')) {
       return false;
     }
 
-    scanner.consumeMatch(/[^[>]+/y);
+    let name = this.consumeWhitespace()
+      && this.consumeName();
 
-    if (scanner.consumeMatch(/\[[\s\S]+?\][\x20\t\r\n]*>/y)) {
-      return true;
+    if (!name) {
+      throw this.error('Expected a name');
+    }
+
+    let publicId;
+    let systemId;
+
+    if (this.consumeWhitespace()) {
+      if (scanner.consumeStringFast('PUBLIC')) {
+        publicId = this.consumeWhitespace()
+          && this.consumePubidLiteral();
+
+        if (publicId === false) {
+          throw this.error('Expected a public identifier');
+        }
+
+        this.consumeWhitespace();
+      }
+
+      if (publicId !== undefined || scanner.consumeStringFast('SYSTEM')) {
+        this.consumeWhitespace();
+        systemId = this.consumeSystemLiteral();
+
+        if (systemId === false) {
+          throw this.error('Expected a system identifier');
+        }
+
+        this.consumeWhitespace();
+      }
+    }
+
+    let internalSubset;
+
+    if (scanner.consumeStringFast('[')) {
+      // The internal subset may contain comments that contain `]` characters,
+      // so we can't use `consumeUntilString()` here.
+      internalSubset = scanner.consumeUntilMatch(/\][\x20\t\r\n]*>/);
+
+      if (!scanner.consumeStringFast(']')) {
+        throw this.error('Unclosed internal subset');
+      }
+
+      this.consumeWhitespace();
     }
 
     if (!scanner.consumeStringFast('>')) {
       throw this.error('Unclosed doctype declaration');
+    }
+
+    if (this.options.preserveDocumentType) {
+      this.addNode(new XmlDocumentType(name, publicId, systemId, internalSubset), startIndex);
     }
 
     return true;
@@ -522,6 +568,28 @@ export class Parser {
     }
 
     return startIndex < scanner.charIndex;
+  }
+
+  /**
+   * Consumes a public identifier literal if possible.
+   *
+   * @returns
+   *   Value of the public identifier literal minus quotes, or `false` if
+   *   nothing was consumed. An empty string indicates that a public id literal
+   *   was consumed but was empty.
+   *
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-PubidLiteral
+   */
+  consumePubidLiteral(): string | false {
+    let startIndex = this.scanner.charIndex;
+    let value = this.consumeSystemLiteral();
+
+    if (value !== false && !/^[-\x20\r\na-zA-Z0-9'()+,./:=?;!*#@$_%]*$/.test(value)) {
+      this.scanner.reset(startIndex);
+      throw this.error('Invalid character in public identifier');
+    }
+
+    return value;
   }
 
   /**
@@ -841,6 +909,19 @@ export type ParserOptions = {
    * @default false
    */
   preserveComments?: boolean;
+
+  /**
+   * When `true`, a document type declaration (if present) will be preserved in
+   * the document as an `XmlDocumentType` node. Otherwise the declaration will
+   * not be included in the node tree.
+   *
+   * Note that when this is `true` and a document type declaration is present,
+   * the DTD will precede the root node in the node tree (normally the root
+   * node would be first).
+   *
+   * @default false
+   */
+  preserveDocumentType?: boolean;
 
   /**
    * When `true`, an XML declaration (if present) will be preserved in the

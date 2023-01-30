@@ -38,7 +38,7 @@ Or, if you like living dangerously, you can load [the minified bundle](https://u
 
 ## Not Features
 
-This parser currently discards document type declarations (`<!DOCTYPE ... >`) and all their contents, because they're rarely useful and some of their features aren't safe when the XML being parsed comes from an untrusted source.
+While this parser is capable of parsing document type declarations (`<!DOCTYPE ... >`) and including them in the node tree, it doesn't actually do anything with them. External document type definitions won't be loaded, and the parser won't validate the document against a DTD or resolve custom entity references defined in a DTD.
 
 In addition, the only supported character encoding is UTF-8 because it's not feasible (or useful) to support other character encodings in JavaScript.
 

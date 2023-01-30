@@ -22,6 +22,11 @@ export class XmlNode {
   static readonly TYPE_DOCUMENT = 'document';
 
   /**
+   * Type value for an `XmlDocumentType` node.
+   */
+  static readonly TYPE_DOCUMENT_TYPE = 'doctype';
+
+  /**
    * Type value for an `XmlElement` node.
    */
   static readonly TYPE_ELEMENT = 'element';

@@ -12,13 +12,16 @@ describe('Parser', () => {
     options = {};
   });
 
-  it('ignores DTDs', () => {
-    let doc = parseXml('<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><root />');
+  it('discards DTDs by default', () => {
+    let doc = parseXml(`
+      <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+      <html />
+    `);
 
     assert(doc instanceof XmlDocument);
     assert.strictEqual(doc.children.length, 1);
     assert(doc.root instanceof XmlElement);
-    assert.strictEqual(doc.root.name, 'root');
+    assert.strictEqual(doc.root.name, 'html');
 
     doc = parseXml(`
       <!DOCTYPE sgml [
@@ -31,13 +34,13 @@ describe('Parser', () => {
         <!ENTITY   example1SVG     SYSTEM "example1.svg" NDATA example1SVG-rdf>
         <!NOTATION example1SVG-rdf SYSTEM "example1.svg.rdf">
       ]>
-      <root />
+      <sgml />
     `);
 
     assert(doc instanceof XmlDocument);
     assert.strictEqual(doc.children.length, 1);
     assert(doc.root instanceof XmlElement);
-    assert.strictEqual(doc.root.name, 'root');
+    assert.strictEqual(doc.root.name, 'sgml');
   });
 
   it('normalizes whitespace in attribute values', () => {
@@ -218,6 +221,102 @@ describe('Parser', () => {
             '  <a><![CDATA[blah</a>\n' +
             '              ^\n',
           pos: 12,
+        });
+      });
+    });
+
+    describe('doctype declaration without a name', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<!DOCTYPE>');
+        }, {
+          column: 10,
+          excerpt: '<!DOCTYPE>',
+          line: 1,
+          message: 'Expected a name (line 1, column 10)\n' +
+            '  <!DOCTYPE>\n' +
+            '           ^\n',
+          pos: 9,
+        });
+      });
+    });
+
+    describe('doctype declaration with incomplete public identifier', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<!DOCTYPE html PUBLIC>');
+        }, {
+          column: 22,
+          excerpt: '<!DOCTYPE html PUBLIC>',
+          line: 1,
+          message: 'Expected a public identifier (line 1, column 22)\n' +
+            '  <!DOCTYPE html PUBLIC>\n' +
+            '                       ^\n',
+          pos: 21,
+        });
+      });
+    });
+
+    describe('doctype declaration with invalid character in public identifier', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<!DOCTYPE html PUBLIC "[foo]" "bar">');
+        }, {
+          column: 23,
+          excerpt: '<!DOCTYPE html PUBLIC "[foo]" "bar">',
+          line: 1,
+          message: 'Invalid character in public identifier (line 1, column 23)\n' +
+            '  <!DOCTYPE html PUBLIC "[foo]" "bar">\n' +
+            '                        ^\n',
+          pos: 22,
+        });
+      });
+    });
+
+    describe('doctype declaration with public identifier but no system identifier', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<!DOCTYPE html PUBLIC "foo">');
+        }, {
+          column: 28,
+          excerpt: '<!DOCTYPE html PUBLIC "foo">',
+          line: 1,
+          message: 'Expected a system identifier (line 1, column 28)\n' +
+            '  <!DOCTYPE html PUBLIC "foo">\n' +
+            '                             ^\n',
+          pos: 27,
+        });
+      });
+    });
+
+    describe('doctype declaration with incomplete system identifier', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<!DOCTYPE html SYSTEM>');
+        }, {
+          column: 22,
+          excerpt: '<!DOCTYPE html SYSTEM>',
+          line: 1,
+          message: 'Expected a system identifier (line 1, column 22)\n' +
+            '  <!DOCTYPE html SYSTEM>\n' +
+            '                       ^\n',
+          pos: 21,
+        });
+      });
+    });
+
+    describe('doctype declaration with unclosed internal subset', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<!DOCTYPE html [ >');
+        }, {
+          column: 17,
+          excerpt: '<!DOCTYPE html [ >',
+          line: 1,
+          message: 'Unclosed internal subset (line 1, column 17)\n' +
+            '  <!DOCTYPE html [ >\n' +
+            '                  ^\n',
+          pos: 16,
         });
       });
     });
