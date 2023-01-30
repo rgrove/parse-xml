@@ -850,6 +850,8 @@ export type ParserOptions = {
    * Note that when this is `true` and an XML declaration is present, the
    * XML declaration will be the first child of the document (normally the root
    * node would be first).
+   *
+   * @default false
    */
   preserveXmlDeclaration?: boolean;
 
