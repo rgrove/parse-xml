@@ -62,9 +62,32 @@ const skipSections = [
 // Ids of tests that should be skipped because they require functionality that
 // our parser intentionally doesn't implement (mostly DTD-related).
 const skipTests = new Set([
+  'ibm-invalid-P32-ibm32i01.xml', // external DTD
+  'ibm-invalid-P32-ibm32i03.xml', // external DTD
+  'ibm-invalid-P32-ibm32i04.xml', // external DTD
+  'ibm-invalid-P68-ibm68i01.xml', // DTD validation + external DTD
+  'ibm-invalid-P68-ibm68i02.xml', // DTD validation + external DTD
+  'ibm-invalid-P68-ibm68i03.xml', // DTD validation + external DTD
+  'ibm-invalid-P68-ibm68i04.xml', // DTD validation + external DTD
+  'ibm-invalid-P69-ibm69i01.xml', // DTD validation + external DTD
+  'ibm-invalid-P69-ibm69i02.xml', // DTD validation + external DTD
+  'ibm-invalid-P69-ibm69i03.xml', // DTD validation + external DTD
+  'ibm-invalid-P69-ibm69i04.xml', // DTD validation + external DTD
+  'ibm-valid-P32-ibm32v01.xml', // external DTD
+  'ibm-valid-P32-ibm32v03.xml', // external DTD
+  'ibm-valid-P32-ibm32v04.xml', // external DTD
+  'invalid-not-sa-022', // conditional section
+  'not-wf-not-sa-001', // external DTD
+  'not-wf-not-sa-002', // DTD validation
+  'not-wf-not-sa-003', // external DTD
+  'not-wf-not-sa-004', // external DTD
+  'not-wf-not-sa-005', // external DTD
+  'not-wf-not-sa-006', // external DTD
+  'not-wf-not-sa-009', // external DTD
   'not-wf-sa-078', // entity declaration
   'not-wf-sa-079', // entity declaration
   'not-wf-sa-080', // entity declaration
+  'not-wf-sa-082', // DTD validation
   'not-wf-sa-084', // entity declaration
   'not-wf-sa-121', // entity declaration
   'not-wf-sa-128', // DTD
@@ -76,10 +99,26 @@ const skipTests = new Set([
   'o-p09fail3', // entity declaration
   'o-p09fail4', // entity declaration
   'o-p09fail5', // entity declaration
+  'o-p61fail1', // external DTD
+  'o-p62fail1', // external DTD
+  'o-p62fail2', // external DTD
+  'o-p63fail1', // external DTD
+  'o-p63fail2', // external DTD
+  'o-p64fail1', // external DTD
+  'o-p64fail2', // external DTD
   'rmt-e2e-34', // DTD
   'rmt-e2e-55', // DTD
   'rmt-e2e-61', // we don't support charsets other than UTF-8
   'rmt-e3e-12', // attribute-list declaration
+  'valid-not-sa-013', // conditional section
+  'valid-not-sa-014', // conditional section
+  'valid-not-sa-015', // conditional section
+  'valid-not-sa-016', // conditional section
+  'valid-not-sa-019', // entity declaration
+  'valid-not-sa-020', // entity declaration
+  'valid-not-sa-023', // entity declaration
+  'valid-not-sa-028', // conditional section
+  'valid-not-sa-029', // conditional section
   'valid-sa-044', // DTD
   'valid-sa-049', // test file is encoded as UTF-16 LE, which we don't support
   'valid-sa-050', // test file is encoded as UTF-16 LE, which we don't support
@@ -140,17 +179,11 @@ function createTest(testRoot, test) {
     return;
   }
 
-  if (attributes.ENTITIES && attributes.ENTITIES !== 'none') {
-    // Skip tests that require external entity support.
-    return;
-  }
-
   let sections = attributes.SECTIONS.split(/\s*,\s*/);
 
-  if (skipTests.has(attributes.ID)
-      || sections.some(section => skipSections.some(skip => section.startsWith(skip)))) {
-    // Skip tests for unsupported functionality.
-    return;
+  function shouldSkip() {
+    return skipTests.has(attributes.ID)
+      || sections.some(section => skipSections.some(skip => section.startsWith(skip)));
   }
 
   let description = test.text.trim();
@@ -189,14 +222,26 @@ function createTest(testRoot, test) {
 
   if (attributes.TYPE === 'not-wf' || attributes.TYPE === 'error') {
     // These tests should fail.
-    it(`${prefix} fails to parse ${inputPathRelative}`, () => {
+    it(`${prefix} fails to parse ${inputPathRelative}`, function () {
+      if (shouldSkip()) {
+        // Skip tests for unsupported functionality.
+        this.skip();
+        return;
+      }
+
       assert.throws(() => {
         parseXml(inputXml);
       }, Error, description);
     });
   } else {
     // These tests should pass since the documents are well-formed.
-    it(`${prefix} parses ${inputPathRelative}`, () => {
+    it(`${prefix} parses ${inputPathRelative}`, function () {
+      if (shouldSkip()) {
+        // Skip tests for unsupported functionality.
+        this.skip();
+        return;
+      }
+
       try {
         // Ignoring undefined entities here allows us to parse numerous test
         // documents that are still valuable tests but would otherwise fail due
@@ -209,6 +254,12 @@ function createTest(testRoot, test) {
 
     if (outputPath) {
       it(`${prefix} parsed document is equivalent to ${outputPathRelative}`, function () {
+        if (shouldSkip()) {
+          // Skip tests for unsupported functionality.
+          this.skip();
+          return;
+        }
+
         let inputDoc;
         let outputDoc;
 
@@ -219,7 +270,7 @@ function createTest(testRoot, test) {
           if (/^Named entity isn't defined:/.test(err.message)) {
             // Skip tests that fail due to our lack of support for entity
             // declarations.
-            this.skip(); // eslint-disable-line no-invalid-this
+            this.skip();
             return;
           }
 
