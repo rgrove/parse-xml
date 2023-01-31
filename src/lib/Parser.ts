@@ -69,6 +69,7 @@ export class Parser {
     // than XmlElement so TypeScript is unhappy, but we always do the right
     // thing.
     this.currentNode.children.push(node);
+    return true;
   }
 
   /**
@@ -95,11 +96,11 @@ export class Parser {
           textNode.end = this.scanner.charIndexToByteIndex();
         }
 
-        return;
+        return true;
       }
     }
 
-    this.addNode(new XmlText(text), charIndex);
+    return this.addNode(new XmlText(text), charIndex);
   }
 
   /**
@@ -233,13 +234,9 @@ export class Parser {
       throw this.error('Unclosed CDATA section');
     }
 
-    if (this.options.preserveCdata) {
-      this.addNode(new XmlCdata(normalizeLineBreaks(text)), startIndex);
-    } else {
-      this.addText(text, startIndex);
-    }
-
-    return true;
+    return this.options.preserveCdata
+      ? this.addNode(new XmlCdata(normalizeLineBreaks(text)), startIndex)
+      : this.addText(text, startIndex);
   }
 
   /**
@@ -263,8 +260,7 @@ export class Parser {
       throw this.error('Element content may not contain the CDATA section close delimiter `]]>`');
     }
 
-    this.addText(charData, startIndex);
-    return true;
+    return this.addText(charData, startIndex);
   }
 
   /**
@@ -292,11 +288,9 @@ export class Parser {
       throw this.error('Unclosed comment');
     }
 
-    if (this.options.preserveComments) {
-      this.addNode(new XmlComment(normalizeLineBreaks(content)), startIndex);
-    }
-
-    return true;
+    return this.options.preserveComments
+      ? this.addNode(new XmlComment(normalizeLineBreaks(content)), startIndex)
+      : true;
   }
 
   /**
@@ -312,12 +306,9 @@ export class Parser {
     let startIndex = this.scanner.charIndex;
     let ref = this.consumeReference();
 
-    if (ref) {
-      this.addText(ref, startIndex);
-      return true;
-    }
-
-    return false;
+    return ref
+      ? this.addText(ref, startIndex)
+      : false;
   }
 
   /**
@@ -389,12 +380,10 @@ export class Parser {
       throw this.error('Unclosed doctype declaration');
     }
 
-    if (this.options.preserveDocumentType) {
-      this.addNode(new XmlDocumentType(name, publicId, systemId, internalSubset), startIndex);
+    return this.options.preserveDocumentType
+      ? this.addNode(new XmlDocumentType(name, publicId, systemId, internalSubset), startIndex)
+      : true;
     }
-
-    return true;
-  }
 
   /**
    * Consumes an element if possible.
@@ -418,7 +407,7 @@ export class Parser {
     }
 
     let attributes = this.consumeAttributes();
-    let isEmpty = Boolean(scanner.consumeStringFast('/>'));
+    let isEmpty = !!scanner.consumeStringFast('/>');
     let element = new XmlElement(name, attributes);
 
     element.parent = this.currentNode;
@@ -460,8 +449,7 @@ export class Parser {
       this.currentNode = element.parent;
     }
 
-    this.addNode(element, startIndex);
-    return true;
+    return this.addNode(element, startIndex);
   }
 
   /**
@@ -532,8 +520,7 @@ export class Parser {
 
     if (!this.consumeWhitespace()) {
       if (scanner.consumeStringFast('?>')) {
-        this.addNode(new XmlProcessingInstruction(name), startIndex);
-        return true;
+        return this.addNode(new XmlProcessingInstruction(name), startIndex);
       }
 
       throw this.error('Whitespace is required after a processing instruction name');
@@ -546,8 +533,7 @@ export class Parser {
       throw this.error('Unterminated processing instruction');
     }
 
-    this.addNode(new XmlProcessingInstruction(name, normalizeLineBreaks(content)), startIndex);
-    return true;
+    return this.addNode(new XmlProcessingInstruction(name, normalizeLineBreaks(content)), startIndex);
   }
 
   /**
@@ -711,7 +697,7 @@ export class Parser {
    * @see https://www.w3.org/TR/2008/REC-xml-20081126/#white
    */
   consumeWhitespace(): boolean {
-    return Boolean(this.scanner.consumeMatchFn(syntax.isWhitespace));
+    return !!this.scanner.consumeMatchFn(syntax.isWhitespace);
   }
 
   /**
@@ -732,7 +718,7 @@ export class Parser {
       throw this.error('Invalid XML declaration');
     }
 
-    let version = Boolean(scanner.consumeStringFast('version'))
+    let version = !!scanner.consumeStringFast('version')
       && this.consumeEqual()
       && this.consumeSystemLiteral();
 
@@ -746,7 +732,7 @@ export class Parser {
     let standalone;
 
     if (this.consumeWhitespace()) {
-      encoding = Boolean(scanner.consumeStringFast('encoding'))
+      encoding = !!scanner.consumeStringFast('encoding')
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 
@@ -754,7 +740,7 @@ export class Parser {
         this.consumeWhitespace();
       }
 
-      standalone = Boolean(scanner.consumeStringFast('standalone'))
+      standalone = !!scanner.consumeStringFast('standalone')
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 
@@ -771,11 +757,9 @@ export class Parser {
       throw this.error('Invalid or unclosed XML declaration');
     }
 
-    if (this.options.preserveXmlDeclaration) {
-      this.addNode(new XmlDeclaration(version, encoding || undefined, standalone || undefined), startIndex);
-    }
-
-    return true;
+    return this.options.preserveXmlDeclaration
+      ? this.addNode(new XmlDeclaration(version, encoding || undefined, standalone || undefined), startIndex)
+      : true;
   }
 
   /**

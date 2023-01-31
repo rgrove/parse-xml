@@ -93,7 +93,7 @@ export class XmlNode {
    * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-white-space
    */
   get preserveWhitespace(): boolean {
-    return Boolean(this.parent?.preserveWhitespace);
+    return !!this.parent?.preserveWhitespace;
   }
 
   /**

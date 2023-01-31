@@ -15,7 +15,7 @@ const options = {
   bundle: true,
   entryPoints: ['./src/index.ts'],
   logLevel: 'info',
-  mangleProps: /^consume([A-Z]|$)|^(addNode|addText|advance|charCount|charIndex|charIndex|charIndexToByteIndex|charLength|charsToBytes|currentNode|error|isEnd|multiByteMode|peek|reset|scanner|syntax|validateChars)$/,
+  mangleProps: /^consume([A-Z]|$)|^(addNode|addText|advance|charCount|charIndex|charIndex|charIndexToByteIndex|charLength|charsToBytes|currentNode|error|isEnd|multiByteMode|options|peek|reset|scanner|string|syntax|validateChars)$/,
   sourcemap: true,
   target: 'es2017',
   treeShaking: true,

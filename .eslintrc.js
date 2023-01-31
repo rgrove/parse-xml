@@ -8,4 +8,10 @@ module.exports = {
     '@rgrove/eslint-config/node',
     '@rgrove/eslint-config/typescript',
   ],
+
+  rules: {
+    'no-implicit-coercion': ['warn', {
+      allow: ['!!'],
+    }],
+  },
 };
