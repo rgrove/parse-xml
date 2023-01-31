@@ -6,10 +6,9 @@ import { XmlDeclaration } from './XmlDeclaration.js';
 import { XmlDocument } from './XmlDocument.js';
 import { XmlDocumentType } from './XmlDocumentType.js';
 import { XmlElement } from './XmlElement.js';
+import { XmlNode } from './XmlNode.js';
 import { XmlProcessingInstruction } from './XmlProcessingInstruction.js';
 import { XmlText } from './XmlText.js';
-
-import type { XmlNode } from './XmlNode.js';
 
 const emptyString = '';
 
@@ -85,13 +84,15 @@ export class Parser {
     if (length > 0) {
       let prevNode = children[length - 1];
 
-      if (prevNode instanceof XmlText) {
+      if (prevNode?.type === XmlNode.TYPE_TEXT) {
+        let textNode = prevNode as XmlText;
+
         // The previous node is a text node, so we can append to it and avoid
         // creating another node.
-        prevNode.text += text;
+        textNode.text += text;
 
         if (this.options.includeOffsets) {
-          prevNode.end = this.scanner.charIndexToByteIndex();
+          textNode.end = this.scanner.charIndexToByteIndex();
         }
 
         return;

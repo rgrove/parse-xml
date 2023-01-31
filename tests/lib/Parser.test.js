@@ -3,7 +3,7 @@
 
 const assert = require('assert');
 
-const { parseXml, XmlDocument, XmlElement } = require('../..');
+const { parseXml, XmlDocument, XmlElement, XmlNode } = require('../..');
 
 describe('Parser', () => {
   let options;
@@ -388,6 +388,19 @@ describe('Parser', () => {
       let value = 'c'.repeat(9000000);
       let { root } = parseXml(`<a b="${value}"/>`);
       assert.strictEqual(root.attributes.b, value);
+    });
+
+    it("doesn't append text to a preceding CDATA node", () => {
+      let { root } = parseXml('<a>foo<![CDATA[bar]]>baz</a>', { preserveCdata: true });
+
+      assert.strictEqual(root.children[0].text, 'foo');
+      assert.strictEqual(root.children[0].type, XmlNode.TYPE_TEXT);
+
+      assert.strictEqual(root.children[1].text, 'bar');
+      assert.strictEqual(root.children[1].type, XmlNode.TYPE_CDATA);
+
+      assert.strictEqual(root.children[2].text, 'baz');
+      assert.strictEqual(root.children[2].type, XmlNode.TYPE_TEXT);
     });
   });
 });

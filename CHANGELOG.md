@@ -73,6 +73,8 @@ All notable changes to parse-xml are documented in this file. The format is base
 
 -   Leading and trailing whitespace in comment content is no longer trimmed. This issue only affected parsing when the `preserveComments` parser option was enabled. [#28](https://github.com/rgrove/parse-xml/issues/28)
 
+-   Text content following a CDATA section is no longer appended to the preceding `XmlCdata` node. This issue only affected parsing when the `preserveCdata` parser option was enabled. [#29](https://github.com/rgrove/parse-xml/issues/29)
+
 ## 4.0.1 (2022-10-17)
 
 ### Fixed
