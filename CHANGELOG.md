@@ -69,6 +69,10 @@ All notable changes to parse-xml are documented in this file. The format is base
     // }
     ```
 
+### Fixed
+
+-   Leading and trailing whitespace in comment content is no longer trimmed. This issue only affected parsing when the `preserveComments` parser option was enabled. [#28](https://github.com/rgrove/parse-xml/issues/28)
+
 ## 4.0.1 (2022-10-17)
 
 ### Fixed

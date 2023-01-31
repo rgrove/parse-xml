@@ -292,7 +292,7 @@ export class Parser {
     }
 
     if (this.options.preserveComments) {
-      this.addNode(new XmlComment(normalizeLineBreaks(content.trim())), startIndex);
+      this.addNode(new XmlComment(normalizeLineBreaks(content)), startIndex);
     }
 
     return true;

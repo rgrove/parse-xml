@@ -18,7 +18,7 @@ describe('XmlComment', () => {
 
   it('can be serialized to JSON', () => {
     let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
-    assert.strictEqual(JSON.stringify(root.children[0]), `{"type":"comment","content":"I'm a comment!"}`);
+    assert.strictEqual(JSON.stringify(root.children[0]), `{"type":"comment","content":" I'm a comment! "}`);
   });
 
   describe('constructor', () => {
@@ -31,7 +31,7 @@ describe('XmlComment', () => {
   describe('content', () => {
     it('is the content of the comment', () => {
       let { root } = parseXml(`<root><!-- I'm a comment! --></root>`, { preserveComments: true });
-      assert.strictEqual(root.children[0].content, "I'm a comment!");
+      assert.strictEqual(root.children[0].content, " I'm a comment! ");
     });
   });
 
