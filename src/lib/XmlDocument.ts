@@ -3,6 +3,7 @@ import { XmlNode } from './XmlNode.js';
 
 import type { XmlComment } from './XmlComment.js';
 import type { XmlDeclaration } from './XmlDeclaration.js';
+import type { XmlDocumentType } from './XmlDocumentType.js';
 import type { XmlProcessingInstruction } from './XmlProcessingInstruction.js';
 
 /**
@@ -13,9 +14,9 @@ export class XmlDocument extends XmlNode {
   /**
    * Child nodes of this document.
    */
-  readonly children: Array<XmlComment | XmlDeclaration | XmlProcessingInstruction | XmlElement>;
+  readonly children: Array<XmlComment | XmlDeclaration | XmlDocumentType | XmlProcessingInstruction | XmlElement>;
 
-  constructor(children: Array<XmlComment | XmlDeclaration | XmlElement | XmlProcessingInstruction> = []) {
+  constructor(children: Array<XmlComment | XmlDeclaration | XmlDocumentType | XmlElement | XmlProcessingInstruction> = []) {
     super();
     this.children = children;
   }
