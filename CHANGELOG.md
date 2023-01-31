@@ -4,9 +4,9 @@ All notable changes to parse-xml are documented in this file. The format is base
 
 ## 4.1.0 (git)
 
-### Minor Changes
+### Added
 
--   Added a new `includeOffsets` parser option. [[#25](https://github.com/rgrove/parse-xml/pull/25)]
+-   Added a new `includeOffsets` parser option. [#25](https://github.com/rgrove/parse-xml/pull/25)
 
     When `true`, the starting and ending byte offsets of each node in the input string will be made available via `start` and `end` properties on the node. The default is `false`.
 
@@ -25,7 +25,7 @@ All notable changes to parse-xml are documented in this file. The format is base
     // => { type: 'element', name: 'child', start: 6, end: 15, ... }
     ```
 
--   Added a new `preserveXmlDeclaration` parser option.
+-   Added a new `preserveXmlDeclaration` parser option. [#32](https://github.com/rgrove/parse-xml/pull/32)
 
     When `true`, an `XmlDeclaration` node representing the XML declaration (if there is one) will be included in the parsed document. When `false`, the XML declaration will be discarded. The default is `false`, which matches the behavior of previous versions.
 
