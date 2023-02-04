@@ -9,6 +9,7 @@ export { XmlDeclaration } from './lib/XmlDeclaration.js';
 export { XmlDocument } from './lib/XmlDocument.js';
 export { XmlDocumentType } from './lib/XmlDocumentType.js';
 export { XmlElement } from './lib/XmlElement.js';
+export { XmlError } from './lib/XmlError.js';
 export { XmlNode } from './lib/XmlNode.js';
 export { XmlProcessingInstruction } from './lib/XmlProcessingInstruction.js';
 export { XmlText } from './lib/XmlText.js';

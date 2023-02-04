@@ -6,6 +6,7 @@ import { XmlDeclaration } from './XmlDeclaration.js';
 import { XmlDocument } from './XmlDocument.js';
 import { XmlDocumentType } from './XmlDocumentType.js';
 import { XmlElement } from './XmlElement.js';
+import { XmlError } from './XmlError.js';
 import { XmlNode } from './XmlNode.js';
 import { XmlProcessingInstruction } from './XmlProcessingInstruction.js';
 import { XmlText } from './XmlText.js';
@@ -763,61 +764,11 @@ export class Parser {
   }
 
   /**
-   * Throws an error at the current scanner position.
+   * Returns an `XmlError` for the current scanner position.
    */
   error(message: string) {
-    let { charIndex, string: xml } = this.scanner;
-    let column = 1;
-    let excerpt = '';
-    let line = 1;
-
-    // Find the line and column where the error occurred.
-    for (let i = 0; i < charIndex; ++i) {
-      let char = xml[i];
-
-      if (char === '\n') {
-        column = 1;
-        excerpt = '';
-        line += 1;
-      } else {
-        column += 1;
-        excerpt += char;
-      }
-    }
-
-    let eol = xml.indexOf('\n', charIndex);
-
-    excerpt += eol === -1
-      ? xml.slice(charIndex)
-      : xml.slice(charIndex, eol);
-
-    let excerptStart = 0;
-
-    // Keep the excerpt below 50 chars, but always keep the error position in
-    // view.
-    if (excerpt.length > 50) {
-      if (column < 40) {
-        excerpt = excerpt.slice(0, 50);
-      } else {
-        excerptStart = column - 20;
-        excerpt = excerpt.slice(excerptStart, column + 30);
-      }
-    }
-
-    let err = new Error(
-      `${message} (line ${line}, column ${column})\n`
-        + `  ${excerpt}\n`
-        + ' '.repeat(column - excerptStart + 1) + '^\n',
-    );
-
-    Object.assign(err, {
-      column,
-      excerpt,
-      line,
-      pos: charIndex,
-    });
-
-    return err;
+    let { scanner } = this;
+    return new XmlError(message, scanner.charIndex, scanner.string);
   }
 
   /**

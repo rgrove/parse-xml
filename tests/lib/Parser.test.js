@@ -3,7 +3,7 @@
 
 const assert = require('assert');
 
-const { parseXml, XmlDocument, XmlElement, XmlNode } = require('../..');
+const { parseXml, XmlDocument, XmlElement, XmlError, XmlNode } = require('../..');
 
 describe('Parser', () => {
   let options;
@@ -129,6 +129,20 @@ describe('Parser', () => {
   });
 
   describe('errors', () => {
+    it('are thrown as `XmlError` instances', () => {
+      let error;
+
+      try {
+        parseXml('<a>');
+      } catch (err) {
+        error = err;
+      }
+
+      assert(error instanceof XmlError);
+      assert(error instanceof Error);
+      assert.strictEqual(error.name, 'XmlError');
+    });
+
     describe('element contains CDATA section close delimiter', () => {
       it('throws an error', () => {
         assert.throws(() => {

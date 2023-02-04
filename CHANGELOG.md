@@ -25,7 +25,7 @@ All notable changes to parse-xml are documented in this file. The format is base
     // => { type: 'element', name: 'child', start: 6, end: 15, ... }
     ```
 
--   Added a new `preserveXmlDeclaration` parser option. [#32](https://github.com/rgrove/parse-xml/pull/32)
+-   Added a new `preserveXmlDeclaration` parser option. [#31](https://github.com/rgrove/parse-xml/pull/31)
 
     When `true`, an `XmlDeclaration` node representing the XML declaration (if there is one) will be included in the parsed document. When `false`, the XML declaration will be discarded. The default is `false`, which matches the behavior of previous versions.
 
@@ -41,7 +41,7 @@ All notable changes to parse-xml are documented in this file. The format is base
     // => { type: 'xmldecl', version: '1.0', encoding: 'UTF-8' }
     ```
 
--   Added a new `preserveDocumentType` parser option.
+-   Added a new `preserveDocumentType` parser option. [#32](https://github.com/rgrove/parse-xml/pull/32)
 
     When `true`, an `XmlDocumentType` node representing a document type declaration (if there is one) will be included in the parsed document. When `false`, any document type declaration encountered will be discarded. The default is `false`, which matches the behavior of previous versions.
 
@@ -68,6 +68,10 @@ All notable changes to parse-xml are documented in this file. The format is base
     //   internalSubset: '<!ELEMENT kittens (#PCDATA)>'
     // }
     ```
+
+### Changed
+
+-   Errors thrown by the parser are now instances of a new `XmlError` class, which extends `Error`. These errors still have all the same properties as before, but now with improved type definitions. [#27](https://github.com/rgrove/parse-xml/issues/27)
 
 ### Fixed
 
