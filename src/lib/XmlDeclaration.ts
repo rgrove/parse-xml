@@ -20,7 +20,7 @@ export class XmlDeclaration extends XmlNode {
    * Value of the standalone declaration in this XML declaration, or `null` if
    * no standalone declaration was present.
    */
-  standalone: string | null;
+  standalone: 'yes' | 'no' | null;
 
   /**
    * Value of the version declaration in this XML declaration.
@@ -30,7 +30,7 @@ export class XmlDeclaration extends XmlNode {
   constructor(
     version: string,
     encoding?: string,
-    standalone?: string,
+    standalone?: typeof XmlDeclaration.prototype.standalone,
   ) {
     super();
 

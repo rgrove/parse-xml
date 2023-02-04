@@ -759,7 +759,11 @@ export class Parser {
     }
 
     return this.options.preserveXmlDeclaration
-      ? this.addNode(new XmlDeclaration(version, encoding || undefined, standalone || undefined), startIndex)
+      ? this.addNode(new XmlDeclaration(
+          version,
+          encoding || undefined,
+          (standalone as 'yes' | 'no' | false) || undefined,
+        ), startIndex)
       : true;
   }
 
