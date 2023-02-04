@@ -40,11 +40,11 @@
     "coverage": "nyc --reporter html --report-dir coverage pnpm test && open coverage/index.html",
     "lint": "pnpm run build:js && pnpm run lint:js",
     "lint:js": "eslint .",
-    "lint:ts": "tsc --noEmit",
     "prepublishOnly": "pnpm run clean && pnpm run build",
-    "test": "pnpm run build:js && nyc --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha",
-    "test:watch": "pnpm run build:js && concurrently --kill-others-on-fail --names build,mocha 'pnpm run build:js --watch' 'mocha --watch'",
-    "test:browser": "pnpm run build:js && pnpm run build:bundle && concurrently --kill-others-on-fail --names build:bundle,build:js,webpack 'pnpm run build:bundle --watch' 'pnpm run build:js --watch' 'webpack serve --config tests/webpack.config.js'"
+    "test": "pnpm run build:js && nyc --check-coverage --branches 100 --functions 100 --lines 100 --statements 100 mocha && pnpm run test:types",
+    "test:browser": "pnpm run build:js && pnpm run build:bundle && concurrently --kill-others-on-fail --names build:bundle,build:js,webpack 'pnpm run build:bundle --watch' 'pnpm run build:js --watch' 'webpack serve --config tests/webpack.config.js'",
+    "test:types": "pnpm run build:js && tsc --noEmit tests/types.expect.ts",
+    "test:watch": "pnpm run build:js && concurrently --kill-others-on-fail --names build,mocha 'pnpm run build:js --watch' 'mocha --watch'"
   },
   "devDependencies": {
     "@rgrove/eslint-config": "^5.0.0",
@@ -54,6 +54,7 @@
     "concurrently": "^7.6.0",
     "esbuild": "^0.17.3",
     "eslint": "^8.32.0",
+    "expect-type": "^0.15.0",
     "mocha": "^10.2.0",
     "nyc": "^15.1.0",
     "path-browserify": "^1.0.1",
