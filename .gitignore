@@ -4,6 +4,7 @@ coverage/
 dist/
 docs/
 node_modules/
+tests/.build/
 tmp/
 .DS_Store
 .eslintcache
