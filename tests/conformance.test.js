@@ -5,8 +5,6 @@
 const assert = require('assert');
 const path = require('path');
 
-const mapLimit = require('async/mapLimit');
-
 const { parseXml } = require('..');
 
 const REPO_ROOT = path.resolve(__dirname, '..');
@@ -208,13 +206,12 @@ const specialEncodings = {
 };
 
 // -- Tests --------------------------------------------------------------------
-mapLimit(testSuiteFiles, 10, loadTestSuite, (err, testSuites) => {
-  if (err) { throw err; }
+(async () => {
+  let testSuites = await Promise.all(testSuiteFiles.map(loadTestSuite));
 
   describe("XML conformance tests", () => {
     for (let suite of testSuites) {
       let { doc, filename } = suite;
-
       let testRoot = path.dirname(filename);
 
       for (let node of doc.children) {
@@ -225,8 +222,8 @@ mapLimit(testSuiteFiles, 10, loadTestSuite, (err, testSuites) => {
     }
   });
 
-  run(); // <-- Mocha global, don't freak out
-});
+  run(); // This is a Mocha global.
+})();
 
 // -- Helpers ------------------------------------------------------------------
 function createTest(testRoot, test) {
@@ -235,15 +232,8 @@ function createTest(testRoot, test) {
   let version = attributes.VERSION || '1.0';
 
   if (!rec.startsWith('XML1.0') || !version.includes('1.0')) {
-    // Skip tests that aren't for XML 1.0.
+    // Ignore tests that aren't for XML 1.0.
     return;
-  }
-
-  let sections = attributes.SECTIONS.split(/\s*,\s*/);
-
-  function shouldSkip() {
-    return skipTests.has(attributes.ID)
-      || sections.some(section => skipSections.some(skip => section.startsWith(skip)));
   }
 
   let description = test.text.trim();
@@ -253,103 +243,95 @@ function createTest(testRoot, test) {
   let outputPath;
   let outputPathRelative;
   let outputXml;
+  let prefix = `[${attributes.ID}] ${attributes.SECTIONS}:`;
+  let sections = attributes.SECTIONS.split(/\s*,\s*/);
 
   if (attributes.OUTPUT) {
     outputPath = path.join(testRoot, attributes.OUTPUT);
     outputPathRelative = path.relative(REPO_ROOT, outputPath);
   }
 
-  let prefix = `[${attributes.ID}] ${attributes.SECTIONS}:`;
+  function shouldSkip() {
+    return skipTests.has(attributes.ID)
+      || sections.some(section => skipSections.some(skip => section.startsWith(skip)));
+  }
 
-  before(done => {
-    readXml(inputPath, attributes.ID, (err, xml) => {
-      if (err) { return void done(err); }
+  before(async () => {
+    inputXml = await readXml(inputPath, attributes.ID);
 
-      inputXml = xml;
-
-      if (outputPath) {
-        readXml(outputPath, attributes.ID, (err, xml) => { // eslint-disable-line no-shadow
-          if (err) { return void done(err); }
-
-          outputXml = xml;
-          done();
-        });
-      } else {
-        done();
-      }
-    });
+    if (outputPath) {
+      outputXml = await readXml(outputPath, attributes.ID);
+    }
   });
 
   if (attributes.TYPE === 'not-wf' || attributes.TYPE === 'error') {
-    // These tests should fail.
+    // This test should fail.
     it(`${prefix} fails to parse ${inputPathRelative}`, function () {
       if (shouldSkip()) {
         // Skip tests for unsupported functionality.
         this.skip();
-        return;
       }
 
       assert.throws(() => {
         parseXml(inputXml);
       }, Error, description);
     });
-  } else {
-    // These tests should pass since the documents are well-formed.
-    it(`${prefix} parses ${inputPathRelative}`, function () {
+
+    return;
+  }
+
+  // This test should pass since the documents are well-formed.
+  it(`${prefix} parses ${inputPathRelative}`, function () {
+    if (shouldSkip()) {
+      // Skip tests for unsupported functionality.
+      this.skip();
+    }
+
+    try {
+      // Ignoring undefined entities here allows us to parse numerous test
+      // documents that are still valuable tests but would otherwise fail due
+      // to reliance on entity declarations support.
+      parseXml(inputXml, { ignoreUndefinedEntities: true });
+    } catch (err) {
+      assert.fail(`${err.message}\nTest description: ${description}`);
+    }
+  });
+
+  if (outputPath) {
+    it(`${prefix} parsed document is equivalent to ${outputPathRelative}`, function () {
       if (shouldSkip()) {
         // Skip tests for unsupported functionality.
         this.skip();
-        return;
       }
+
+      let inputDoc;
+      let outputDoc;
 
       try {
-        // Ignoring undefined entities here allows us to parse numerous test
-        // documents that are still valuable tests but would otherwise fail due
-        // to reliance on entity declarations support.
-        parseXml(inputXml, { ignoreUndefinedEntities: true });
+        inputDoc = parseXml(inputXml);
+        outputDoc = parseXml(outputXml);
       } catch (err) {
-        assert.fail(`${err.message}\nTest description: ${description}`);
-      }
-    });
-
-    if (outputPath) {
-      it(`${prefix} parsed document is equivalent to ${outputPathRelative}`, function () {
-        if (shouldSkip()) {
-          // Skip tests for unsupported functionality.
+        if (/^Named entity isn't defined:/.test(err.message)) {
+          // Skip tests that fail due to our lack of support for entity
+          // declarations.
           this.skip();
-          return;
         }
 
-        let inputDoc;
-        let outputDoc;
+        throw err;
+      }
 
-        try {
-          inputDoc = parseXml(inputXml);
-          outputDoc = parseXml(outputXml);
-        } catch (err) {
-          if (/^Named entity isn't defined:/.test(err.message)) {
-            // Skip tests that fail due to our lack of support for entity
-            // declarations.
-            this.skip();
-            return;
-          }
-
-          throw err;
-        }
-
-        assert.equal(
-          JSON.stringify(inputDoc, null, 2),
-          JSON.stringify(outputDoc, null, 2),
-          description,
-        );
-      });
-    }
+      assert.equal(
+        JSON.stringify(inputDoc, null, 2),
+        JSON.stringify(outputDoc, null, 2),
+        description,
+      );
+    });
   }
 }
 
 function createTestCases(testRoot, testCases) {
   describe(testCases.attributes.PROFILE, () => {
-    testCases.children.forEach(node => {
+    for (let node of testCases.children) {
       switch (node.name) {
         case 'TESTCASES':
           createTestCases(testRoot, node);
@@ -359,57 +341,52 @@ function createTestCases(testRoot, testCases) {
           createTest(testRoot, node);
           break;
       }
+    }
+  });
+}
+
+async function loadTestSuite(filename) {
+  filename = path.join(XMLCONF_ROOT, filename);
+
+  return {
+    doc: parseXml(await readXml(filename, '')),
+    filename,
+  };
+}
+
+async function readXml(filename, testId) {
+  let encoding = specialEncodings[testId] || 'utf-8';
+
+  if (typeof window !== 'undefined') {
+    return readXmlBrowser(filename, encoding);
+  }
+
+  return new Promise((resolve, reject) => {
+    require('fs').readFile(filename, { encoding }, (err, xml) => {
+      if (err) { return void reject(err); }
+      resolve(xml);
     });
   });
 }
 
-function loadTestSuite(filename, cb) {
-  filename = path.join(XMLCONF_ROOT, filename);
+function readXmlBrowser(filename, encoding) {
+  return new Promise((resolve, reject) => {
+    let req = new XMLHttpRequest();
 
-  readXml(filename, '', (err, xml) => {
-    if (err) { return void cb(err); }
+    req.addEventListener('error', () => {
+      reject(new Error(`Unable to load XML file ${filename}`));
+    });
 
-    let suite;
+    req.addEventListener('load', () => {
+      if (req.status !== 200) {
+        return void reject(new Error(`Unable to load XML file ${filename}`));
+      }
 
-    try {
-      suite = {
-        doc: parseXml(xml),
-        filename,
-      };
-    } catch (ex) {
-      return void cb(ex);
-    }
+      resolve(req.responseText);
+    });
 
-    cb(null, suite);
+    req.open('GET', path.join('..', filename));
+    req.overrideMimeType(`text/plain;charset=${encoding}`);
+    req.send();
   });
-}
-
-function readXml(filename, testId, cb) {
-  let encoding = specialEncodings[testId] || 'utf-8';
-
-  if (typeof window !== 'undefined') {
-    return readXmlBrowser(filename, encoding, cb);
-  }
-
-  require('fs').readFile(filename, { encoding }, cb);
-}
-
-function readXmlBrowser(filename, encoding, cb) {
-  let req = new XMLHttpRequest();
-
-  req.addEventListener('error', () => {
-    cb(new Error(`Unable to load XML file ${filename}`));
-  });
-
-  req.addEventListener('load', () => {
-    if (req.status !== 200) {
-      return void cb(new Error(`Unable to load XML file ${filename}`));
-    }
-
-    cb(null, req.responseText);
-  });
-
-  req.open('GET', path.join('..', filename));
-  req.overrideMimeType(`text/plain;charset=${encoding}`);
-  req.send();
 }

@@ -50,7 +50,6 @@
     "@rgrove/eslint-config": "^5.0.0",
     "@types/node": "^18.11.18",
     "assert": "^2.0.0",
-    "async": "^3.2.4",
     "concurrently": "^7.6.0",
     "esbuild": "^0.17.3",
     "eslint": "^8.32.0",
