@@ -29,6 +29,7 @@ const testSuiteFiles = [
   //
   // 'ibm/ibm_oasis_not-wf.xml',
 
+  'japanese/japanese.xml',
   'oasis/oasis.xml',
   'sun/sun-error.xml',
 
@@ -44,24 +45,18 @@ const testSuiteFiles = [
 // Names of spec sections whose tests should be skipped because we don't
 // implement those parts of the spec.
 const skipSections = [
-  '2.3 [9]', // EntityValue
-  '2.3 [11]', // SystemLiteral
-  '2.3 [12]', // PubidLiteral
-  '2.3 [13]', // PubidChar
-  '2.8 [28]', // doctypedecl
-  '2.8 [29]', // DTD markupdecl
+  '2.3 [11]', // DTD internal subset
   '2.8 [30]', // extSubset
-  '2.8 [31]', // extSubsetDecl
-  '3.2', // Element Type Declarations
   '3.3', // Attribute-List Declarations
   '4.1 [69]', // PEReference
   '4.2', // Entity Declarations
-  '4.3', // Parsed Entities
 ];
 
 // Ids of tests that should be skipped because they require functionality that
 // our parser intentionally doesn't implement (mostly DTD-related).
 const skipTests = new Set([
+  'hst-lhs-007', // validation of unsupported iso-8859-1 encoding
+  'hst-lhs-008', // unsupported encoding validation
   'ibm-invalid-P32-ibm32i01.xml', // external DTD
   'ibm-invalid-P32-ibm32i03.xml', // external DTD
   'ibm-invalid-P32-ibm32i04.xml', // external DTD
@@ -83,22 +78,82 @@ const skipTests = new Set([
   'not-wf-not-sa-004', // external DTD
   'not-wf-not-sa-005', // external DTD
   'not-wf-not-sa-006', // external DTD
+  'not-wf-not-sa-007', // external DTD
   'not-wf-not-sa-009', // external DTD
+  'not-wf-sa-057', // DTD validation
   'not-wf-sa-078', // entity declaration
   'not-wf-sa-079', // entity declaration
   'not-wf-sa-080', // entity declaration
   'not-wf-sa-082', // DTD validation
   'not-wf-sa-084', // entity declaration
+  'not-wf-sa-086', // DTD validation
+  'not-wf-sa-087', // DTD validation
+  'not-wf-sa-113', // DTD validation
+  'not-wf-sa-114', // DTD validation
   'not-wf-sa-121', // entity declaration
+  'not-wf-sa-122', // DTD validation
+  'not-wf-sa-123', // DTD validation
+  'not-wf-sa-124', // DTD validation
+  'not-wf-sa-125', // DTD validation
+  'not-wf-sa-126', // DTD validation
+  'not-wf-sa-127', // DTD validation
   'not-wf-sa-128', // DTD
+  'not-wf-sa-129', // DTD validation
+  'not-wf-sa-130', // DTD validation
+  'not-wf-sa-131', // DTD validation
+  'not-wf-sa-132', // DTD validation
+  'not-wf-sa-133', // DTD validation
+  'not-wf-sa-134', // DTD validation
+  'not-wf-sa-135', // DTD validation
+  'not-wf-sa-136', // DTD validation
+  'not-wf-sa-137', // DTD validation
+  'not-wf-sa-138', // DTD validation
+  'not-wf-sa-139', // DTD validation
+  'not-wf-sa-149', // DTD validation
   'not-wf-sa-160', // entity declaration
   'not-wf-sa-161', // entity declaration
   'not-wf-sa-162', // entity declaration
   'not-wf-sa-179', // entity declaration
   'not-wf-sa-180', // entity declaration
+  'not-wf-sa-183', // DTD validation
+  'not-wf-sa-184', // DTD validation
+  'o-p09fail1', // external DTD
+  'o-p09fail2', // external DTD
   'o-p09fail3', // entity declaration
   'o-p09fail4', // entity declaration
   'o-p09fail5', // entity declaration
+  'o-p12fail1', // DTD validation
+  'o-p12fail2', // DTD validation
+  'o-p12fail3', // DTD validation
+  'o-p12fail4', // DTD validation
+  'o-p12fail5', // DTD validation
+  'o-p12fail6', // DTD validation
+  'o-p12fail7', // DTD validation
+  'o-p29fail1', // DTD validation
+  'o-p31fail1', // external DTD
+  'o-p45fail1', // DTD validation
+  'o-p45fail2', // DTD validation
+  'o-p45fail3', // DTD validation
+  'o-p45fail4', // DTD validation
+  'o-p46fail1', // DTD validation
+  'o-p46fail2', // DTD validation
+  'o-p46fail3', // DTD validation
+  'o-p46fail4', // DTD validation
+  'o-p46fail5', // DTD validation
+  'o-p46fail6', // DTD validation
+  'o-p47fail1', // DTD validation
+  'o-p47fail2', // DTD validation
+  'o-p47fail3', // DTD validation
+  'o-p47fail4', // DTD validation
+  'o-p48fail1', // DTD validation
+  'o-p48fail2', // DTD validation
+  'o-p51fail1', // DTD validation
+  'o-p51fail2', // DTD validation
+  'o-p51fail3', // DTD validation
+  'o-p51fail4', // DTD validation
+  'o-p51fail5', // DTD validation
+  'o-p51fail6', // DTD validation
+  'o-p51fail7', // DTD validation
   'o-p61fail1', // external DTD
   'o-p62fail1', // external DTD
   'o-p62fail2', // external DTD
@@ -106,10 +161,12 @@ const skipTests = new Set([
   'o-p63fail2', // external DTD
   'o-p64fail1', // external DTD
   'o-p64fail2', // external DTD
+  'pr-xml-utf-16', // unsupported UTF-16 BE encoding
   'rmt-e2e-34', // DTD
   'rmt-e2e-55', // DTD
   'rmt-e2e-61', // we don't support charsets other than UTF-8
   'rmt-e3e-12', // attribute-list declaration
+  'valid-not-sa-012', // external DTD
   'valid-not-sa-013', // conditional section
   'valid-not-sa-014', // conditional section
   'valid-not-sa-015', // conditional section
@@ -125,6 +182,7 @@ const skipTests = new Set([
   'valid-sa-051', // test file is encoded as UTF-16 LE, which we don't support
   'valid-sa-094', // DTD
   'valid-sa-114', // entity declaration
+  'weekly-utf-16', // unsupported UTF-16 BE encoding
   'x-rmt-008', // asserts a failure in XML 1.0 <=4th edition, but we implement 5th edition, which allows this
 ]);
 
@@ -136,7 +194,9 @@ const specialEncodings = {
   'not-wf-sa-169': 'utf-16le',
   'not-wf-sa-170': 'utf-16le',
   'not-wf-sa-175': 'utf-16le',
+  'pr-xml-little': 'utf-16le',
   'rmt-e2e-27': 'utf-16le',
+  'weekly-little': 'utf-16le',
   'x-ibm-1-0.5-not-wf-P04-ibm04n21.xml': 'utf-16le',
   'x-ibm-1-0.5-not-wf-P04-ibm04n22.xml': 'utf-16le',
   'x-ibm-1-0.5-not-wf-P04-ibm04n23.xml': 'utf-16le',
@@ -152,17 +212,17 @@ mapLimit(testSuiteFiles, 10, loadTestSuite, (err, testSuites) => {
   if (err) { throw err; }
 
   describe("XML conformance tests", () => {
-    testSuites.forEach(suite => {
+    for (let suite of testSuites) {
       let { doc, filename } = suite;
 
       let testRoot = path.dirname(filename);
 
-      doc.children.forEach(node => {
+      for (let node of doc.children) {
         if (node.name === 'TESTCASES') {
           createTestCases(testRoot, node);
         }
-      });
-    });
+      }
+    }
   });
 
   run(); // <-- Mocha global, don't freak out
@@ -248,7 +308,7 @@ function createTest(testRoot, test) {
         // to reliance on entity declarations support.
         parseXml(inputXml, { ignoreUndefinedEntities: true });
       } catch (err) {
-        assert.fail(false, true, `${err.message}\nTest description: ${description}`);
+        assert.fail(`${err.message}\nTest description: ${description}`);
       }
     });
 
