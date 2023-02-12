@@ -738,6 +738,9 @@ export class Parser {
         && this.consumeSystemLiteral();
 
       if (encoding) {
+        if (!/^[A-Za-z][\w.-]*$/.test(encoding)) {
+          throw this.error('Invalid character in encoding name');
+        }
         this.consumeWhitespace();
       }
 
