@@ -49,7 +49,7 @@ export const predefinedEntities: Readonly<{[name: string]: string;}> = Object.fr
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameChar
  */
 export function isNameChar(char: string): boolean {
-  let cp = getCodePoint(char);
+  let cp = char.codePointAt(0) as number;
 
   // Including the most common NameStartChars here improves performance
   // slightly.
@@ -69,7 +69,7 @@ export function isNameChar(char: string): boolean {
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-NameStartChar
  */
-export function isNameStartChar(char: string, cp = getCodePoint(char)): boolean {
+export function isNameStartChar(char: string, cp = char.codePointAt(0) as number): boolean {
   return (cp >= 0x61 && cp <= 0x7A) // a-z
     || (cp >= 0x41 && cp <= 0x5A) // A-Z
     || cp === 0x3A // :
@@ -104,7 +104,7 @@ export function isReferenceChar(char: string): boolean {
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#white
  */
 export function isWhitespace(char: string): boolean {
-  let cp = getCodePoint(char);
+  let cp = char.codePointAt(0);
 
   return cp === 0x20
     || cp === 0x9
@@ -125,12 +125,4 @@ export function isXmlCodePoint(cp: number): boolean {
     || cp === 0xD
     || (cp >= 0xE000 && cp <= 0xFFFD)
     || (cp >= 0x10000 && cp <= 0x10FFFF);
-}
-
-/**
- * Returns the Unicode code point value of the given character, or `-1` if
- * _char_ is empty.
- */
-function getCodePoint(char: string): number {
-  return char.codePointAt(0) || -1;
 }
