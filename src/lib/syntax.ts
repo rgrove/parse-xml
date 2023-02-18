@@ -119,10 +119,10 @@ export function isWhitespace(char: string): boolean {
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Char
  */
 export function isXmlCodePoint(cp: number): boolean {
-  return cp === 0x9
+  return (cp >= 0x20 && cp <= 0xD7FF)
     || cp === 0xA
+    || cp === 0x9
     || cp === 0xD
-    || (cp >= 0x20 && cp <= 0xD7FF)
     || (cp >= 0xE000 && cp <= 0xFFFD)
     || (cp >= 0x10000 && cp <= 0x10FFFF);
 }
