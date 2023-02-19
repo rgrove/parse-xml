@@ -115,20 +115,39 @@ export class StringScanner {
   }
 
   /**
-   * Consumes and returns all characters for which the given function returns a
-   * truthy value, stopping on the first falsy return value or if the end of the
-   * input is reached.
+   * Consumes and returns all characters for which the given function returns
+   * `true`, stopping when `false` is returned or the end of the input is
+   * reached.
    */
   consumeMatchFn(fn: (char: string) => boolean): string {
-    let char;
-    let match = emptyString;
+    let { length, multiByteMode, string } = this;
+    let startByteIndex = this.charIndexToByteIndex();
+    let byteIndex = startByteIndex;
 
-    while ((char = this.peek()) && fn(char)) {
-      match += char;
-      this.advance();
+    if (multiByteMode) {
+      while (byteIndex < length) {
+        let char = string[byteIndex] as string;
+        let isSurrogatePair = char >= '\uD800' && char <= '\uDBFF';
+
+        if (isSurrogatePair) {
+          char += string[byteIndex + 1];
+        }
+
+        if (!fn(char)) {
+          break;
+        }
+
+        byteIndex += isSurrogatePair ? 2 : 1;
+      }
+    } else {
+      while (byteIndex < length && fn(string[byteIndex] as string)) {
+        ++byteIndex;
+      }
     }
 
-    return match;
+    let result = string.slice(startByteIndex, byteIndex);
+    this.advance(this.charLength(result));
+    return result;
   }
 
   /**
