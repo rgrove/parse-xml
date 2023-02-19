@@ -60,7 +60,8 @@ export function isNameChar(char: string): boolean {
     || cp === 0x2E // .
     || cp === 0xB7
     || (cp >= 0x300 && cp <= 0x36F)
-    || (cp >= 0x203F && cp <= 0x2040)
+    || cp === 0x203F
+    || cp === 0x2040
     || isNameStartChar(char, cp);
 }
 
@@ -79,7 +80,8 @@ export function isNameStartChar(char: string, cp = char.codePointAt(0) as number
     || (cp >= 0xF8 && cp <= 0x2FF)
     || (cp >= 0x370 && cp <= 0x37D)
     || (cp >= 0x37F && cp <= 0x1FFF)
-    || (cp >= 0x200C && cp <= 0x200D)
+    || cp === 0x200C
+    || cp === 0x200D
     || (cp >= 0x2070 && cp <= 0x218F)
     || (cp >= 0x2C00 && cp <= 0x2FEF)
     || (cp >= 0x3001 && cp <= 0xD7FF)
