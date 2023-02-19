@@ -240,22 +240,11 @@ export class StringScanner {
    * input string.
    */
   peek(count = 1): string {
-    let { charIndex, multiByteMode, string } = this;
+    let { charIndex, string } = this;
 
-    if (multiByteMode) {
-      // Inlining this comparison instead of checking `this.isEnd` improves perf
-      // slightly since `peek()` is called so frequently.
-      if (charIndex >= this.charCount) {
-        return emptyString;
-      }
-
-      return string.slice(
-        this.charIndexToByteIndex(charIndex),
-        this.charIndexToByteIndex(charIndex + count),
-      );
-    }
-
-    return string.slice(charIndex, charIndex + count);
+    return this.multiByteMode
+      ? string.slice(this.charIndexToByteIndex(charIndex), this.charIndexToByteIndex(charIndex + count))
+      : string.slice(charIndex, charIndex + count);
   }
 
   /**
