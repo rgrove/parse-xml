@@ -81,10 +81,26 @@ export class StringScanner {
    *
    * If no characters could be consumed, an empty string will be returned.
    */
-  consume(count = 1): string {
-    let chars = this.peek(count);
-    this.advance(count);
+  consume(charCount = 1): string {
+    let chars = this.peek(charCount);
+    this.advance(charCount);
     return chars;
+  }
+
+  /**
+   * Consumes and returns the given number of bytes if possible, advancing the
+   * scanner and stopping if the end of the string is reached.
+   *
+   * It's up to the caller to ensure that the given byte count doesn't split a
+   * multibyte character.
+   *
+   * If no bytes could be consumed, an empty string will be returned.
+   */
+  consumeBytes(byteCount: number): string {
+    let byteIndex = this.charIndexToByteIndex();
+    let result = this.string.slice(byteIndex, byteIndex + byteCount);
+    this.advance(this.charLength(result));
+    return result;
   }
 
   /**
@@ -122,32 +138,30 @@ export class StringScanner {
   consumeMatchFn(fn: (char: string) => boolean): string {
     let { length, multiByteMode, string } = this;
     let startByteIndex = this.charIndexToByteIndex();
-    let byteIndex = startByteIndex;
+    let endByteIndex = startByteIndex;
 
     if (multiByteMode) {
-      while (byteIndex < length) {
-        let char = string[byteIndex] as string;
+      while (endByteIndex < length) {
+        let char = string[endByteIndex] as string;
         let isSurrogatePair = char >= '\uD800' && char <= '\uDBFF';
 
         if (isSurrogatePair) {
-          char += string[byteIndex + 1];
+          char += string[endByteIndex + 1];
         }
 
         if (!fn(char)) {
           break;
         }
 
-        byteIndex += isSurrogatePair ? 2 : 1;
+        endByteIndex += isSurrogatePair ? 2 : 1;
       }
     } else {
-      while (byteIndex < length && fn(string[byteIndex] as string)) {
-        ++byteIndex;
+      while (endByteIndex < length && fn(string[endByteIndex] as string)) {
+        ++endByteIndex;
       }
     }
 
-    let result = string.slice(startByteIndex, byteIndex);
-    this.advance(this.charLength(result));
-    return result;
+    return this.consumeBytes(endByteIndex - startByteIndex);
   }
 
   /**
@@ -201,16 +215,13 @@ export class StringScanner {
    * Returns the consumed string, or an empty string if nothing was consumed.
    */
   consumeUntilMatch(regex: RegExp): string {
-    let restOfString = this.string.slice(this.charIndexToByteIndex());
-    let matchByteIndex = restOfString.search(regex);
+    let matchByteIndex = this.string
+      .slice(this.charIndexToByteIndex())
+      .search(regex);
 
-    if (matchByteIndex <= 0) {
-      return emptyString;
-    }
-
-    let result = restOfString.slice(0, matchByteIndex);
-    this.advance(this.charLength(result));
-    return result;
+    return matchByteIndex > 0
+      ? this.consumeBytes(matchByteIndex)
+      : emptyString;
   }
 
   /**
@@ -221,17 +232,12 @@ export class StringScanner {
    * Returns the consumed string, or an empty string if nothing was consumed.
    */
   consumeUntilString(searchString: string): string {
-    let { string } = this;
     let byteIndex = this.charIndexToByteIndex();
-    let matchByteIndex = string.indexOf(searchString, byteIndex);
+    let matchByteIndex = this.string.indexOf(searchString, byteIndex);
 
-    if (matchByteIndex <= 0) {
-      return emptyString;
-    }
-
-    let result = string.slice(byteIndex, matchByteIndex);
-    this.advance(this.charLength(result));
-    return result;
+    return matchByteIndex > 0
+      ? this.consumeBytes(matchByteIndex - byteIndex)
+      : emptyString;
   }
 
   /**

@@ -110,6 +110,28 @@ describe('StringScanner', () => {
     });
   });
 
+  describe('consumeBytes()', () => {
+    it('consumes and returns the given number of bytes', () => {
+      let s = new StringScanner('😺 bar baz');
+      assert.strictEqual(s.consumeBytes(6), '😺 bar');
+      assert.strictEqual(s.charIndex, 5);
+    });
+
+    it('stops consuming at the end of the string', () => {
+      let s = new StringScanner('foo bar baz');
+      assert.strictEqual(s.consumeBytes(42), 'foo bar baz');
+      assert.strictEqual(s.charIndex, 11);
+    });
+
+    describe('when there are no characters left to consume', () => {
+      it('returns an empty string', () => {
+        let s = new StringScanner('');
+        assert.strictEqual(s.consumeBytes(42), '');
+        assert.strictEqual(s.charIndex, 0);
+      });
+    });
+  });
+
   describe('consumeMatch()', () => {
     describe('when the regex matches at the current scanner position', () => {
       it('consumes and returns the match', () => {
