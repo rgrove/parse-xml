@@ -132,37 +132,6 @@ describe('StringScanner', () => {
     });
   });
 
-  describe('consumeMatch()', () => {
-    describe('when the regex matches at the current scanner position', () => {
-      it('consumes and returns the match', () => {
-        let s = new StringScanner('🥧abcdef😋');
-        assert.strictEqual(s.consumeMatch(/.+abc/y), '🥧abc');
-        assert.strictEqual(s.charIndex, 4);
-      });
-    });
-
-    describe('when the regex does not match at the current scanner position', () => {
-      it('returns an empty string and does not advance', () => {
-        let s = new StringScanner('🥧abcdef😋');
-        assert.strictEqual(s.consumeMatch(/xyz/y), '');
-        assert.strictEqual(s.charIndex, 0);
-      });
-    });
-
-    describe('when the regex does not have a sticky flag', () => {
-      it('throws an error', () => {
-        let s = new StringScanner('🥧abcdef😋');
-
-        assert.throws(() => {
-          s.consumeMatch(/a/);
-        }, {
-          name: 'Error',
-          message:'`regex` must have a sticky flag ("y")',
-        });
-      });
-    });
-  });
-
   describe('consumeMatchFn()', () => {
     it('consumes characters as long as the function returns `true`', () => {
       let s = new StringScanner('🥧abcdef😋');

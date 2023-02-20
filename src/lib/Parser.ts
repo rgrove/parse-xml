@@ -182,7 +182,7 @@ export class Parser {
       : syntax.attValueCharSingleQuote;
 
     matchLoop: while (!scanner.isEnd) {
-      chars = scanner.consumeMatch(regex);
+      chars = scanner.consumeUntilMatch(regex);
 
       if (chars) {
         this.validateChars(chars);
@@ -201,7 +201,7 @@ export class Parser {
         case '<':
           throw this.error('Unescaped `<` is not allowed in an attribute value');
 
-        case emptyString:
+        default:
           break matchLoop;
       }
     }

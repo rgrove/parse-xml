@@ -104,33 +104,6 @@ export class StringScanner {
   }
 
   /**
-   * Consumes a match for the given sticky regex, advances the scanner, updates
-   * the `lastIndex` property of the regex, and returns the matching string.
-   *
-   * The regex must have a sticky flag ("y") so that its `lastIndex` prop can be
-   * used to anchor the match at the current scanner position.
-   *
-   * Returns the consumed string, or an empty string if nothing was consumed.
-   */
-  consumeMatch(regex: RegExp): string {
-    if (!regex.sticky) {
-      throw new Error('`regex` must have a sticky flag ("y")');
-    }
-
-    regex.lastIndex = this.charIndexToByteIndex();
-
-    let result = regex.exec(this.string);
-
-    if (result === null || result.length === 0) {
-      return emptyString;
-    }
-
-    let match = result[0] as string;
-    this.advance(this.charLength(match));
-    return match;
-  }
-
-  /**
    * Consumes and returns all characters for which the given function returns
    * `true`, stopping when `false` is returned or the end of the input is
    * reached.

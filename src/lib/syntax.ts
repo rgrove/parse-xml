@@ -4,7 +4,7 @@
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-AttValue
  */
-export const attValueCharDoubleQuote = /[^"&<]+/y;
+export const attValueCharDoubleQuote = /["&<]/;
 
 /**
  * Regular expression that matches one or more `AttValue` characters in a
@@ -12,7 +12,7 @@ export const attValueCharDoubleQuote = /[^"&<]+/y;
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-AttValue
  */
-export const attValueCharSingleQuote = /[^'&<]+/y;
+export const attValueCharSingleQuote = /['&<]/;
 
 /**
  * Regular expression that matches a whitespace character that should be
