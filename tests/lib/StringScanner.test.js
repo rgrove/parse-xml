@@ -214,24 +214,6 @@ describe('StringScanner', () => {
     });
   });
 
-  describe('consumeStringFast()', () => {
-    describe('when a string with single byte chars matches at the current scanner position', () => {
-      it('consumes and returns the match', () => {
-        let s = new StringScanner('abcdef');
-        assert.strictEqual(s.consumeStringFast('abc'), 'abc');
-        assert.strictEqual(s.charIndex, 3);
-      });
-    });
-
-    describe('when a string with single byte chars does not match at the current scanner position', () => {
-      it('returns an empty string and does not advance', () => {
-        let s = new StringScanner('abcdef');
-        assert.strictEqual(s.consumeStringFast('xyz'), '');
-        assert.strictEqual(s.charIndex, 0);
-      });
-    });
-  });
-
   describe('consumeUntilMatch()', () => {
     describe('when the regex matches', () => {
       it('consumes and returns characters up to the beginning of the match', () => {

@@ -41,7 +41,7 @@ export class Parser {
       doc.end = xml.length;
     }
 
-    scanner.consumeStringFast('\uFEFF'); // byte order mark
+    scanner.consumeString('\uFEFF'); // byte order mark
     this.consumeProlog();
 
     if (!this.consumeElement()) {
@@ -224,14 +224,14 @@ export class Parser {
     let { scanner } = this;
     let startIndex = scanner.charIndex;
 
-    if (!scanner.consumeStringFast('<![CDATA[')) {
+    if (!scanner.consumeString('<![CDATA[')) {
       return false;
     }
 
     let text = scanner.consumeUntilString(']]>');
     this.validateChars(text);
 
-    if (!scanner.consumeStringFast(']]>')) {
+    if (!scanner.consumeString(']]>')) {
       throw this.error('Unclosed CDATA section');
     }
 
@@ -274,14 +274,14 @@ export class Parser {
     let { scanner } = this;
     let startIndex = scanner.charIndex;
 
-    if (!scanner.consumeStringFast('<!--')) {
+    if (!scanner.consumeString('<!--')) {
       return false;
     }
 
     let content = scanner.consumeUntilString('--');
     this.validateChars(content);
 
-    if (!scanner.consumeStringFast('-->')) {
+    if (!scanner.consumeString('-->')) {
       if (scanner.peek(2) === '--') {
         throw this.error("The string `--` isn't allowed inside a comment");
       }
@@ -325,7 +325,7 @@ export class Parser {
     let { scanner } = this;
     let startIndex = scanner.charIndex;
 
-    if (!scanner.consumeStringFast('<!DOCTYPE')) {
+    if (!scanner.consumeString('<!DOCTYPE')) {
       return false;
     }
 
@@ -340,7 +340,7 @@ export class Parser {
     let systemId;
 
     if (this.consumeWhitespace()) {
-      if (scanner.consumeStringFast('PUBLIC')) {
+      if (scanner.consumeString('PUBLIC')) {
         publicId = this.consumeWhitespace()
           && this.consumePubidLiteral();
 
@@ -351,7 +351,7 @@ export class Parser {
         this.consumeWhitespace();
       }
 
-      if (publicId !== undefined || scanner.consumeStringFast('SYSTEM')) {
+      if (publicId !== undefined || scanner.consumeString('SYSTEM')) {
         this.consumeWhitespace();
         systemId = this.consumeSystemLiteral();
 
@@ -365,19 +365,19 @@ export class Parser {
 
     let internalSubset;
 
-    if (scanner.consumeStringFast('[')) {
+    if (scanner.consumeString('[')) {
       // The internal subset may contain comments that contain `]` characters,
       // so we can't use `consumeUntilString()` here.
       internalSubset = scanner.consumeUntilMatch(/\][\x20\t\r\n]*>/);
 
-      if (!scanner.consumeStringFast(']')) {
+      if (!scanner.consumeString(']')) {
         throw this.error('Unclosed internal subset');
       }
 
       this.consumeWhitespace();
     }
 
-    if (!scanner.consumeStringFast('>')) {
+    if (!scanner.consumeString('>')) {
       throw this.error('Unclosed doctype declaration');
     }
 
@@ -396,7 +396,7 @@ export class Parser {
     let { scanner } = this;
     let startIndex = scanner.charIndex;
 
-    if (!scanner.consumeStringFast('<')) {
+    if (!scanner.consumeString('<')) {
       return false;
     }
 
@@ -408,13 +408,13 @@ export class Parser {
     }
 
     let attributes = this.consumeAttributes();
-    let isEmpty = !!scanner.consumeStringFast('/>');
+    let isEmpty = !!scanner.consumeString('/>');
     let element = new XmlElement(name, attributes);
 
     element.parent = this.currentNode;
 
     if (!isEmpty) {
-      if (!scanner.consumeStringFast('>')) {
+      if (!scanner.consumeString('>')) {
         throw this.error(`Unclosed start tag for element \`${name}\``);
       }
 
@@ -433,7 +433,7 @@ export class Parser {
       let endTagMark = scanner.charIndex;
       let endTagName;
 
-      if (!scanner.consumeStringFast('</')
+      if (!scanner.consumeString('</')
           || !(endTagName = this.consumeName())
           || endTagName !== name) {
 
@@ -443,7 +443,7 @@ export class Parser {
 
       this.consumeWhitespace();
 
-      if (!scanner.consumeStringFast('>')) {
+      if (!scanner.consumeString('>')) {
         throw this.error(`Unclosed end tag for element ${name}`);
       }
 
@@ -462,7 +462,7 @@ export class Parser {
   consumeEqual(): boolean {
     this.consumeWhitespace();
 
-    if (this.scanner.consumeStringFast('=')) {
+    if (this.scanner.consumeString('=')) {
       this.consumeWhitespace();
       return true;
     }
@@ -504,7 +504,7 @@ export class Parser {
     let { scanner } = this;
     let startIndex = scanner.charIndex;
 
-    if (!scanner.consumeStringFast('<?')) {
+    if (!scanner.consumeString('<?')) {
       return false;
     }
 
@@ -520,7 +520,7 @@ export class Parser {
     }
 
     if (!this.consumeWhitespace()) {
-      if (scanner.consumeStringFast('?>')) {
+      if (scanner.consumeString('?>')) {
         return this.addNode(new XmlProcessingInstruction(name), startIndex);
       }
 
@@ -530,7 +530,7 @@ export class Parser {
     let content = scanner.consumeUntilString('?>');
     this.validateChars(content);
 
-    if (!scanner.consumeStringFast('?>')) {
+    if (!scanner.consumeString('?>')) {
       throw this.error('Unterminated processing instruction');
     }
 
@@ -595,7 +595,7 @@ export class Parser {
   consumeReference(): string | false {
     let { scanner } = this;
 
-    if (!scanner.consumeStringFast('&')) {
+    if (!scanner.consumeString('&')) {
       return false;
     }
 
@@ -675,7 +675,7 @@ export class Parser {
    */
   consumeSystemLiteral(): string | false {
     let { scanner } = this;
-    let quote = scanner.consumeStringFast('"') || scanner.consumeStringFast("'");
+    let quote = scanner.consumeString('"') || scanner.consumeString("'");
 
     if (!quote) {
       return false;
@@ -684,7 +684,7 @@ export class Parser {
     let value = scanner.consumeUntilString(quote);
     this.validateChars(value);
 
-    if (!scanner.consumeStringFast(quote)) {
+    if (!scanner.consumeString(quote)) {
       throw this.error('Missing end quote');
     }
 
@@ -711,7 +711,7 @@ export class Parser {
     let { scanner } = this;
     let startIndex = scanner.charIndex;
 
-    if (!scanner.consumeStringFast('<?xml')) {
+    if (!scanner.consumeString('<?xml')) {
       return false;
     }
 
@@ -719,7 +719,7 @@ export class Parser {
       throw this.error('Invalid XML declaration');
     }
 
-    let version = !!scanner.consumeStringFast('version')
+    let version = !!scanner.consumeString('version')
       && this.consumeEqual()
       && this.consumeSystemLiteral();
 
@@ -733,7 +733,7 @@ export class Parser {
     let standalone;
 
     if (this.consumeWhitespace()) {
-      encoding = !!scanner.consumeStringFast('encoding')
+      encoding = !!scanner.consumeString('encoding')
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 
@@ -744,7 +744,7 @@ export class Parser {
         this.consumeWhitespace();
       }
 
-      standalone = !!scanner.consumeStringFast('standalone')
+      standalone = !!scanner.consumeString('standalone')
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 
@@ -757,7 +757,7 @@ export class Parser {
       }
     }
 
-    if (!scanner.consumeStringFast('?>')) {
+    if (!scanner.consumeString('?>')) {
       throw this.error('Invalid or unclosed XML declaration');
     }
 

@@ -172,35 +172,11 @@ export class StringScanner {
    * string will be returned and the scanner will not be advanced.
    */
   consumeString(stringToConsume: string): string {
-    if (this.consumeStringFast(stringToConsume)) {
-      return stringToConsume;
-    }
-
-    if (this.multiByteMode) {
-      let { length } = stringToConsume;
-      let charLengthToMatch = this.charLength(stringToConsume);
-
-      if (charLengthToMatch !== length
-          && stringToConsume === this.peek(charLengthToMatch)) {
-
-        this.advance(charLengthToMatch);
-        return stringToConsume;
-      }
-    }
-
-    return emptyString;
-  }
-
-  /**
-   * Does the same thing as `consumeString()`, but doesn't support consuming
-   * multibyte characters. This can be faster if you only need to match single
-   * byte characters.
-   */
-  consumeStringFast(stringToConsume: string): string {
     let { length } = stringToConsume;
+    let byteIndex = this.charIndexToByteIndex();
 
-    if (this.peek(length) === stringToConsume) {
-      this.advance(length);
+    if (stringToConsume === this.string.slice(byteIndex, byteIndex + length)) {
+      this.advance(length === 1 ? 1 : this.charLength(stringToConsume));
       return stringToConsume;
     }
 
