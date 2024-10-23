@@ -31,7 +31,7 @@ export class Parser {
    */
   constructor(xml: string, options: ParserOptions = {}) {
     let doc = this.document = new XmlDocument();
-    let scanner = this.scanner = new StringScanner(xml);
+    this.scanner = new StringScanner(xml);
 
     this.currentNode = doc;
     this.options = options;
@@ -40,8 +40,12 @@ export class Parser {
       doc.start = 0;
       doc.end = xml.length;
     }
+    
+    this.startParse();
+  }
 
-    scanner.consumeStringFast('\uFEFF'); // byte order mark
+  startParse() {
+    this.scanner.consumeStringFast('\uFEFF'); // byte order mark
     this.consumeProlog();
 
     if (!this.consumeElement()) {
@@ -50,7 +54,7 @@ export class Parser {
 
     while (this.consumeMisc()) {} // eslint-disable-line no-empty
 
-    if (!scanner.isEnd) {
+    if (!this.scanner.isEnd) {
       throw this.error('Extra content at the end of the document');
     }
   }
