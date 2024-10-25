@@ -31,32 +31,17 @@ export class Parser {
    */
   constructor(xml: string, options: ParserOptions = {}) {
     let doc = this.document = new XmlDocument();
-    this.scanner = new StringScanner(xml);
 
     this.currentNode = doc;
     this.options = options;
+    this.scanner = new StringScanner(xml);
 
     if (this.options.includeOffsets) {
       doc.start = 0;
       doc.end = xml.length;
     }
 
-    this.startParse();
-  }
-
-  startParse() {
-    this.scanner.consumeString('\uFEFF'); // byte order mark
-    this.consumeProlog();
-
-    if (!this.consumeElement()) {
-      throw this.error('Root element is missing or invalid');
-    }
-
-    while (this.consumeMisc()) {} // eslint-disable-line no-empty
-
-    if (!this.scanner.isEnd) {
-      throw this.error('Extra content at the end of the document');
-    }
+    this.parse();
   }
 
   /**
@@ -780,6 +765,24 @@ export class Parser {
   error(message: string) {
     let { scanner } = this;
     return new XmlError(message, scanner.charIndex, scanner.string);
+  }
+
+  /**
+   * Parses the XML input.
+   */
+  parse() {
+    this.scanner.consumeString('\uFEFF'); // byte order mark
+    this.consumeProlog();
+
+    if (!this.consumeElement()) {
+      throw this.error('Root element is missing or invalid');
+    }
+
+    while (this.consumeMisc()) {} // eslint-disable-line no-empty
+
+    if (!this.scanner.isEnd) {
+      throw this.error('Extra content at the end of the document');
+    }
   }
 
   /**
