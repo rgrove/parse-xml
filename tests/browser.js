@@ -4,7 +4,6 @@ require('mocha/mocha.css');
 const mocha = require('mocha/mocha.js');
 
 mocha.setup({
-  delay: true,
   ui: 'bdd',
 });
 
