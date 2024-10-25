@@ -10,7 +10,6 @@
     "exactOptionalPropertyTypes": true,
     "forceConsistentCasingInFileNames": true,
     "incremental": true,
-    "importsNotUsedAsValues": "error",
     "isolatedModules": true,
     "lib": ["es2020"],
     "module": "commonjs",
