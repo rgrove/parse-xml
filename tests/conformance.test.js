@@ -221,9 +221,10 @@ const specialEncodings = {
       }
     }
   });
-
-  run(); // This is a Mocha global.
-})();
+})().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
 
 // -- Helpers ------------------------------------------------------------------
 function createTest(testRoot, test) {
