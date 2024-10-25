@@ -13,5 +13,6 @@ module.exports = {
     'no-implicit-coercion': ['warn', {
       allow: ['!!'],
     }],
+    '@typescript-eslint/type-annotation-spacing': 'off',
   },
 };
