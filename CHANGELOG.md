@@ -2,7 +2,21 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## Unreleased
+## 4.2.0 (2014-10-24)
+
+Faster! Smaller! Better in ways you can't even see and probably don't care about! And still completely backwards compatible.
+
+### Improved
+
+-   Parsing performance in Node.js 22 is up to 28% faster than version 4.1.0. Note that the performance gain will vary depending on the document being parsed.
+
+-   The minified bundle size has been reduced by a mind-blowing 87 bytes (uncompressed).
+
+### Changed
+
+-   Moved initial parsing steps out of the `Parser` constructor and into a new `parse()` method. [#35](https://github.com/rgrove/parse-xml/pull/35)
+
+    This change is an internal refactoring that doesn't affect the public API, but may make error handling easier for people who like living dangerously and are using parse-xml internals in interesting ways.
 
 ### Fixed
 
