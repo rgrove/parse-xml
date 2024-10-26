@@ -2,7 +2,7 @@
 
 A fast, safe, compliant XML parser for Node.js and browsers.
 
-[![npm version](https://badge.fury.io/js/%40rgrove%2Fparse-xml.svg)](https://badge.fury.io/js/%40rgrove%2Fparse-xml) [![Bundle size](https://badgen.net/bundlephobia/minzip/@rgrove/parse-xml)](https://bundlephobia.com/result?p=@rgrove/parse-xml) [![CI](https://github.com/rgrove/parse-xml/actions/workflows/ci.yml/badge.svg)](https://github.com/rgrove/parse-xml/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/%40rgrove%2Fparse-xml)](https://www.npmjs.com/package/@rgrove/parse-xml) [![Bundle size](https://badgen.net/bundlephobia/minzip/@rgrove/parse-xml)](https://bundlephobia.com/result?p=@rgrove/parse-xml) [![CI](https://github.com/rgrove/parse-xml/actions/workflows/ci.yml/badge.svg)](https://github.com/rgrove/parse-xml/actions/workflows/ci.yml)
 
 ## Links
 
