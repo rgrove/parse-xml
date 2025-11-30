@@ -60,6 +60,18 @@ describe('Parser', () => {
     });
   });
 
+  describe('when `options.allowFullCodepoints` is `true`', () => {
+    beforeEach(() => {
+      options.allowFullCodepoints = true;
+    });
+
+    it('converts invalid codepoints to it\'s character equivalent', () => {
+      let { root } = parseXml('<root foo="bar &#27; baz">&#28;</root>', options);
+      assert.strictEqual(root.attributes.foo, 'bar \x1b baz');
+      assert.strictEqual(root.text, '\x1c');
+    });
+  });
+
   describe('when `options.includeOffsets` is `true`', () => {
     it('the start offset is a byte offset, not a character offset', () => {
       let { root } = parseXml('<root><cat>🐈</cat><dog>🐕</dog></root>', { includeOffsets: true });

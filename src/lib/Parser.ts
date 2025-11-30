@@ -606,7 +606,7 @@ export class Parser {
         throw this.error('Invalid character reference');
       }
 
-      if (!syntax.isXmlCodePoint(codePoint)) {
+      if (!syntax.isXmlCodePoint(codePoint) && !this.options.allowFullCodepoints) {
         throw this.error('Character reference resolves to an invalid character');
       }
 
@@ -834,6 +834,14 @@ export type ParserOptions = {
    * @default false
    */
   ignoreUndefinedEntities?: boolean;
+
+  /**
+   * When `true`, an invalid entity codepoint (like "&#27;") will be converted
+   * to a character instead of causing a parse error.
+   *
+   * @default false
+   */
+  allowFullCodepoints?: boolean;
 
   /**
    * When `true`, the starting and ending byte offsets of each node in the input
