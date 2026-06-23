@@ -390,6 +390,24 @@ describe('Parser', () => {
       assert.strictEqual(root.attributes.d, " a   z ");
     });
 
+    // A character reference for a carriage return (`&#xD;` / `&#13;`) in content
+    // must be preserved as a literal `\r`. Line break normalization only applies
+    // to literal line breaks in the input, not to characters that come from a
+    // character reference.
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#sec-line-ends
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#entproc
+    it("doesn't normalize a character reference for a carriage return in content", () => {
+      assert.strictEqual(parseXml('<a>&#xD;</a>').root.children[0].text, '\r');
+      assert.strictEqual(parseXml('<a>&#13;</a>').root.children[0].text, '\r');
+
+      // A literal `\r` is normalized to `\n`, but a `&#xD;` reference following
+      // it must remain a `\r`.
+      assert.strictEqual(parseXml('<a>x\r&#xD;y</a>').root.children[0].text, 'x\n\ry');
+
+      // `&#xD;&#xA;` must remain `\r\n` rather than collapsing to `\n` or `\n\n`.
+      assert.strictEqual(parseXml('<a>&#xD;&#xA;</a>').root.children[0].text, '\r\n');
+    });
+
     it('handles many character references in a single attribute', () => {
       let { root } = parseXml('<a b="&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;"/>');
       assert.strictEqual(root.attributes.b, "<".repeat(35));
