@@ -2,6 +2,12 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+-   A character reference for a carriage return (`&#xD;` / `&#13;`) in element text content is now correctly preserved as a literal `\r` rather than being normalized to `\n`. [#41](https://github.com/rgrove/parse-xml/pull/41) (@spokodev)
+
 ## 4.2.0 (2024-10-24)
 
 Faster! Smaller! Better in ways you can't even see and probably don't care about! And still completely backwards compatible.
