@@ -21,7 +21,7 @@
   "engines": {
     "node": ">=14.0.0"
   },
-  "packageManager": "pnpm@9.12.2",
+  "packageManager": "pnpm@11.9.0",
   "files": [
     "dist",
     "!dist/tsconfig.tsbuildinfo",
