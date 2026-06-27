@@ -65,12 +65,19 @@ export class Parser {
   /**
    * Adds the given _text_ to the document, either by appending it to a
    * preceding `XmlText` node (if possible) or by creating a new `XmlText` node.
+   *
+   * When _normalize_ is `true` (the default), line breaks in _text_ are
+   * normalized per section 2.11 of the XML spec. This must be `false` for text
+   * that comes from a character or entity reference, since references aren't
+   * subject to line break normalization.
    */
-  addText(text: string, charIndex: number) {
+  addText(text: string, charIndex: number, normalize = true) {
     let { children } = this.currentNode;
     let { length } = children;
 
-    text = normalizeLineBreaks(text);
+    if (normalize) {
+      text = normalizeLineBreaks(text);
+    }
 
     if (length > 0) {
       let prevNode = children[length - 1];
@@ -297,7 +304,7 @@ export class Parser {
     let ref = this.consumeReference();
 
     return ref
-      ? this.addText(ref, startIndex)
+      ? this.addText(ref, startIndex, false)
       : false;
   }
 
