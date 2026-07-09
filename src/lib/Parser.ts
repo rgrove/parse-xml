@@ -609,7 +609,8 @@ export class Parser {
         ? parseInt(ref.slice(2), 16) // Hex codepoint.
         : parseInt(ref.slice(1), 10); // Decimal codepoint.
 
-      if (isNaN(codePoint)) {
+      if (isNaN(codePoint)
+          || !/^#(?:x[0-9A-Fa-f]+|[0-9]+)$/.test(ref)) {
         throw this.error('Invalid character reference');
       }
 

@@ -408,6 +408,17 @@ describe('Parser', () => {
       assert.strictEqual(parseXml('<a>&#xD;&#xA;</a>').root.children[0].text, '\r\n');
     });
 
+    // A numeric character reference must consist solely of digits, so a
+    // reference like `&#65a;` or `&#x41g;` is malformed and must be rejected
+    // rather than silently truncated to the leading numeric portion.
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#NT-CharRef
+    it('rejects a numeric character reference with trailing non-digit characters', () => {
+      assert.throws(() => parseXml('<a>&#65a;</a>'), /Invalid character reference/);
+      assert.throws(() => parseXml('<a>&#48f;</a>'), /Invalid character reference/);
+      assert.throws(() => parseXml('<a>&#x41g;</a>'), /Invalid character reference/);
+      assert.throws(() => parseXml('<a b="&#65z;" />'), /Invalid character reference/);
+    });
+
     it('handles many character references in a single attribute', () => {
       let { root } = parseXml('<a b="&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;&lt;"/>');
       assert.strictEqual(root.attributes.b, "<".repeat(35));
