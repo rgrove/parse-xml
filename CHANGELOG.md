@@ -2,6 +2,12 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.2.2 (2026-07-10)
+
+### Fixed
+
+-   A malformed numeric character reference with one or more trailing non-digit characters (e.g. `&#65a;`, `&#x41g;`) now results in an "Invalid character reference" error. Previously the trailing non-digit characters were silently ignored, which didn't conform to the XML specification. [#45](https://github.com/rgrove/parse-xml/pull/45) (@spokodev)
+
 ## 4.2.1 (2026-06-27)
 
 ### Fixed
