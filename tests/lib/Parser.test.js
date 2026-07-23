@@ -178,13 +178,13 @@ describe('Parser', () => {
     describe('invalid XML declaration', () => {
       it('throws an error', () => {
         assert.throws(() => {
-          parseXml('<?xmlblah');
+          parseXml('<?xml?>');
         }, {
           column: 6,
-          excerpt: '<?xmlblah',
+          excerpt: '<?xml?>',
           line: 1,
           message: 'Invalid XML declaration (line 1, column 6)\n' +
-            '  <?xmlblah\n' +
+            '  <?xml?>\n' +
             '       ^\n',
           pos: 5,
         });

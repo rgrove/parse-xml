@@ -16,6 +16,13 @@ describe('XmlProcessingInstruction', () => {
     assert.strictEqual(JSON.stringify(root.children[0]), `{"type":"pi","name":"xml-stylesheet","content":"type=\\"text/xsl\\" href=\\"style.xsl\\""}`);
   });
 
+  it('may begin the document when its target starts with "xml"', () => {
+    let doc = parseXml('<?xml-stylesheet type="text/xsl" href="style.xsl"?><root/>');
+    assert(doc.children[0] instanceof XmlProcessingInstruction);
+    assert.strictEqual(doc.children[0].name, 'xml-stylesheet');
+    assert.strictEqual(doc.root.name, 'root');
+  });
+
   describe('constructor', () => {
     it('defaults the value of `content` to an empty string if not provided', () => {
       let pi = new XmlProcessingInstruction('foo');

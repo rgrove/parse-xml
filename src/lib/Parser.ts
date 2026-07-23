@@ -712,6 +712,15 @@ export class Parser {
       return false;
     }
 
+    // `<?xml` begins an XML declaration only when it's immediately followed by
+    // whitespace. If the next character is a name character, this is a
+    // processing instruction whose target merely begins with "xml" (e.g.
+    // `<?xml-stylesheet ... ?>`); rewind and let it be parsed as a PI.
+    if (syntax.isNameChar(scanner.peek())) {
+      scanner.reset(startIndex);
+      return false;
+    }
+
     if (!this.consumeWhitespace()) {
       throw this.error('Invalid XML declaration');
     }
