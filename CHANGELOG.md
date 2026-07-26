@@ -2,6 +2,12 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 4.2.3 (2026-07-26)
+
+### Fixed
+
+-   A document that starts with a valid processing instruction whose first characters are `xml`, such as `<?xml-stylesheet ...?>`, is no longer incorrectly rejected for having an invalid XML declaration. [#47](https://github.com/rgrove/parse-xml/pull/47) (@spokodev)
+
 ## 4.2.2 (2026-07-10)
 
 ### Fixed
