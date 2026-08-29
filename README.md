@@ -46,17 +46,8 @@ In addition, the only supported character encoding is UTF-8 because it's not fea
 
 ### Basic Usage
 
-**ESM**
-
 ```js
 import { parseXml } from '@rgrove/parse-xml';
-parseXml('<kittens fuzzy="yes">I like fuzzy kittens.</kittens>');
-```
-
-**CommonJS**
-
-```js
-const { parseXml } = require('@rgrove/parse-xml');
 parseXml('<kittens fuzzy="yes">I like fuzzy kittens.</kittens>');
 ```
 

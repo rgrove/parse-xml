@@ -2,6 +2,43 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 5.0.0 (unreleased)
+
+parse-xml is now an ES module. The API is completely unchanged, but the package format and the minimum supported Node.js version have changed. See below for details.
+
+### Breaking Changes
+
+-   **parse-xml is now an ES module.** The package sets `"type": "module"` and ships ESM rather than CommonJS.
+
+    If you already use `import`, you don't need to change anything:
+
+    ```js
+    import { parseXml } from '@rgrove/parse-xml';
+    ```
+
+    Using `require()` also still works in Node.js 22+ thanks to [`require(esm)`](https://nodejs.org/api/modules.html#loading-ecmascript-modules-using-require):
+
+    ```js
+    const { parseXml } = require('@rgrove/parse-xml');
+    ```
+
+    There are two cases that will require a change: bundlers or runtimes that can't resolve ESM at all will no longer work, and if your own project is CommonJS *and* written in TypeScript, you'll need TypeScript 5.8 or later with `"module": "nodenext"`. Older versions of TypeScript and configs using `"module": "node16"` don't support `require(esm)` and will report an error.
+
+-   **Node.js 22.12.0 is now the minimum supported version** (up from 14.0.0, which hadn't actually been tested in some time).
+
+-   **The package now has an `exports` map**, so only its public API can be imported. The root entry and the `Xml*` node classes are unaffected:
+
+    ```js
+    import { parseXml, XmlElement } from '@rgrove/parse-xml';
+    import { XmlElement } from '@rgrove/parse-xml/dist/lib/XmlElement.js';
+    ```
+
+    But `Parser`, `StringScanner`, `syntax`, and `types` are no longer importable. These were never documented as public or exported from the package's entry point so this is unlikely to affect most people.
+
+-   **The browser bundle at `dist/browser.js` is now ESM** rather than CommonJS. This is the file bundlers pick up via the `browser` field, so it should be transparent. As an added bonus, it's also 1.1 KB smaller now.
+
+    The minified global bundle at `dist/global.min.js` is unchanged, so loading parse-xml from a CDN with a `<script>` element and using the `parseXml` global works exactly as before.
+
 ## 4.2.3 (2026-07-26)
 
 ### Fixed
