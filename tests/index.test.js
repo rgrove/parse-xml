@@ -1,9 +1,7 @@
 /* eslint-env mocha */
-'use strict';
+import assert from 'node:assert';
 
-const assert = require('assert');
-
-const { parseXml, XmlCdata, XmlComment, XmlDeclaration, XmlDocument, XmlDocumentType, XmlElement, XmlError, XmlNode, XmlProcessingInstruction, XmlText } = require('..');
+import { parseXml, XmlCdata, XmlComment, XmlDeclaration, XmlDocument, XmlDocumentType, XmlElement, XmlError, XmlNode, XmlProcessingInstruction, XmlText } from '@rgrove/parse-xml';
 
 it('exports XML node classes', () => {
   assert.equal(typeof XmlCdata, 'function');

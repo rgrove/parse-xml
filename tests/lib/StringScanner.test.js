@@ -1,9 +1,7 @@
 /* eslint-env mocha */
-'use strict';
+import assert from 'node:assert';
 
-const assert = require('assert');
-
-const { StringScanner } = require('../../dist/lib/StringScanner');
+import { StringScanner } from '../../dist/lib/StringScanner.js';
 
 describe('StringScanner', () => {
   describe('charCount', () => {

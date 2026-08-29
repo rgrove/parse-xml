@@ -1,9 +1,10 @@
 #!/usr/bin/env node
-'use strict';
 
-const { build, context } = require('esbuild');
+import { readFile } from 'node:fs/promises';
 
-const pkg = require('../package.json');
+import { build, context } from 'esbuild';
+
+const pkg = JSON.parse(await readFile(new URL('../package.json', import.meta.url), 'utf8'));
 
 const watch = process.argv.includes('--watch');
 
@@ -21,42 +22,35 @@ const options = {
   treeShaking: true,
 };
 
-async function main() {
-  // CommonJS browser bundle.
-  let cjsOptions = {
-    ...options,
-    format: 'cjs',
-    outfile: './dist/browser.js',
-  };
+// ESM browser bundle.
+let esmOptions = {
+  ...options,
+  format: 'esm',
+  outfile: './dist/browser.js',
+};
 
-  // Minified global bundle.
-  let globalOptions = {
-    ...options,
-    footer: {
-      js: 'parseXml=parseXml.parseXml',
-    },
-    globalName: 'parseXml',
-    minify: true,
-    outfile: './dist/global.min.js',
-  };
+// Minified global bundle.
+let globalOptions = {
+  ...options,
+  footer: {
+    js: 'parseXml=parseXml.parseXml',
+  },
+  globalName: 'parseXml',
+  minify: true,
+  outfile: './dist/global.min.js',
+};
 
-  if (watch) {
-    let cjsContext = await context(cjsOptions);
-    let globalContext = await context(globalOptions);
+if (watch) {
+  let esmContext = await context(esmOptions);
+  let globalContext = await context(globalOptions);
 
-    await Promise.all([
-      cjsContext.watch(),
-      globalContext.watch(),
-    ]);
-  } else {
-    await Promise.all([
-      build(cjsOptions),
-      build(globalOptions),
-    ]);
-  }
+  await Promise.all([
+    esmContext.watch(),
+    globalContext.watch(),
+  ]);
+} else {
+  await Promise.all([
+    build(esmOptions),
+    build(globalOptions),
+  ]);
 }
-
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
-});

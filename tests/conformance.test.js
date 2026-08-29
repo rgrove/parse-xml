@@ -1,14 +1,12 @@
 /* eslint-env mocha */
 /* eslint-disable func-names */
-'use strict';
+import assert from 'node:assert';
+import path from 'node:path';
 
-const assert = require('assert');
-const path = require('path');
+import { parseXml } from '@rgrove/parse-xml';
 
-const { parseXml } = require('..');
-
-const REPO_ROOT = path.resolve(__dirname, '..');
-const XMLCONF_ROOT = path.resolve(__dirname, 'fixtures/xmlconf');
+const REPO_ROOT = path.resolve(import.meta.dirname, '..');
+const XMLCONF_ROOT = path.resolve(import.meta.dirname, 'fixtures/xmlconf');
 
 // -- Config -------------------------------------------------------------------
 
@@ -362,12 +360,11 @@ async function readXml(filename, testId) {
     return readXmlBrowser(filename, encoding);
   }
 
-  return new Promise((resolve, reject) => {
-    require('fs').readFile(filename, { encoding }, (err, xml) => {
-      if (err) { return void reject(err); }
-      resolve(xml);
-    });
-  });
+  // Imported lazily so that the browser build, which never reaches this
+  // branch, doesn't have to resolve a Node builtin.
+  let { readFile } = await import('node:fs/promises');
+
+  return readFile(filename, { encoding });
 }
 
 function readXmlBrowser(filename, encoding) {

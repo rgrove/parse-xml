@@ -1,9 +1,7 @@
 /* eslint-env mocha */
-'use strict';
+import assert from 'node:assert';
 
-const assert = require('assert');
-
-const { parseXml, XmlComment, XmlNode } = require('../..');
+import { parseXml, XmlComment, XmlNode } from '@rgrove/parse-xml';
 
 describe('XmlComment', () => {
   it("isn't emitted by default", () => {

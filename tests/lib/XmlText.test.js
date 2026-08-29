@@ -1,9 +1,7 @@
 /* eslint-env mocha */
-'use strict';
+import assert from 'node:assert';
 
-const assert = require('assert');
-
-const { parseXml, XmlNode, XmlText } = require('../..');
+import { parseXml, XmlNode, XmlText } from '@rgrove/parse-xml';
 
 describe('XmlText', () => {
   it('is emitted by the parser', () => {

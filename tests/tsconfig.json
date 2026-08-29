@@ -4,7 +4,8 @@
   "compilerOptions": {
     "checkJs": false,
     "incremental": false,
-    "noEmit": true
+    "noEmit": true,
+    "rootDir": ".."
   },
   "include": [
     "types.expect.ts"

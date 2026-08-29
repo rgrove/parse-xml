@@ -19,7 +19,7 @@
     "url": "https://github.com/rgrove/parse-xml.git"
   },
   "engines": {
-    "node": ">=14.0.0"
+    "node": ">=22.12.0"
   },
   "packageManager": "pnpm@11.9.0",
   "files": [
@@ -28,6 +28,21 @@
     "src",
     "LICENSE"
   ],
+  "type": "module",
+  "sideEffects": false,
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "browser": "./dist/browser.js",
+      "default": "./dist/index.js"
+    },
+    "./dist/lib/Xml*.js": {
+      "types": "./dist/lib/Xml*.d.ts",
+      "default": "./dist/lib/Xml*.js"
+    },
+    "./dist/global.min.js": "./dist/global.min.js",
+    "./package.json": "./package.json"
+  },
   "types": "./dist/index.d.ts",
   "main": "./dist/index.js",
   "browser": "./dist/browser.js",

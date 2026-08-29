@@ -1,60 +1,60 @@
 #!/usr/bin/env node
-'use strict';
 
-const path = require('node:path');
-const util = require('node:util');
-const exec = util.promisify(require('node:child_process').exec);
+import { exec as execCallback } from 'node:child_process';
+import path from 'node:path';
+import util from 'node:util';
 
-const { concurrently } = require('concurrently');
-const { context } = require('esbuild');
+import { concurrently } from 'concurrently';
+import { context } from 'esbuild';
 
-const testDir = path.resolve(__dirname, '..', '..', 'tests');
+const exec = util.promisify(execCallback);
 
-async function main() {
-  let buildContext = await context({
-    alias: {
-      path: 'path-browserify',
-    },
-    bundle: true,
-    define: {
-      __dirname: '"/"',
-      'process.env.NODE_DEBUG': 'undefined',
-      'process.env.NODE_ENV': '"test"',
-    },
-    entryPoints: [
-      path.resolve(testDir, 'browser.js'),
-    ],
-    external: ['fs'],
-    logLevel: 'info',
-    outdir: path.resolve(testDir, '.build'),
-    sourcemap: true,
-  });
+const testDir = path.resolve(import.meta.dirname, '..', '..', 'tests');
 
-  await Promise.allSettled([
-    buildContext.serve({
-      servedir: testDir,
-    }),
-
-    concurrently([
-      {
-        name: 'build:bundle',
-        command: 'pnpm --silent run build:bundle --watch',
-      },
-      {
-        name: 'build:js    ',
-        command: 'pnpm --silent run build:js --watch --preserveWatchOutput',
-      },
-    ], {
-      killOthers: ['failure'],
-      prefix: '{name}',
-      prefixColors: ['auto'],
-    }),
-
-    exec('sleep 0.5 && open "http://127.0.0.1:8000/"'),
-  ]);
-}
-
-main().catch((error) => {
-  console.error(error);
-  process.exit(1);
+let buildContext = await context({
+  alias: {
+    // esbuild doesn't implement Node's self-reference resolution, and the
+    // browser tests should exercise the browser bundle, which is what the
+    // `browser` field points Node's own resolution at.
+    '@rgrove/parse-xml': path.resolve(testDir, '..', 'dist', 'browser.js'),
+    'node:assert': 'assert',
+    'node:path': 'path-browserify',
+  },
+  bundle: true,
+  define: {
+    'import.meta.dirname': '"/"',
+    'process.env.NODE_DEBUG': 'undefined',
+    'process.env.NODE_ENV': '"test"',
+  },
+  entryPoints: [
+    path.resolve(testDir, 'browser.js'),
+  ],
+  external: ['node:fs/promises'],
+  format: 'esm',
+  logLevel: 'info',
+  outdir: path.resolve(testDir, '.build'),
+  sourcemap: true,
 });
+
+await Promise.allSettled([
+  buildContext.serve({
+    servedir: testDir,
+  }),
+
+  concurrently([
+    {
+      name: 'build:bundle',
+      command: 'pnpm --silent run build:bundle --watch',
+    },
+    {
+      name: 'build:js    ',
+      command: 'pnpm --silent run build:js --watch --preserveWatchOutput',
+    },
+  ], {
+    killOthers: ['failure'],
+    prefix: '{name}',
+    prefixColors: ['auto'],
+  }),
+
+  exec('sleep 0.5 && open "http://127.0.0.1:8000/"'),
+]);

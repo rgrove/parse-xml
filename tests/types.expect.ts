@@ -1,8 +1,8 @@
 import { expectTypeOf } from 'expect-type';
 
-import { parseXml, XmlComment, XmlDeclaration, XmlDocument, XmlDocumentType, XmlElement, XmlError, XmlNode, XmlProcessingInstruction, XmlText } from '..';
+import { parseXml, XmlComment, XmlDeclaration, XmlDocument, XmlDocumentType, XmlElement, XmlError, XmlNode, XmlProcessingInstruction, XmlText } from '@rgrove/parse-xml';
 
-import type { JsonObject, ParserOptions, XmlCdata } from '..';
+import type { JsonObject, ParserOptions, XmlCdata } from '@rgrove/parse-xml';
 
 // -- parseXml() ---------------------------------------------------------------
 expectTypeOf(parseXml).toBeFunction();

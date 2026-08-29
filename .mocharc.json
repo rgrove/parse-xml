@@ -1,0 +1,5 @@
+{
+  "enableSourceMaps": true,
+  "reporter": "dot",
+  "spec": "tests/{**,}/*.test.js"
+}
