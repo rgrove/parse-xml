@@ -9,6 +9,16 @@ module.exports = {
     '@rgrove/eslint-config/typescript',
   ],
 
+  settings: {
+    // The default node resolver doesn't understand `exports` maps, which
+    // ESM-only dependencies rely on.
+    'import/resolver': {
+      typescript: {
+        alwaysTryTypes: true,
+      },
+    },
+  },
+
   rules: {
     'no-implicit-coercion': ['warn', {
       allow: ['!!'],

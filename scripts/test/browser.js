@@ -5,7 +5,7 @@ const path = require('node:path');
 const util = require('node:util');
 const exec = util.promisify(require('node:child_process').exec);
 
-const concurrently = require('concurrently');
+const { concurrently } = require('concurrently');
 const { context } = require('esbuild');
 
 const testDir = path.resolve(__dirname, '..', '..', 'tests');
