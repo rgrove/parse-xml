@@ -1,0 +1,19 @@
+{
+  "all": true,
+  "branches": 100,
+  "check-coverage": true,
+  "functions": 100,
+  "include": [
+    "dist/**/*.js"
+  ],
+  "exclude": [
+    "dist/browser.js",
+    "dist/global.min.js"
+  ],
+  "lines": 100,
+  "reporter": [
+    "text"
+  ],
+  "statements": 100,
+  "temp-directory": ".c8_output"
+}
