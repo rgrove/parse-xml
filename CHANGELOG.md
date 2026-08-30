@@ -2,7 +2,7 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## 5.0.0 (unreleased)
+## 5.0.0 (2026-08-29)
 
 parse-xml is now an ES module. The API is completely unchanged, but the package format and the minimum supported Node.js version have changed. See below for details.
 
