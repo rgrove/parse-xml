@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    // Sourcemaps for the compiled JS are useful during development (c8 maps
+    // coverage back to `src` and Mocha uses them for stack traces), but they're
+    // just bloat in the published package. Declaration maps are still emitted
+    // since those are necessary to support "go to definition" on the original
+    // TypeScript.
+    "sourceMap": false
+  }
+}

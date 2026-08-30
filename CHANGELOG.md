@@ -39,6 +39,10 @@ parse-xml is now an ES module. The API is completely unchanged, but the package 
 
     The minified global bundle at `dist/global.min.js` is unchanged, so loading parse-xml from a CDN with a `<script>` element and using the `parseXml` global works exactly as before.
 
+### Other Changes
+
+-   **The published npm package is about 40% smaller** (48 KB packed, down from 82 KB in 4.2.3) because it no longer includes unnecessary sourcemaps that are only useful during development.
+
 ## 4.2.3 (2026-07-26)
 
 ### Fixed

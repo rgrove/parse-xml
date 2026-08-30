@@ -18,6 +18,7 @@ const options = {
   logLevel: 'info',
   mangleProps: /^consume([A-Z]|$)|^(addNode|addText|advance|charCount|charIndex|charIndex|charIndexToByteIndex|charLength|charsToBytes|currentNode|error|isEnd|multiByteMode|options|peek|reset|scanner|string|syntax|validateChars)$/,
   sourcemap: true,
+  sourcesContent: false,
   target: 'es2017',
   treeShaking: true,
 };
@@ -27,6 +28,7 @@ let esmOptions = {
   ...options,
   format: 'esm',
   outfile: './dist/browser.js',
+  sourcemap: false,
 };
 
 // Minified global bundle.
