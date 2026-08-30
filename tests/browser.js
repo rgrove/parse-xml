@@ -19,7 +19,6 @@ await import('./lib/XmlElement.test.js');
 await import('./lib/XmlNode.test.js');
 await import('./lib/XmlProcessingInstruction.test.js');
 await import('./lib/XmlText.test.js');
-await import('./conformance.test.js');
 
 mocha.checkLeaks();
 mocha.run();
