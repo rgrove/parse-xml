@@ -16,6 +16,8 @@ All notable changes to parse-xml are documented in this file. The format is base
 
 -   The position reported for an invalid character that follows a character outside the Basic Multilingual Plane (such as an emoji) is now correct.
 
+-   When `includeOffsets` is `true` and a document contains a character outside the Basic Multilingual Plane (such as an emoji), the `end` offset of a node that ends at the very end of the document is now the document's length instead of `Infinity`.
+
 ## 5.0.0 (2026-08-29)
 
 parse-xml is now an ES module. The API is completely unchanged, but the package format and the minimum supported Node.js version have changed. See below for details.

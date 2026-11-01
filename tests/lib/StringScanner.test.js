@@ -76,6 +76,29 @@ describe('StringScanner', () => {
     });
   });
 
+  describe('charIndexToByteIndex()', () => {
+    it('returns the byte index of the given character index', () => {
+      let s = new StringScanner('a🥧b😋c');
+      assert.strictEqual(s.charIndexToByteIndex(0), 0);
+      assert.strictEqual(s.charIndexToByteIndex(1), 1);
+      assert.strictEqual(s.charIndexToByteIndex(2), 3);
+      assert.strictEqual(s.charIndexToByteIndex(3), 4);
+      assert.strictEqual(s.charIndexToByteIndex(4), 6);
+    });
+
+    it('returns the byte index of the current character index if no index is given', () => {
+      let s = new StringScanner('🥧abc');
+      s.advance(2);
+      assert.strictEqual(s.charIndexToByteIndex(), 3);
+    });
+
+    it('returns the byte length of the string when given the character index at the end of the string', () => {
+      assert.strictEqual(new StringScanner('abc').charIndexToByteIndex(3), 3);
+      assert.strictEqual(new StringScanner('a🥧b😋c').charIndexToByteIndex(5), 7);
+      assert.strictEqual(new StringScanner('a🥧').charIndexToByteIndex(2), 3);
+    });
+  });
+
   describe('consume()', () => {
     describe('when `count` is not given', () => {
       it('consumes and returns one character', () => {

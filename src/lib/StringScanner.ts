@@ -23,8 +23,9 @@ export class StringScanner {
 
       // Create a mapping of character indexes to byte indexes. Since the string
       // contains multibyte characters, a byte index may not necessarily align
-      // with a character index.
-      for (let byteIndex = 0, charIndex = 0; charIndex < this.charCount; ++charIndex) {
+      // with a character index. The end of the string is included so that
+      // offsets of nodes that end at the end of the input can be mapped.
+      for (let byteIndex = 0, charIndex = 0; charIndex <= this.charCount; ++charIndex) {
         charsToBytes[charIndex] = byteIndex;
         byteIndex += (string.codePointAt(byteIndex) as number) > 65535 ? 2 : 1;
       }

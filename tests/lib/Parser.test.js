@@ -78,6 +78,19 @@ describe('Parser', () => {
       let { root } = parseXml('<root>\rfoo</root>', { includeOffsets: true });
       assert.strictEqual(root.children[0].start, 6);
     });
+
+    it('the end offset of a node at the end of a document with multibyte characters is the byte length of the document', () => {
+      let offsetOptions = { includeOffsets: true, preserveComments: true };
+
+      let { root } = parseXml('<root>😀</root>', offsetOptions);
+      assert.strictEqual(root.end, 15);
+
+      let doc = parseXml('<root>😀</root><!-- 🐈 -->', offsetOptions);
+      assert.strictEqual(doc.children[1].end, 26);
+
+      doc = parseXml('<root/><?pi 🐕?>', offsetOptions);
+      assert.strictEqual(doc.children[1].end, 16);
+    });
   });
 
   describe('when `options.resolveUndefinedEntity` is set', () => {
