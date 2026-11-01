@@ -31,6 +31,19 @@ export const attValueNormalizedWhitespace = /\r\n|[\n\r\t]/g;
 export const endCharData = /<|&|]]>/;
 
 /**
+ * Regular expression that matches a character that ends a run of unquoted text
+ * inside a markup declaration in a DTD internal subset.
+ *
+ * Quotes begin literals and `>` ends the declaration. `<` and `]` can't appear
+ * outside a literal in a well-formed markup declaration, so they're matched in
+ * order to be rejected. The end of the input is matched so that an unclosed
+ * declaration is consumed (and its characters validated) in full.
+ *
+ * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-markupdecl
+ */
+export const markupDeclarationDelimiter = /["'<>\]]|$/;
+
+/**
  * Mapping of predefined entity names to their replacement values.
  *
  * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-predefined-ent

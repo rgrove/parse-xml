@@ -2,6 +2,20 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## 5.1.0 (Unreleased)
+
+### Security
+
+-   Fixed a parser differential in which the internal subset of a `<!DOCTYPE>` declaration ended at the first `]>`, even when that `]>` appeared inside a quoted literal, comment, or processing instruction where it's allowed by the XML spec. A crafted document could cause parse-xml to treat content inside the DTD as document content, so parse-xml and spec-compliant XML parsers could see different elements and text in the same document. The internal subset now ends at the first `]` that isn't inside a literal, comment, or processing instruction. [GHSA-wq5m-2ff9-78fr](https://github.com/rgrove/parse-xml/security/advisories/GHSA-wq5m-2ff9-78fr)
+
+### Fixed
+
+-   Well-formed documents with `]>` inside a quoted literal, comment, or processing instruction in a DTD internal subset (e.g. `<!ENTITY x "]>">`) are no longer rejected.
+
+-   Some malformed DTD internal subsets that were previously accepted are now rejected, including those containing unknown or lowercase declaration keywords (e.g. `<!element>`), unclosed declarations, literals, comments, or processing instructions, malformed parameter entity references, conditional sections, or elements. parse-xml still doesn't fully validate the syntax of markup declarations.
+
+-   The position reported for an invalid character that follows a character outside the Basic Multilingual Plane (such as an emoji) is now correct.
+
 ## 5.0.0 (2026-08-29)
 
 parse-xml is now an ES module. The API is completely unchanged, but the package format and the minimum supported Node.js version have changed. See below for details.

@@ -105,19 +105,15 @@ const skipTests = new Set([
   'not-wf-sa-137', // DTD validation
   'not-wf-sa-138', // DTD validation
   'not-wf-sa-139', // DTD validation
-  'not-wf-sa-149', // DTD validation
   'not-wf-sa-160', // entity declaration
   'not-wf-sa-161', // entity declaration
   'not-wf-sa-162', // entity declaration
-  'not-wf-sa-179', // entity declaration
   'not-wf-sa-180', // entity declaration
   'not-wf-sa-183', // DTD validation
   'not-wf-sa-184', // DTD validation
   'o-p09fail1', // external DTD
   'o-p09fail2', // external DTD
   'o-p09fail3', // entity declaration
-  'o-p09fail4', // entity declaration
-  'o-p09fail5', // entity declaration
   'o-p12fail1', // DTD validation
   'o-p12fail2', // DTD validation
   'o-p12fail3', // DTD validation
@@ -125,9 +121,7 @@ const skipTests = new Set([
   'o-p12fail5', // DTD validation
   'o-p12fail6', // DTD validation
   'o-p12fail7', // DTD validation
-  'o-p29fail1', // DTD validation
   'o-p31fail1', // external DTD
-  'o-p45fail1', // DTD validation
   'o-p45fail2', // DTD validation
   'o-p45fail3', // DTD validation
   'o-p45fail4', // DTD validation
@@ -177,7 +171,6 @@ const skipTests = new Set([
   'valid-sa-050', // test file is encoded as UTF-16 LE, which we don't support
   'valid-sa-051', // test file is encoded as UTF-16 LE, which we don't support
   'valid-sa-094', // DTD
-  'valid-sa-114', // entity declaration
   'weekly-utf-16', // unsupported UTF-16 BE encoding
   'x-rmt-008', // asserts a failure in XML 1.0 <=4th edition, but we implement 5th edition, which allows this
 ]);

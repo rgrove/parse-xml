@@ -322,13 +322,13 @@ describe('Parser', () => {
         assert.throws(() => {
           parseXml('<!DOCTYPE html [ >');
         }, {
-          column: 17,
+          column: 18,
           excerpt: '<!DOCTYPE html [ >',
           line: 1,
-          message: 'Unclosed internal subset (line 1, column 17)\n' +
+          message: 'Unclosed internal subset (line 1, column 18)\n' +
             '  <!DOCTYPE html [ >\n' +
-            '                  ^\n',
-          pos: 16,
+            '                   ^\n',
+          pos: 17,
         });
       });
     });
@@ -442,6 +442,87 @@ describe('Parser', () => {
 
       assert.strictEqual(root.children[2].text, 'baz');
       assert.strictEqual(root.children[2].type, XmlNode.TYPE_TEXT);
+    });
+
+    // The internal subset ends at the first `]` that isn't inside a comment,
+    // processing instruction, or quoted literal, all of which may contain `]>`.
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#NT-doctypedecl
+    it("doesn't end a DTD internal subset at `]>` inside a literal, comment, or processing instruction", () => {
+      let payload = ']><a><b>wrong</b></a><?x ';
+
+      let subsets = [
+        `<!ENTITY e "${payload}">`,
+        `<!ENTITY e '${payload}'>`,
+        `<!ENTITY e SYSTEM "${payload}">`,
+        `<!NOTATION n SYSTEM "${payload}">`,
+        `<!NOTATION n PUBLIC "x" '${payload}'>`,
+        `<!-- ${payload} -->`,
+        `<?pi ${payload}?>`,
+      ];
+
+      for (let subset of subsets) {
+        let doc = parseXml(`<!DOCTYPE a [${subset}]><a><b>right</b></a><?x ?>`, {
+          preserveComments: true,
+          preserveDocumentType: true,
+        });
+
+        assert.deepStrictEqual(doc.children.map(node => node.type), [
+          XmlNode.TYPE_DOCUMENT_TYPE,
+          XmlNode.TYPE_ELEMENT,
+          XmlNode.TYPE_PROCESSING_INSTRUCTION,
+        ], subset);
+
+        assert.strictEqual(doc.children[0].internalSubset, subset);
+        assert.strictEqual(doc.root.text, 'right', subset);
+      }
+
+      // An attribute value can't contain `<`, but it can contain `]>`.
+      let doc = parseXml(`<!DOCTYPE a [<!ATTLIST a b CDATA "]>">]><a>right</a>`);
+      assert.strictEqual(doc.root.text, 'right');
+    });
+
+    it('preserves a DTD internal subset containing multibyte characters', () => {
+      let subset = '<!ENTITY e "😀]>😀"><!-- 😀 -->';
+      let xml = `<!DOCTYPE a [${subset}]><a>😀</a>`;
+      let doc = parseXml(xml, { includeOffsets: true, preserveDocumentType: true });
+      let [ doctype, root ] = doc.children;
+
+      assert.strictEqual(doctype.internalSubset, subset);
+      assert.strictEqual(doctype.start, 0);
+      assert.strictEqual(doctype.end, xml.indexOf('<a>'));
+      assert.strictEqual(root.start, xml.indexOf('<a>'));
+      assert.strictEqual(root.text, '😀');
+    });
+
+    it('reports the correct position of an invalid character following multibyte characters', () => {
+      assert.throws(() => parseXml('<a>😀\uD800</a>'), { column: 5, pos: 4 });
+      assert.throws(() => parseXml('<a>😀😀\u0001x</a>'), { column: 6, pos: 5 });
+      assert.throws(() => parseXml('<!DOCTYPE a [<!ENTITY 😀 "\u0001">]><a/>'), { column: 26, pos: 25 });
+    });
+
+    it('reports an unclosed markup declaration at the end of the input', () => {
+      assert.throws(() => parseXml('<!DOCTYPE a [<!ENTITY 😀😀 x'), {
+        column: 27,
+        message: /^Unclosed markup declaration/,
+        pos: 26,
+      });
+
+      assert.throws(() => parseXml('<!DOCTYPE a [<!ENTITY e x\u0001'), /Invalid character/);
+    });
+
+    it('allows parameter entity references between declarations in a DTD internal subset', () => {
+      let doc = parseXml('<!DOCTYPE a [<!ENTITY % e "<!ELEMENT a ANY>"> %e; ]><a/>');
+      assert.strictEqual(doc.root.name, 'a');
+    });
+
+    it('rejects a malformed DTD internal subset instead of guessing where it ends', () => {
+      assert.throws(() => parseXml('<!DOCTYPE a [<!ELEMENT a ANY]><a/>'), /Unclosed markup declaration/);
+      assert.throws(() => parseXml('<!DOCTYPE a [<!ENTITY e "]><a/>'), /Missing end quote/);
+      assert.throws(() => parseXml('<!DOCTYPE a [<!-- ]><a/>'), /Unclosed comment/);
+      assert.throws(() => parseXml('<!DOCTYPE a [<?pi ]><a/>'), /Unterminated processing instruction/);
+      assert.throws(() => parseXml('<!DOCTYPE a [%e ]><a/>'), /Invalid parameter entity reference/);
+      assert.throws(() => parseXml('<!DOCTYPE a [<![IGNORE[ ]]> ]><a/>'), /Unclosed internal subset/);
+      assert.throws(() => parseXml('<!DOCTYPE a [ <a/> ]><a/>'), /Unclosed internal subset/);
     });
   });
 });

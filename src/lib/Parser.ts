@@ -263,10 +263,15 @@ export class Parser {
   /**
    * Consumes a comment if possible.
    *
+   * @param addToDocument
+   *   Whether the comment may be added to the document (subject to the
+   *   `preserveComments` option). This should be `false` for comments inside a
+   *   DTD internal subset.
+   *
    * @returns Whether a comment was consumed.
    * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-Comment
    */
-  consumeComment(): boolean {
+  consumeComment(addToDocument = true): boolean {
     let { scanner } = this;
     let startIndex = scanner.charIndex;
 
@@ -285,7 +290,7 @@ export class Parser {
       throw this.error('Unclosed comment');
     }
 
-    return this.options.preserveComments
+    return addToDocument && this.options.preserveComments
       ? this.addNode(new XmlComment(normalizeLineBreaks(content)), startIndex)
       : true;
   }
@@ -311,8 +316,8 @@ export class Parser {
   /**
    * Consumes a doctype declaration if possible.
    *
-   * This is a loose implementation since doctype declarations are currently
-   * discarded without further parsing.
+   * This is a loose implementation since DTDs are otherwise ignored. The
+   * internal subset is only scanned closely enough to find where it ends.
    *
    * @returns Whether a doctype declaration was consumed.
    * @see https://www.w3.org/TR/2008/REC-xml-20081126/#dtd
@@ -362,9 +367,7 @@ export class Parser {
     let internalSubset;
 
     if (scanner.consumeString('[')) {
-      // The internal subset may contain comments that contain `]` characters,
-      // so we can't use `consumeUntilString()` here.
-      internalSubset = scanner.consumeUntilMatch(/\][\x20\t\r\n]*>/);
+      internalSubset = this.consumeInternalSubset();
 
       if (!scanner.consumeString(']')) {
         throw this.error('Unclosed internal subset');
@@ -467,6 +470,74 @@ export class Parser {
   }
 
   /**
+   * Consumes the contents of a DTD internal subset, stopping before the closing
+   * `]` or at the first content that isn't allowed in an internal subset.
+   *
+   * The end of the internal subset is the first `]` that isn't inside a
+   * comment, processing instruction, or quoted literal, all of which may
+   * legally contain `]>`. Since DTDs are otherwise ignored, markup declarations
+   * are only scanned closely enough to find where they end.
+   *
+   * @returns Raw text of the internal subset.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-intSubset
+   */
+  consumeInternalSubset(): string {
+    let { scanner } = this;
+    let startByteIndex = scanner.charIndexToByteIndex();
+
+    while (
+      this.consumeWhitespace()
+        || this.consumeComment(false)
+        || this.consumeProcessingInstruction(false)
+        || this.consumeMarkupDeclaration()
+        || this.consumeParameterEntityReference()
+    ) {} // eslint-disable-line no-empty
+
+    return scanner.string.slice(startByteIndex, scanner.charIndexToByteIndex());
+  }
+
+  /**
+   * Consumes an element, attribute-list, entity, or notation declaration in a
+   * DTD internal subset if possible.
+   *
+   * The declaration isn't fully parsed. Quoted literals are skipped as opaque
+   * units, and the declaration ends at the first `>` outside a literal.
+   *
+   * @returns Whether a markup declaration was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-markupdecl
+   */
+  consumeMarkupDeclaration(): boolean {
+    let { scanner } = this;
+
+    if (!scanner.consumeString('<!ATTLIST')
+        && !scanner.consumeString('<!ELEMENT')
+        && !scanner.consumeString('<!ENTITY')
+        && !scanner.consumeString('<!NOTATION')) {
+
+      return false;
+    }
+
+    for (;;) {
+      this.validateChars(scanner.consumeUntilMatch(syntax.markupDeclarationDelimiter));
+
+      let char = scanner.peek();
+
+      if (char === '>') {
+        scanner.advance();
+        return true;
+      }
+
+      if (char === '"' || char === "'") {
+        this.consumeSystemLiteral();
+        continue;
+      }
+
+      // An unquoted `<` or `]`, or the end of the input.
+      throw this.error('Unclosed markup declaration');
+    }
+  }
+
+  /**
    * Consumes `Misc` content if possible.
    *
    * @returns Whether anything was consumed.
@@ -491,12 +562,36 @@ export class Parser {
   }
 
   /**
+   * Consumes a parameter entity reference in a DTD internal subset if possible.
+   *
+   * @returns Whether a parameter entity reference was consumed.
+   * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-PEReference
+   */
+  consumeParameterEntityReference(): boolean {
+    let { scanner } = this;
+
+    if (!scanner.consumeString('%')) {
+      return false;
+    }
+
+    if (!this.consumeName() || !scanner.consumeString(';')) {
+      throw this.error('Invalid parameter entity reference');
+    }
+
+    return true;
+  }
+
+  /**
    * Consumes a processing instruction if possible.
+   *
+   * @param addToDocument
+   *   Whether to add the processing instruction to the document. This should be
+   *   `false` for processing instructions inside a DTD internal subset.
    *
    * @returns Whether a processing instruction was consumed.
    * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-pi
    */
-  consumeProcessingInstruction(): boolean {
+  consumeProcessingInstruction(addToDocument = true): boolean {
     let { scanner } = this;
     let startIndex = scanner.charIndex;
 
@@ -517,7 +612,9 @@ export class Parser {
 
     if (!this.consumeWhitespace()) {
       if (scanner.consumeString('?>')) {
-        return this.addNode(new XmlProcessingInstruction(name), startIndex);
+        return addToDocument
+          ? this.addNode(new XmlProcessingInstruction(name), startIndex)
+          : true;
       }
 
       throw this.error('Whitespace is required after a processing instruction name');
@@ -530,7 +627,9 @@ export class Parser {
       throw this.error('Unterminated processing instruction');
     }
 
-    return this.addNode(new XmlProcessingInstruction(name, normalizeLineBreaks(content)), startIndex);
+    return addToDocument
+      ? this.addNode(new XmlProcessingInstruction(name, normalizeLineBreaks(content)), startIndex)
+      : true;
   }
 
   /**
@@ -813,7 +912,7 @@ export class Parser {
       let cp = string.codePointAt(i) as number;
 
       if (!syntax.isXmlCodePoint(cp)) {
-        this.scanner.reset(-([ ...string ].length - i));
+        this.scanner.reset(-[ ...string.slice(i) ].length);
         throw this.error('Invalid character');
       }
 
