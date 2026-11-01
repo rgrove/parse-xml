@@ -8,6 +8,10 @@ All notable changes to parse-xml are documented in this file. The format is base
 
 -   Fixed a parser differential in which the internal subset of a `<!DOCTYPE>` declaration ended at the first `]>`, even when that `]>` appeared inside a quoted literal, comment, or processing instruction where it's allowed by the XML spec. A crafted document could cause parse-xml to treat content inside the DTD as document content, so parse-xml and spec-compliant XML parsers could see different elements and text in the same document. The internal subset now ends at the first `]` that isn't inside a literal, comment, or processing instruction. [GHSA-wq5m-2ff9-78fr](https://github.com/rgrove/parse-xml/security/advisories/GHSA-wq5m-2ff9-78fr)
 
+### Added
+
+-   Added a new `rejectAttributeListDeclarations` parser option. When `true`, a document will be rejected with a parse error if its DTD internal subset contains an attribute-list declaration (`<!ATTLIST ...>`) or a parameter entity reference (which could contain an attribute-list declaration). parse-xml ignores attribute-list declarations, but other XML parsers may use them to add default attribute values or normalize attribute values, so this option can help prevent parser differentials in applications that rely on parse-xml and another XML parser interpreting the same untrusted document the same way.
+
 ### Fixed
 
 -   Well-formed documents with `]>` inside a quoted literal, comment, or processing instruction in a DTD internal subset (e.g. `<!ENTITY x "]>">`) are no longer rejected.

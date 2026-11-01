@@ -40,6 +40,8 @@ Or, if you like living dangerously, you can load [the minified bundle](https://u
 
 While this parser is capable of parsing document type declarations (`<!DOCTYPE ... >`) and including them in the node tree, it doesn't actually do anything with them. External document type definitions won't be loaded, and the parser won't validate the document against a DTD or resolve custom entity references defined in a DTD.
 
+Attribute-list declarations (`<!ATTLIST ... >`) in a DTD are also ignored, so parse-xml won't add default attribute values or normalize attribute values based on attribute types declared in a DTD. Other XML parsers that process the DTD may do these things, which means they could see different attribute values than parse-xml sees in the same document. If your application relies on parse-xml and another XML parser interpreting the same untrusted document the same way, consider enabling the `rejectAttributeListDeclarations` option to reject documents whose DTD internal subset contains attribute-list declarations or parameter entity references.
+
 In addition, the only supported character encoding is UTF-8 because it's not feasible (or useful) to support other character encodings in JavaScript.
 
 ## Examples

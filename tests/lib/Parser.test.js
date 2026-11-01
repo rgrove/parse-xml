@@ -93,6 +93,48 @@ describe('Parser', () => {
     });
   });
 
+  describe('when `options.rejectAttributeListDeclarations` is `true`', () => {
+    beforeEach(() => {
+      options.rejectAttributeListDeclarations = true;
+    });
+
+    it('rejects an attribute-list declaration in the internal subset', () => {
+      assert.throws(() => {
+        parseXml('<!DOCTYPE a [<!ELEMENT a EMPTY> <!ATTLIST a b CDATA "x">]><a/>', options);
+      }, {
+        message: /^Attribute-list declarations aren't allowed when `rejectAttributeListDeclarations` is enabled \(line 1, column 33\)/,
+        pos: 32,
+      });
+    });
+
+    it('rejects a parameter entity reference in the internal subset', () => {
+      assert.throws(() => {
+        parseXml(`<!DOCTYPE a [<!ENTITY % p "&#60;!ATTLIST a b CDATA 'x'>"> %p;]><a/>`, options);
+      }, {
+        message: /^Parameter entity references aren't allowed when `rejectAttributeListDeclarations` is enabled \(line 1, column 59\)/,
+        pos: 58,
+      });
+    });
+
+    it('allows other markup declarations, comments, and processing instructions in the internal subset', () => {
+      let doc = parseXml(`<!DOCTYPE a [
+        <!ELEMENT a ANY>
+        <!ENTITY % p "<!ATTLIST a b CDATA 'x'>">
+        <!ENTITY e "<!ATTLIST a b CDATA 'x'>">
+        <!NOTATION n SYSTEM "<!ATTLIST">
+        <!-- <!ATTLIST a b CDATA 'x'> %p; -->
+        <?pi <!ATTLIST a b CDATA 'x'> %p; ?>
+      ]><a/>`, options);
+
+      assert.strictEqual(doc.root.name, 'a');
+    });
+
+    it('allows documents without an internal subset', () => {
+      let doc = parseXml('<!DOCTYPE a SYSTEM "a.dtd"><a/>', options);
+      assert.strictEqual(doc.root.name, 'a');
+    });
+  });
+
   describe('when `options.resolveUndefinedEntity` is set', () => {
     beforeEach(() => {
       options.resolveUndefinedEntity = (ref) => {

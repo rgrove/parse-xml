@@ -508,9 +508,14 @@ export class Parser {
    */
   consumeMarkupDeclaration(): boolean {
     let { scanner } = this;
+    let startIndex = scanner.charIndex;
 
-    if (!scanner.consumeString('<!ATTLIST')
-        && !scanner.consumeString('<!ELEMENT')
+    if (scanner.consumeString('<!ATTLIST')) {
+      if (this.options.rejectAttributeListDeclarations) {
+        scanner.reset(startIndex);
+        throw this.error("Attribute-list declarations aren't allowed when `rejectAttributeListDeclarations` is enabled");
+      }
+    } else if (!scanner.consumeString('<!ELEMENT')
         && !scanner.consumeString('<!ENTITY')
         && !scanner.consumeString('<!NOTATION')) {
 
@@ -564,15 +569,25 @@ export class Parser {
   /**
    * Consumes a parameter entity reference in a DTD internal subset if possible.
    *
+   * Since parse-xml doesn't expand parameter entities, a reference is rejected
+   * when `rejectAttributeListDeclarations` is enabled, because its replacement
+   * text could contain an attribute-list declaration.
+   *
    * @returns Whether a parameter entity reference was consumed.
    * @see https://www.w3.org/TR/2008/REC-xml-20081126/#NT-PEReference
    */
   consumeParameterEntityReference(): boolean {
     let { scanner } = this;
 
-    if (!scanner.consumeString('%')) {
+    if (scanner.peek() !== '%') {
       return false;
     }
+
+    if (this.options.rejectAttributeListDeclarations) {
+      throw this.error("Parameter entity references aren't allowed when `rejectAttributeListDeclarations` is enabled");
+    }
+
+    scanner.advance();
 
     if (!this.consumeName() || !scanner.consumeString(';')) {
       throw this.error('Invalid parameter entity reference');
@@ -1001,6 +1016,27 @@ export type ParserOptions = {
    * @default false
    */
   preserveXmlDeclaration?: boolean;
+
+  /**
+   * When `true`, a document will be rejected with a parse error if its DTD
+   * internal subset contains an attribute-list declaration (`<!ATTLIST ...>`)
+   * or a parameter entity reference (like `%foo;`), since parse-xml doesn't
+   * expand parameter entities and the replacement text of one could contain an
+   * attribute-list declaration.
+   *
+   * parse-xml ignores attribute-list declarations. Other XML parsers may use
+   * them to add default attribute values to elements or to normalize the
+   * whitespace in attribute values, so they could see different attributes
+   * than parse-xml sees in the same document. Enable this option if your
+   * application relies on parse-xml and another XML parser interpreting the
+   * same untrusted document the same way.
+   *
+   * This option doesn't affect external DTDs. parse-xml never loads them, but
+   * other XML parsers may.
+   *
+   * @default false
+   */
+  rejectAttributeListDeclarations?: boolean;
 
   /**
    * When an undefined named entity is encountered, this function will be called

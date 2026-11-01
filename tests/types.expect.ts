@@ -17,6 +17,7 @@ expectTypeOf<ParserOptions>().toHaveProperty('preserveCdata').toEqualTypeOf<bool
 expectTypeOf<ParserOptions>().toHaveProperty('preserveComments').toEqualTypeOf<boolean | undefined>();
 expectTypeOf<ParserOptions>().toHaveProperty('preserveDocumentType').toEqualTypeOf<boolean | undefined>();
 expectTypeOf<ParserOptions>().toHaveProperty('preserveXmlDeclaration').toEqualTypeOf<boolean | undefined>();
+expectTypeOf<ParserOptions>().toHaveProperty('rejectAttributeListDeclarations').toEqualTypeOf<boolean | undefined>();
 expectTypeOf<ParserOptions>().toHaveProperty('resolveUndefinedEntity').toEqualTypeOf<((entity: string) => string | null | undefined) | undefined>();
 expectTypeOf<ParserOptions>().toHaveProperty('sortAttributes').toEqualTypeOf<boolean | undefined>();
 
