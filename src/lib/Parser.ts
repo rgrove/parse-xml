@@ -853,6 +853,10 @@ export class Parser {
     let standalone;
 
     if (this.consumeWhitespace()) {
+      // Whitespace is required before `standalone`, whether it follows the
+      // version or the encoding.
+      let hasWhitespace = true;
+
       encoding = !!scanner.consumeString('encoding')
         && this.consumeEqual()
         && this.consumeSystemLiteral();
@@ -861,10 +865,11 @@ export class Parser {
         if (!/^[A-Za-z][\w.-]*$/.test(encoding)) {
           throw this.error('Invalid character in encoding name');
         }
-        this.consumeWhitespace();
+        hasWhitespace = this.consumeWhitespace();
       }
 
-      standalone = !!scanner.consumeString('standalone')
+      standalone = hasWhitespace
+        && !!scanner.consumeString('standalone')
         && this.consumeEqual()
         && this.consumeSystemLiteral();
 

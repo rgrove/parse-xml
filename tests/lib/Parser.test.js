@@ -244,6 +244,19 @@ describe('Parser', () => {
       });
     });
 
+    describe('XML declaration without whitespace before `standalone`', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<?xml version="1.0" encoding="UTF-8"standalone="yes"?><a/>');
+        }, {
+          column: 37,
+          line: 1,
+          message: /^Invalid or unclosed XML declaration \(line 1, column 37\)/,
+          pos: 36,
+        });
+      });
+    });
+
     describe('root element missing or invalid', () => {
       it('throws an error', () => {
         assert.throws(() => {
