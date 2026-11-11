@@ -849,32 +849,34 @@ export class Parser {
       throw this.error('Invalid character in version number');
     }
 
-    let encoding;
-    let standalone;
+    let encoding: string | undefined;
+    let standalone: 'yes' | 'no' | undefined;
+    let hasWhitespace = this.consumeWhitespace();
 
-    if (this.consumeWhitespace()) {
-      encoding = !!scanner.consumeString('encoding')
-        && this.consumeEqual()
-        && this.consumeSystemLiteral();
+    if (hasWhitespace && scanner.consumeString('encoding')) {
+      let value = this.consumeEqual() && this.consumeSystemLiteral();
 
-      if (encoding) {
-        if (!/^[A-Za-z][\w.-]*$/.test(encoding)) {
-          throw this.error('Invalid character in encoding name');
-        }
-        this.consumeWhitespace();
+      if (value === false) {
+        throw this.error('Invalid or unclosed XML declaration');
+      } else if (!/^[A-Za-z][\w.-]*$/.test(value)) {
+        throw this.error('Invalid character in encoding name');
       }
 
-      standalone = !!scanner.consumeString('standalone')
-        && this.consumeEqual()
-        && this.consumeSystemLiteral();
+      encoding = value;
+      hasWhitespace = this.consumeWhitespace();
+    }
 
-      if (standalone) {
-        if (standalone !== 'yes' && standalone !== 'no') {
-          throw this.error('Only "yes" and "no" are permitted as values of `standalone`');
-        }
+    if (hasWhitespace && scanner.consumeString('standalone')) {
+      let value = this.consumeEqual() && this.consumeSystemLiteral();
 
-        this.consumeWhitespace();
+      if (value === false) {
+        throw this.error('Invalid or unclosed XML declaration');
+      } else if (value !== 'yes' && value !== 'no') {
+        throw this.error('Only "yes" and "no" are permitted as values of `standalone`');
       }
+
+      standalone = value;
+      this.consumeWhitespace();
     }
 
     if (!scanner.consumeString('?>')) {
@@ -882,11 +884,7 @@ export class Parser {
     }
 
     return this.options.preserveXmlDeclaration
-      ? this.addNode(new XmlDeclaration(
-          version,
-          encoding || undefined,
-          (standalone as 'yes' | 'no' | false) || undefined,
-        ), startIndex)
+      ? this.addNode(new XmlDeclaration(version, encoding, standalone), startIndex)
       : true;
   }
 

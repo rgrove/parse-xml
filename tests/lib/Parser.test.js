@@ -244,6 +244,22 @@ describe('Parser', () => {
       });
     });
 
+    describe('XML declaration without whitespace before `standalone`', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<?xml version="1.0" encoding="A"standalone="no"?>');
+        }, {
+          column: 33,
+          excerpt: '<?xml version="1.0" encoding="A"standalone="no"?>',
+          line: 1,
+          message: 'Invalid or unclosed XML declaration (line 1, column 33)\n' +
+            '  <?xml version="1.0" encoding="A"standalone="no"?>\n' +
+            '                                  ^\n',
+          pos: 32,
+        });
+      });
+    });
+
     describe('root element missing or invalid', () => {
       it('throws an error', () => {
         assert.throws(() => {
@@ -578,6 +594,155 @@ describe('Parser', () => {
       assert.throws(() => parseXml('<!DOCTYPE a [%e ]><a/>'), /Invalid parameter entity reference/);
       assert.throws(() => parseXml('<!DOCTYPE a [<![IGNORE[ ]]> ]><a/>'), /Unclosed internal subset/);
       assert.throws(() => parseXml('<!DOCTYPE a [ <a/> ]><a/>'), /Unclosed internal subset/);
+    });
+
+    // Like `EncodingDecl`, `SDDecl` begins with mandatory whitespace.
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#NT-SDDecl
+    it('requires whitespace before `standalone` in an XML declaration', () => {
+      assert.throws(() => parseXml('<?xml version="1.0"standalone="yes"?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 19,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" encoding="UTF-8"standalone="yes"?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 36,
+      });
+
+      assert.throws(() => parseXml("<?xml version='1.0' encoding='UTF-8'standalone='no'?><a/>"), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 36,
+      });
+
+      // An empty encoding name must not bypass the whitespace requirement.
+      assert.throws(() => parseXml('<?xml version="1.0" encoding=""standalone="yes"?><a/>'), {
+        message: /^Invalid character in encoding name/,
+        pos: 31,
+      });
+    });
+
+    it('allows any whitespace before `standalone` and around `=` in an XML declaration', () => {
+      let xmls = [
+        '<?xml version="1.0" encoding="UTF-8" standalone="yes"?><a/>',
+        '<?xml version="1.0" encoding="UTF-8"\tstandalone="yes"?><a/>',
+        '<?xml version="1.0" encoding="UTF-8"\r\nstandalone="yes"?><a/>',
+        "<?xml version='1.0'\nencoding = 'UTF-8'\n standalone = 'yes' ?><a/>",
+      ];
+
+      for (let xml of xmls) {
+        let [ node ] = parseXml(xml, { preserveXmlDeclaration: true }).children;
+        assert.strictEqual(node.encoding, 'UTF-8', xml);
+        assert.strictEqual(node.standalone, 'yes', xml);
+      }
+    });
+
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#NT-EncodingDecl
+    it('rejects an XML declaration with an empty or incomplete encoding declaration', () => {
+      assert.throws(() => parseXml('<?xml version="1.0" encoding=""?><a/>'), {
+        message: /^Invalid character in encoding name/,
+        pos: 31,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" encoding?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 28,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" encoding=?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 29,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" encoding standalone="yes"?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 29,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" encoding= standalone="yes"?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 30,
+      });
+    });
+
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#NT-SDDecl
+    it('rejects an XML declaration with an empty or incomplete standalone declaration', () => {
+      assert.throws(() => parseXml('<?xml version="1.0" standalone=""?><a/>'), {
+        message: /^Only "yes" and "no" are permitted as values of `standalone`/,
+        pos: 33,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" standalone?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 30,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" standalone=?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 31,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" encoding="UTF-8" standalone=""?><a/>'), {
+        message: /^Only "yes" and "no" are permitted as values of `standalone`/,
+        pos: 50,
+      });
+
+      assert.throws(() => parseXml('<?xml version="1.0" encoding="UTF-8" standalone?><a/>'), {
+        message: /^Invalid or unclosed XML declaration/,
+        pos: 47,
+      });
+    });
+
+    // These are the XML declarations from the IBM not-wf conformance tests for
+    // productions [23]-[26], [32], [80], and [81]. The conformance suite skips
+    // the IBM not-wf tests because many of their other fixtures are broken.
+    it('rejects malformed XML declarations from the IBM not-wf conformance tests', () => {
+      let decls = [
+        `<?xml encoding="ASCII" ?>`, // ibm23n01
+        `<?xml encoding='ASCII' version='1.0'?>`, // ibm23n02
+        `<?xml encoding='ASCII' standalone='yes' version='1.0'?>`, // ibm23n03
+        `<?XML version='1.0'?>`, // ibm23n04
+        `<?xml version='1.0' encoding='ASCII' standalone='yes' >`, // ibm23n05
+        `<!xml version='1.0' encoding='ASCII' standalone='yes' ?>`, // ibm23n06
+        `<?xml version= ?>`, // ibm24n01
+        `<?xmlversion='1.0' ?>`, // ibm24n02
+        `<?xml version'1.0' ?>`, // ibm24n03
+        `<?xml '1.0'=version ?>`, // ibm24n04
+        `<?xml version'1.0'= ?>`, // ibm24n05
+        `<?xml Version='1.0' ?>`, // ibm24n06
+        `<?xml versioN='1.0' ?>`, // ibm24n07
+        `<?xml version='1.0" ?>`, // ibm24n08
+        `<?xml version='1.0 ?>`, // ibm24n09
+        `<?xml version=='1.0' ?>`, // ibm25n01
+        `<?xml version eq '1.0' ?>`, // ibm25n02
+        `<?xml version='_#1.0' ?>`, // ibm26n01
+        `<?xml version="1.0"standalone="yes" ?>`, // ibm32n01
+        `<?xml version="1.0" standalone"yes" ?>`, // ibm32n02
+        `<?xml version="1.0" Standalone="yes" ?>`, // ibm32n03
+        `<?xml version="1.0" standalone="Yes" ?>`, // ibm32n04
+        `<?xml version="1.0" standalone="YES" ?>`, // ibm32n05
+        `<?xml version="1.0" standalone="No" ?>`, // ibm32n06
+        `<?xml version="1.0" standalone="NO" ?>`, // ibm32n07
+        `<?xml version="1.0" standalone"Yes"= ?>`, // ibm32n08
+        `<?xml version="1.0"encoding="UTF-8"?>`, // ibm80n01
+        `<?xml version="1.0" encoding "UTF-8"?>`, // ibm80n02
+        `<?xml version="1.0" encoding= ?>`, // ibm80n03
+        `<?xml version="1.0" "UTF-8"encoding=?>`, // ibm80n04
+        `<?xml version="1.0" "UTF-8"=encoding?>`, // ibm80n05
+        `<?xml version="1.0" Encoding="UTF-8"?>`, // ibm80n06
+        `<?xml version="1.0" encoding="_UTF-8"?>`, // ibm81n01
+        `<?xml version="1.0" encoding="-UTF-8"?>`, // ibm81n02
+        `<?xml version="1.0" encoding=".UTF-8"?>`, // ibm81n03
+        `<?xml version="1.0" encoding="8-UTF"?>`, // ibm81n04
+        `<?xml version="1.0" encoding="UTF~8"?>`, // ibm81n05
+        `<?xml version="1.0" encoding="UTF#8"?>`, // ibm81n06
+        `<?xml version="1.0" encoding="UTF:8"?>`, // ibm81n07
+        `<?xml version="1.0" encoding="UTF/8"?>`, // ibm81n08
+        `<?xml version="1.0" encoding="UTF;8"?>`, // ibm81n09
+      ];
+
+      for (let decl of decls) {
+        assert.throws(() => parseXml(`${decl}<a/>`), XmlError, decl);
+      }
     });
   });
 });

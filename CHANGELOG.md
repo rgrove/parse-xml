@@ -2,6 +2,14 @@
 
 All notable changes to parse-xml are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/). This project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Fixed
+
+-   An XML declaration with no whitespace between the encoding declaration and the standalone declaration (e.g. `<?xml version="1.0" encoding="UTF-8"standalone="yes"?>`) is now rejected, as required by the XML spec. [#53](https://github.com/rgrove/parse-xml/pull/53)
+
+-   An XML declaration with an empty or incomplete encoding or standalone declaration (e.g. `encoding=""`, `encoding=`, or `standalone` without a value) is now rejected. Previously, the invalid declaration was silently ignored.
+
 ## 5.1.0 (2026-11-01)
 
 ### Security
