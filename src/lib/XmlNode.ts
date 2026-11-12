@@ -68,7 +68,19 @@ export class XmlNode {
    * with a document.
    */
   get document(): XmlDocument | null {
-    return this.parent?.document ?? null;
+    let node = this.parent;
+
+    // Walk up the tree iteratively rather than recursively so that a deeply
+    // nested node can't exhaust the call stack.
+    while (node !== null) {
+      if (node.type === XmlNode.TYPE_DOCUMENT) {
+        return node as XmlDocument;
+      }
+
+      node = node.parent;
+    }
+
+    return null;
   }
 
   /**
@@ -76,8 +88,7 @@ export class XmlNode {
    * document element).
    */
   get isRootNode(): boolean {
-    return this.parent !== null
-      && this.parent === this.document
+    return this.parent?.type === XmlNode.TYPE_DOCUMENT
       && this.type === XmlNode.TYPE_ELEMENT;
   }
 

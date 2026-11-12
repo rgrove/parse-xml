@@ -18,6 +18,8 @@ All notable changes to parse-xml are documented in this file. The format is base
 
 -   Parsing a text node, CDATA section, comment, or processing instruction that contains many carriage returns is no longer extremely slow. Line break normalization previously took time proportional to the square of the number of carriage returns, so a document containing a few hundred kilobytes of carriage returns could take many seconds to parse.
 
+-   `XmlNode#document` and `XmlNode#isRootNode` no longer recurse up the node tree, so they can no longer exhaust the call stack in a deeply nested tree. `isRootNode` is also faster, which speeds up `toJSON()`.
+
 ## 5.1.0 (2026-11-01)
 
 ### Security
