@@ -466,6 +466,28 @@ describe('Parser', () => {
       assert.strictEqual(root.children[0].text, 'baz\nquux\n\nmoo');
     });
 
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#sec-line-ends
+    it('normalizes line breaks in text, CDATA sections, comments, and processing instructions', () => {
+      let input = 'a\r\nb\rc\nd\r\r\ne\n\rf\r';
+      let expected = 'a\nb\nc\nd\n\ne\n\nf\n';
+      let doc = parseXml(`<a>${input}<![CDATA[${input}]]><!--${input}--><?pi ${input}?></a>`, {
+        preserveCdata: true,
+        preserveComments: true,
+      });
+
+      let [ text, cdata, comment, pi ] = doc.root.children;
+
+      assert.strictEqual(text.text, expected);
+      assert.strictEqual(cdata.text, expected);
+      assert.strictEqual(comment.content, expected);
+      assert.strictEqual(pi.content, expected);
+    });
+
+    it('normalizes many carriage returns in linear time', () => {
+      let { root } = parseXml(`<a>${'\r'.repeat(1000000)}</a>`);
+      assert.strictEqual(root.text, '\n'.repeat(1000000));
+    });
+
     // https://github.com/rgrove/parse-xml/issues/6
     // https://www.w3.org/TR/2008/REC-xml-20081126/#AVNormalize
     it("doesn't normalize a character reference for a whitespace character other than space (\\x20)", () => {

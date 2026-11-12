@@ -31,6 +31,14 @@ export const attValueNormalizedWhitespace = /\r\n|[\n\r\t]/g;
 export const endCharData = /<|&|]]>/;
 
 /**
+ * Regular expression that matches a CRLF sequence or a lone CR character, both
+ * of which should be normalized to a single LF character.
+ *
+ * @see https://www.w3.org/TR/2008/REC-xml-20081126/#sec-line-ends
+ */
+export const lineBreakToNormalize = /\r\n?/g;
+
+/**
  * Regular expression that matches a character that ends a run of unquoted text
  * inside a markup declaration in a DTD internal subset.
  *

@@ -941,15 +941,9 @@ export class Parser {
  * CR characters with LF characters.
  */
 function normalizeLineBreaks(text: string): string {
-  let i = 0;
-
-  while ((i = text.indexOf('\r', i)) !== -1) {
-    text = text[i + 1] === '\n'
-      ? text.slice(0, i) + text.slice(i + 1)
-      : text.slice(0, i) + '\n' + text.slice(i + 1);
-  }
-
-  return text;
+  return text.includes('\r')
+    ? text.replace(syntax.lineBreakToNormalize, '\n')
+    : text;
 }
 
 // -- Types --------------------------------------------------------------------
