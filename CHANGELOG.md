@@ -4,6 +4,10 @@ All notable changes to parse-xml are documented in this file. The format is base
 
 ## Unreleased
 
+### Added
+
+-   Added a new `maxElementDepth` parser option, which limits how deeply elements may be nested. A document that exceeds the limit is rejected with an `XmlError`. The default limit is 256, so documents with elements nested more deeply than that will now be rejected unless you raise the limit. Previously, a deeply nested document could cause the parser, or recursive traversal of the resulting node tree, to throw a `RangeError` by exhausting the call stack. [#54](https://github.com/rgrove/parse-xml/issues/54)
+
 ### Fixed
 
 -   An XML declaration with no whitespace between the encoding declaration and the standalone declaration (e.g. `<?xml version="1.0" encoding="UTF-8"standalone="yes"?>`) is now rejected, as required by the XML spec. [#53](https://github.com/rgrove/parse-xml/pull/53)

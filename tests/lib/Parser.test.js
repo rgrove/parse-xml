@@ -93,6 +93,65 @@ describe('Parser', () => {
     });
   });
 
+  describe('when `options.maxElementDepth` is set', () => {
+    beforeEach(() => {
+      options.maxElementDepth = 3;
+    });
+
+    it('allows elements nested up to the maximum depth', () => {
+      let doc = parseXml('<a><b><c/></b><b><c>x</c></b></a>', options);
+      assert.strictEqual(doc.root.children[1].children[0].text, 'x');
+    });
+
+    it('rejects an element nested more deeply than the maximum depth', () => {
+      assert.throws(() => {
+        parseXml('<a><b><c><d></d></c></b></a>', options);
+      }, {
+        message: /^Maximum element depth of 3 exceeded \(see the `maxElementDepth` option\) \(line 1, column 10\)/,
+        pos: 9,
+      });
+    });
+
+    it('counts empty elements toward the depth', () => {
+      assert.throws(() => {
+        parseXml('<a><b><c><d/></c></b></a>', options);
+      }, {
+        message: /^Maximum element depth of 3 exceeded/,
+        pos: 9,
+      });
+    });
+
+    it('rejects the root element when the maximum depth is 0', () => {
+      assert.throws(() => {
+        parseXml('<a/>', { maxElementDepth: 0 });
+      }, {
+        message: /^Maximum element depth of 0 exceeded/,
+        pos: 0,
+      });
+    });
+
+    it('rejects the root element when the maximum depth is `NaN`', () => {
+      assert.throws(() => {
+        parseXml('<a/>', { maxElementDepth: NaN });
+      }, {
+        message: /^Maximum element depth of NaN exceeded/,
+        pos: 0,
+      });
+    });
+
+    it('allows any depth when the maximum depth is `Infinity`', () => {
+      let depth = 1000;
+      let doc = parseXml('<a>'.repeat(depth) + '</a>'.repeat(depth), { maxElementDepth: Infinity });
+      let node = doc.root;
+
+      for (let i = 1; i < depth; ++i) {
+        node = node.children[0];
+      }
+
+      assert.strictEqual(node.isEmpty, true);
+    });
+  });
+
   describe('when `options.rejectAttributeListDeclarations` is `true`', () => {
     beforeEach(() => {
       options.rejectAttributeListDeclarations = true;
@@ -209,6 +268,29 @@ describe('Parser', () => {
             '        ^\n',
           pos: 6,
         });
+      });
+    });
+
+    describe('element nested more deeply than the default maximum depth of 256', () => {
+      it('throws an error', () => {
+        let xml = '<a>'.repeat(256) + '<b/>' + '</a>'.repeat(256);
+
+        assert.throws(() => {
+          parseXml(xml);
+        }, {
+          message: /^Maximum element depth of 256 exceeded \(see the `maxElementDepth` option\) \(line 1, column 769\)/,
+          pos: 768,
+        });
+
+        // https://github.com/rgrove/parse-xml/issues/54
+        assert.throws(() => {
+          parseXml('<a>'.repeat(6000) + '</a>'.repeat(6000));
+        }, XmlError);
+      });
+
+      it("doesn't throw an error at the maximum depth", () => {
+        let doc = parseXml('<a>'.repeat(255) + '<b/>' + '</a>'.repeat(255));
+        assert.strictEqual(doc.root.name, 'a');
       });
     });
 

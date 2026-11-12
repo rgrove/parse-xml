@@ -11,6 +11,7 @@ import { XmlNode } from './XmlNode.js';
 import { XmlProcessingInstruction } from './XmlProcessingInstruction.js';
 import { XmlText } from './XmlText.js';
 
+const defaultMaxElementDepth = 256;
 const emptyString = '';
 
 /**
@@ -22,6 +23,8 @@ export class Parser {
   readonly document: XmlDocument;
 
   private currentNode: XmlDocument | XmlElement;
+  private depth = 0;
+  private readonly maxElementDepth: number;
   private readonly options: ParserOptions;
   private readonly scanner: StringScanner;
 
@@ -33,6 +36,7 @@ export class Parser {
     let doc = this.document = new XmlDocument();
 
     this.currentNode = doc;
+    this.maxElementDepth = options.maxElementDepth ?? defaultMaxElementDepth;
     this.options = options;
     this.scanner = new StringScanner(xml);
 
@@ -404,6 +408,13 @@ export class Parser {
       return false;
     }
 
+    // An invalid limit like `NaN` rejects every element rather than silently
+    // disabling the limit.
+    if (!(this.depth < this.maxElementDepth)) {
+      scanner.reset(startIndex);
+      throw this.error(`Maximum element depth of ${this.maxElementDepth} exceeded (see the \`maxElementDepth\` option)`);
+    }
+
     let attributes = this.consumeAttributes();
     let isEmpty = !!scanner.consumeString('/>');
     let element = new XmlElement(name, attributes);
@@ -416,6 +427,7 @@ export class Parser {
       }
 
       this.currentNode = element;
+      this.depth += 1;
 
       do {
         this.consumeCharData();
@@ -445,6 +457,7 @@ export class Parser {
       }
 
       this.currentNode = element.parent;
+      this.depth -= 1;
     }
 
     return this.addNode(element, startIndex);
@@ -963,6 +976,24 @@ export type ParserOptions = {
    * @default false
    */
   includeOffsets?: boolean;
+
+  /**
+   * Maximum depth to which elements may be nested. The root element has a depth
+   * of 1. A document with elements nested more deeply than this will be
+   * rejected with a parse error.
+   *
+   * This limit prevents a deeply nested document from exhausting the call stack
+   * while it's being parsed, as well as when the resulting node tree is
+   * traversed recursively (including by `toJSON()` and `JSON.stringify()`).
+   * libxml2 uses a similar default limit.
+   *
+   * Set this to `Infinity` to disable the limit, but beware that parsing a
+   * deeply nested document or recursively traversing the resulting node tree
+   * may then throw a `RangeError` by exhausting the call stack.
+   *
+   * @default 256
+   */
+  maxElementDepth?: number;
 
   /**
    * When `true`, CDATA sections will be preserved in the document as `XmlCdata`

@@ -13,6 +13,7 @@ expectTypeOf(parseXml).returns.toEqualTypeOf<XmlDocument>();
 // -- ParserOptions ------------------------------------------------------------
 expectTypeOf<ParserOptions>().toHaveProperty('ignoreUndefinedEntities').toEqualTypeOf<boolean | undefined>();
 expectTypeOf<ParserOptions>().toHaveProperty('includeOffsets').toEqualTypeOf<boolean | undefined>();
+expectTypeOf<ParserOptions>().toHaveProperty('maxElementDepth').toEqualTypeOf<number | undefined>();
 expectTypeOf<ParserOptions>().toHaveProperty('preserveCdata').toEqualTypeOf<boolean | undefined>();
 expectTypeOf<ParserOptions>().toHaveProperty('preserveComments').toEqualTypeOf<boolean | undefined>();
 expectTypeOf<ParserOptions>().toHaveProperty('preserveDocumentType').toEqualTypeOf<boolean | undefined>();
