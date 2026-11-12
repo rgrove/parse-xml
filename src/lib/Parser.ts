@@ -348,13 +348,11 @@ export class Parser {
         if (publicId === false) {
           throw this.error('Expected a public identifier');
         }
-
-        this.consumeWhitespace();
       }
 
       if (publicId !== undefined || scanner.consumeString('SYSTEM')) {
-        this.consumeWhitespace();
-        systemId = this.consumeSystemLiteral();
+        systemId = this.consumeWhitespace()
+          && this.consumeSystemLiteral();
 
         if (systemId === false) {
           throw this.error('Expected a system identifier');

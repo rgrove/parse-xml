@@ -388,6 +388,22 @@ describe('Parser', () => {
       });
     });
 
+    describe('doctype declaration without whitespace before system identifier', () => {
+      it('throws an error', () => {
+        assert.throws(() => {
+          parseXml('<!DOCTYPE html PUBLIC "foo""bar">');
+        }, {
+          column: 28,
+          excerpt: '<!DOCTYPE html PUBLIC "foo""bar">',
+          line: 1,
+          message: 'Expected a system identifier (line 1, column 28)\n' +
+            '  <!DOCTYPE html PUBLIC "foo""bar">\n' +
+            '                             ^\n',
+          pos: 27,
+        });
+      });
+    });
+
     describe('doctype declaration with unclosed internal subset', () => {
       it('throws an error', () => {
         assert.throws(() => {
@@ -743,6 +759,40 @@ describe('Parser', () => {
       for (let decl of decls) {
         assert.throws(() => parseXml(`${decl}<a/>`), XmlError, decl);
       }
+    });
+
+    // `ExternalID` requires whitespace between the `SYSTEM` or `PUBLIC` keyword
+    // and each literal that follows it.
+    // https://www.w3.org/TR/2008/REC-xml-20081126/#NT-ExternalID
+    it('requires whitespace before the system identifier in a doctype declaration', () => {
+      assert.throws(() => parseXml('<!DOCTYPE a SYSTEM"y"><a/>'), {
+        message: /^Expected a system identifier/,
+        pos: 18,
+      });
+
+      assert.throws(() => parseXml("<!DOCTYPE a SYSTEM'y'><a/>"), {
+        message: /^Expected a system identifier/,
+        pos: 18,
+      });
+
+      assert.throws(() => parseXml('<!DOCTYPE a PUBLIC "x""y"><a/>'), {
+        message: /^Expected a system identifier/,
+        pos: 22,
+      });
+
+      assert.throws(() => parseXml("<!DOCTYPE a PUBLIC 'x''y' []><a/>"), {
+        message: /^Expected a system identifier/,
+        pos: 22,
+      });
+    });
+
+    it('allows any whitespace between the parts of an external ID in a doctype declaration', () => {
+      let doc = parseXml('<!DOCTYPE a\tSYSTEM\r\n"y"[]><a/>', { preserveDocumentType: true });
+      assert.strictEqual(doc.children[0].systemId, 'y');
+
+      doc = parseXml('<!DOCTYPE a\nPUBLIC\t"x"\r\n"y"\t><a/>', { preserveDocumentType: true });
+      assert.strictEqual(doc.children[0].publicId, 'x');
+      assert.strictEqual(doc.children[0].systemId, 'y');
     });
   });
 });

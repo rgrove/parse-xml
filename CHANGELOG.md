@@ -10,6 +10,8 @@ All notable changes to parse-xml are documented in this file. The format is base
 
 -   An XML declaration with an empty or incomplete encoding or standalone declaration (e.g. `encoding=""`, `encoding=`, or `standalone` without a value) is now rejected. Previously, the invalid declaration was silently ignored.
 
+-   A doctype declaration with no whitespace before its system identifier (e.g. `<!DOCTYPE a SYSTEM"a.dtd">` or `<!DOCTYPE a PUBLIC "a""a.dtd">`) is now rejected, as required by the XML spec.
+
 ## 5.1.0 (2026-11-01)
 
 ### Security
